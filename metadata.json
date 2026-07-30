@@ -1,0 +1,6 @@
+{
+  "name": "TANSO Renewable Energy",
+  "description": "Modern international corporate website for TANSO Solar & Renewable Energy solutions",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
