@@ -1,148 +1,204 @@
 import React, { useState, useEffect } from 'react';
-import { Language, Product, Project } from './types';
-import { Navbar } from './components/Navbar';
-import { Hero } from './components/Hero';
-import { SolarCalculator } from './components/SolarCalculator';
-import { ProductsSection } from './components/ProductsSection';
-import { ServicesSection } from './components/ServicesSection';
-import { AboutSection } from './components/AboutSection';
-import { AdvantagesSection } from './components/AdvantagesSection';
-import { ProjectsSection } from './components/ProjectsSection';
-import { NewsSection } from './components/NewsSection';
-import { PartnersSection } from './components/PartnersSection';
-import { ContactSection } from './components/ContactSection';
+import { LanguageProvider } from './context/LanguageContext';
+import { DataProvider } from './context/DataContext';
+import { AuthProvider, useAuth } from './context/AuthContext';
+import { Header } from './components/Header';
 import { Footer } from './components/Footer';
-import { ProductModal } from './components/ProductModal';
-import { ProjectModal } from './components/ProjectModal';
+import { LeadModal } from './components/LeadModal';
 
-export default function App() {
-  const [currentLang, setCurrentLang] = useState<Language>('uz');
-  const [activeSection, setActiveSection] = useState<string>('hero');
-  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
-  const [selectedProject, setSelectedProject] = useState<Project | null>(null);
-  const [contactSpec, setContactSpec] = useState<string>('');
+// Public Pages
+import { HomePage } from './pages/HomePage';
+import { CatalogPage } from './pages/CatalogPage';
+import { ProductDetailPage } from './pages/ProductDetailPage';
+import { AboutPage } from './pages/AboutPage';
+import { ServicesPage } from './pages/ServicesPage';
+import { ProjectsPage } from './pages/ProjectsPage';
+import { ContactPage } from './pages/ContactPage';
 
+// Admin Pages & Layout
+import { AdminLayout } from './components/admin/AdminLayout';
+import { AdminLogin } from './pages/admin/AdminLogin';
+import { AdminDashboardHome } from './pages/admin/AdminDashboardHome';
+import { AdminLeads } from './pages/admin/AdminLeads';
+import { AdminProducts } from './pages/admin/AdminProducts';
+import { AdminCategories } from './pages/admin/AdminCategories';
+import { AdminBanners } from './pages/admin/AdminBanners';
+import { AdminServices } from './pages/admin/AdminServices';
+import { AdminProjects } from './pages/admin/AdminProjects';
+import { AdminPartners } from './pages/admin/AdminPartners';
+import { AdminMedia } from './pages/admin/AdminMedia';
+import { AdminSettings } from './pages/admin/AdminSettings';
+
+import { Product } from './types';
+
+function AppContent() {
+  const [currentPath, setCurrentPath] = useState<string>(window.location.pathname || '/');
+  const [leadModalOpen, setLeadModalOpen] = useState(false);
+  const [selectedProductForModal, setSelectedProductForModal] = useState<Product | null>(null);
+
+  const { isAuthenticated, isLoading } = useAuth();
+
+  // Navigation helper
+  const handleNavigate = (path: string) => {
+    window.history.pushState({}, '', path);
+    setCurrentPath(path);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  // Popstate handle
   useEffect(() => {
-    const sections = ['hero', 'calculator', 'products', 'services', 'about', 'advantages', 'projects', 'news', 'contact'];
-    
-    const handleScroll = () => {
-      const scrollPosition = window.scrollY + 250;
-      for (const sectionId of sections) {
-        const el = document.getElementById(sectionId);
-        if (el) {
-          const top = el.offsetTop;
-          const height = el.offsetHeight;
-          if (scrollPosition >= top && scrollPosition < top + height) {
-            setActiveSection(sectionId);
-            break;
-          }
-        }
-      }
+    const handlePopState = () => {
+      setCurrentPath(window.location.pathname || '/');
     };
-
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
   }, []);
 
-  const handleOpenCalculator = () => {
-    const el = document.getElementById('calculator');
-    if (el) el.scrollIntoView({ behavior: 'smooth' });
+  const handleOpenConsultation = (product: Product | null = null) => {
+    setSelectedProductForModal(product);
+    setLeadModalOpen(true);
   };
 
-  const handleOpenContact = () => {
-    const el = document.getElementById('contact');
-    if (el) el.scrollIntoView({ behavior: 'smooth' });
-  };
+  // Check if route is inside admin area
+  const isAdminRoute = currentPath.startsWith('/admin');
 
-  const handleOpenContactWithSpec = (specDetails: string) => {
-    setContactSpec(specDetails);
-    const el = document.getElementById('contact');
-    if (el) el.scrollIntoView({ behavior: 'smooth' });
-  };
+  if (isAdminRoute) {
+    if (isLoading) {
+      return (
+        <div className="min-h-screen bg-zinc-950 text-white flex items-center justify-center">
+          <div className="w-8 h-8 border-2 border-emerald-500 border-t-transparent rounded-full animate-spin" />
+        </div>
+      );
+    }
 
-  const handleQuickQuote = (productName: string) => {
-    handleOpenContactWithSpec(`Mahsulot bo'yicha narx so'rovi: ${productName}`);
+    if (currentPath === '/admin/login') {
+      return <AdminLogin onNavigate={handleNavigate} />;
+    }
+
+    if (!isAuthenticated) {
+      return <AdminLogin onNavigate={handleNavigate} />;
+    }
+
+    // Render Admin View inside Layout
+    let adminPageContent = <AdminDashboardHome onNavigate={handleNavigate} />;
+    if (currentPath === '/admin/leads') adminPageContent = <AdminLeads />;
+    else if (currentPath === '/admin/products') adminPageContent = <AdminProducts />;
+    else if (currentPath === '/admin/categories') adminPageContent = <AdminCategories />;
+    else if (currentPath === '/admin/banners') adminPageContent = <AdminBanners />;
+    else if (currentPath === '/admin/services') adminPageContent = <AdminServices />;
+    else if (currentPath === '/admin/projects') adminPageContent = <AdminProjects />;
+    else if (currentPath === '/admin/partners') adminPageContent = <AdminPartners />;
+    else if (currentPath === '/admin/media') adminPageContent = <AdminMedia />;
+    else if (currentPath === '/admin/settings') adminPageContent = <AdminSettings />;
+
+    return (
+      <AdminLayout currentPath={currentPath} onNavigate={handleNavigate}>
+        {adminPageContent}
+      </AdminLayout>
+    );
+  }
+
+  // Render Public Website Page
+  const renderPublicPage = () => {
+    // Route matching
+    if (currentPath.startsWith('/product/')) {
+      const slug = currentPath.replace('/product/', '');
+      return (
+        <ProductDetailPage 
+          slug={slug} 
+          onNavigate={handleNavigate} 
+          onOpenConsultation={handleOpenConsultation} 
+        />
+      );
+    }
+
+    if (currentPath.startsWith('/catalog/')) {
+      const catSlug = currentPath.replace('/catalog/', '');
+      return (
+        <CatalogPage 
+          categorySlug={catSlug} 
+          onNavigate={handleNavigate} 
+          onOpenConsultation={handleOpenConsultation} 
+        />
+      );
+    }
+
+    if (currentPath === '/catalog') {
+      return (
+        <CatalogPage 
+          onNavigate={handleNavigate} 
+          onOpenConsultation={handleOpenConsultation} 
+        />
+      );
+    }
+
+    if (currentPath === '/about') {
+      return (
+        <AboutPage 
+          onNavigate={handleNavigate} 
+          onOpenConsultation={() => handleOpenConsultation(null)} 
+        />
+      );
+    }
+
+    if (currentPath === '/services') {
+      return (
+        <ServicesPage 
+          onNavigate={handleNavigate} 
+          onOpenConsultation={() => handleOpenConsultation(null)} 
+        />
+      );
+    }
+
+    if (currentPath === '/projects') {
+      return (
+        <ProjectsPage 
+          onNavigate={handleNavigate} 
+          onOpenConsultation={() => handleOpenConsultation(null)} 
+        />
+      );
+    }
+
+    if (currentPath === '/contact') {
+      return <ContactPage />;
+    }
+
+    // Default HomePage
+    return (
+      <HomePage 
+        onNavigate={handleNavigate} 
+        onOpenConsultation={handleOpenConsultation} 
+      />
+    );
   };
 
   return (
-    <div className="min-h-screen bg-white text-slate-900 font-sans selection:bg-teal-500 selection:text-white">
-      {/* Sticky Top Header */}
-      <Navbar
-        currentLang={currentLang}
-        onLanguageChange={setCurrentLang}
-        onOpenCalculator={handleOpenCalculator}
-        onOpenContact={handleOpenContact}
-        activeSection={activeSection}
-      />
-
-      {/* Main Sections */}
-      <main>
-        <Hero
-          currentLang={currentLang}
-          onOpenCalculator={handleOpenCalculator}
-          onOpenContact={handleOpenContact}
-        />
-
-        <SolarCalculator
-          currentLang={currentLang}
-          onOpenContactWithSpec={handleOpenContactWithSpec}
-        />
-
-        <ProductsSection
-          currentLang={currentLang}
-          onSelectProduct={setSelectedProduct}
-          onQuickQuote={handleQuickQuote}
-        />
-
-        <ServicesSection
-          currentLang={currentLang}
-          onOpenContact={handleOpenContact}
-        />
-
-        <AboutSection
-          currentLang={currentLang}
-        />
-
-        <AdvantagesSection
-          currentLang={currentLang}
-        />
-
-        <ProjectsSection
-          currentLang={currentLang}
-          onSelectProject={setSelectedProject}
-        />
-
-        <NewsSection
-          currentLang={currentLang}
-        />
-
-        <PartnersSection
-          currentLang={currentLang}
-        />
-
-        <ContactSection
-          currentLang={currentLang}
-          initialSpec={contactSpec}
-        />
+    <div className="min-h-screen bg-zinc-950 text-white selection:bg-emerald-500 selection:text-white flex flex-col justify-between font-sans">
+      <Header currentPath={currentPath} onNavigate={handleNavigate} />
+      
+      <main className="flex-1">
+        {renderPublicPage()}
       </main>
 
-      {/* Dark Corporate Footer */}
-      <Footer currentLang={currentLang} />
+      <Footer onNavigate={handleNavigate} />
 
-      {/* Detail Modals */}
-      <ProductModal
-        product={selectedProduct}
-        currentLang={currentLang}
-        onClose={() => setSelectedProduct(null)}
-        onQuickQuote={handleQuickQuote}
-      />
-
-      <ProjectModal
-        project={selectedProject}
-        currentLang={currentLang}
-        onClose={() => setSelectedProject(null)}
-        onOpenContactWithSpec={handleOpenContactWithSpec}
+      <LeadModal
+        isOpen={leadModalOpen}
+        onClose={() => setLeadModalOpen(false)}
+        product={selectedProductForModal}
       />
     </div>
+  );
+}
+
+export default function App() {
+  return (
+    <AuthProvider>
+      <DataProvider>
+        <LanguageProvider>
+          <AppContent />
+        </LanguageProvider>
+      </DataProvider>
+    </AuthProvider>
   );
 }

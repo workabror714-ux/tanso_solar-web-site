@@ -1,192 +1,203 @@
-import React, { useState } from 'react';
-import { motion } from 'motion/react';
-import { 
-  Sun, 
-  Phone, 
-  Mail, 
-  MapPin, 
-  Send, 
-  ArrowUp, 
-  ShieldCheck, 
-  Award, 
-  CheckCircle2 
-} from 'lucide-react';
-import { Language } from '../types';
-import { translations } from '../data/translations';
+import React from 'react';
+import { Sun, Phone, Send, MapPin, Clock, Instagram, Facebook, Youtube, Shield, ArrowUpRight } from 'lucide-react';
+import { useLanguage } from '../context/LanguageContext';
+import { useData } from '../context/DataContext';
 
 interface FooterProps {
-  currentLang: Language;
+  onNavigate: (path: string) => void;
+  onOpenConsultation: () => void;
 }
 
-export const Footer: React.FC<FooterProps> = ({ currentLang }) => {
-  const t = translations[currentLang];
-  const [email, setEmail] = useState('');
-  const [subscribed, setSubscribed] = useState(false);
-
-  const handleSubscribe = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (email) {
-      setSubscribed(true);
-      setEmail('');
-    }
-  };
-
-  const scrollToTop = () => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
-
-  const scrollToSection = (id: string) => {
-    const el = document.getElementById(id);
-    if (el) el.scrollIntoView({ behavior: 'smooth' });
-  };
+export const Footer: React.FC<FooterProps> = ({ onNavigate, onOpenConsultation }) => {
+  const { language, setLanguage, t, getLoc } = useLanguage();
+  const { settings, categories } = useData();
 
   return (
-    <footer className="bg-[#0F172A] text-slate-300 pt-16 pb-12 border-t border-slate-800/80 relative">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
+    <footer className="bg-[#1A1A1A] text-zinc-300 pt-16 pb-12 border-t border-white/10">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
-        {/* Top Footer Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-10">
+        {/* Top Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10 pb-12 border-b border-white/10">
           
-          {/* Brand Col */}
-          <div className="lg:col-span-4 space-y-4">
-            <div className="flex items-center gap-3 cursor-pointer" onClick={scrollToTop}>
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#0E7490] to-[#14B8A6] flex items-center justify-center text-white shadow-lg">
-                <Sun className="w-6 h-6 text-emerald-200" />
+          {/* Col 1: Brand Info */}
+          <div className="lg:col-span-2 space-y-4">
+            <button 
+              onClick={() => onNavigate('/')}
+              className="flex items-center gap-3 text-left group"
+            >
+              <div className="w-10 h-10 bg-[#064E3B] text-white flex items-center justify-center">
+                <Sun className="w-5 h-5 text-[#F59E0B]" />
               </div>
               <div>
-                <span className="text-xl font-black text-white tracking-tight font-display">
-                  TANSO<span className="text-cyan-400">ENERGY</span>
+                <span className="font-editorial text-2xl font-light tracking-wider text-white uppercase block leading-none italic">
+                  TANSO <span className="text-[#F59E0B] font-normal">SOLAR</span>
+                </span>
+                <span className="text-[9px] tracking-[0.3em] text-zinc-400 font-bold uppercase block mt-1">
+                  UZBEKISTAN
                 </span>
               </div>
-            </div>
+            </button>
 
-            <p className="text-xs text-slate-400 leading-relaxed max-w-sm">
-              {t.footerDesc}
+            <p className="text-xs text-zinc-400 leading-relaxed max-w-sm font-light">
+              {language === 'ru' 
+                ? 'Инновационные решения в сфере солнечного водонагрева и возобновляемой энергетики для частных домов, гостиниц и бизнеса по всему Узбекистану.'
+                : 'O’zbekistonda quyosh suv isitish tizimlari hamda fotoelektrik qayta tiklanuvchi energiya echimlarini yetkazib berish va montaj qilish.'}
             </p>
 
-            <div className="pt-2 flex items-center gap-3">
-              <a 
-                href="https://t.me/tansogroup" 
-                target="_blank" 
-                rel="noreferrer"
-                className="w-9 h-9 rounded-full bg-slate-900 border border-slate-800 hover:border-cyan-500 hover:text-cyan-400 flex items-center justify-center text-slate-400 transition-colors"
+            {/* Social Icons */}
+            <div className="flex items-center gap-3 pt-2">
+              <a
+                href={settings.telegram}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-9 h-9 bg-white/5 border border-white/10 hover:border-[#064E3B] text-zinc-400 hover:text-white flex items-center justify-center transition-all"
+                title="Telegram"
               >
                 <Send className="w-4 h-4" />
               </a>
-              <a 
-                href="tel:+998712000022" 
-                className="w-9 h-9 rounded-full bg-slate-900 border border-slate-800 hover:border-cyan-500 hover:text-cyan-400 flex items-center justify-center text-slate-400 transition-colors"
+              <a
+                href={settings.instagram}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-9 h-9 bg-white/5 border border-white/10 hover:border-[#064E3B] text-zinc-400 hover:text-white flex items-center justify-center transition-all"
+                title="Instagram"
               >
-                <Phone className="w-4 h-4" />
+                <Instagram className="w-4 h-4" />
               </a>
-              <a 
-                href="mailto:info@tanso.gl.uz" 
-                className="w-9 h-9 rounded-full bg-slate-900 border border-slate-800 hover:border-cyan-500 hover:text-cyan-400 flex items-center justify-center text-slate-400 transition-colors"
+              <a
+                href={settings.facebook}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-9 h-9 bg-white/5 border border-white/10 hover:border-[#064E3B] text-zinc-400 hover:text-white flex items-center justify-center transition-all"
+                title="Facebook"
               >
-                <Mail className="w-4 h-4" />
+                <Facebook className="w-4 h-4" />
+              </a>
+              <a
+                href={settings.youtube}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-9 h-9 bg-white/5 border border-white/10 hover:border-[#064E3B] text-zinc-400 hover:text-white flex items-center justify-center transition-all"
+                title="YouTube"
+              >
+                <Youtube className="w-4 h-4" />
               </a>
             </div>
           </div>
 
-          {/* Quick Links */}
-          <div className="lg:col-span-2 space-y-3">
-            <h4 className="text-xs font-bold text-white uppercase tracking-wider font-display">
-              {t.quickLinks}
+          {/* Col 2: Navigation */}
+          <div>
+            <h4 className="text-[10px] font-bold tracking-[0.2em] uppercase text-white mb-4 border-l-2 border-[#064E3B] pl-2">
+              {language === 'ru' ? 'Навигация' : 'Navigatsiya'}
             </h4>
-            <ul className="space-y-2 text-xs">
+            <ul className="space-y-2.5 text-xs text-zinc-400 font-light">
               <li>
-                <button onClick={() => scrollToSection('hero')} className="hover:text-cyan-400 transition-colors">
-                  {t.navHome}
+                <button onClick={() => onNavigate('/')} className="hover:text-[#F59E0B] transition-colors">
+                  {t('home')}
                 </button>
               </li>
               <li>
-                <button onClick={() => scrollToSection('calculator')} className="hover:text-cyan-400 transition-colors">
-                  {t.navCalc}
+                <button onClick={() => onNavigate('/catalog')} className="hover:text-[#F59E0B] transition-colors">
+                  {t('catalog')}
                 </button>
               </li>
               <li>
-                <button onClick={() => scrollToSection('products')} className="hover:text-cyan-400 transition-colors">
-                  {t.navProducts}
+                <button onClick={() => onNavigate('/about')} className="hover:text-[#F59E0B] transition-colors">
+                  {t('about')}
                 </button>
               </li>
               <li>
-                <button onClick={() => scrollToSection('services')} className="hover:text-cyan-400 transition-colors">
-                  {t.navServices}
+                <button onClick={() => onNavigate('/services')} className="hover:text-[#F59E0B] transition-colors">
+                  {t('services')}
                 </button>
               </li>
               <li>
-                <button onClick={() => scrollToSection('projects')} className="hover:text-cyan-400 transition-colors">
-                  {t.navProjects}
+                <button onClick={() => onNavigate('/projects')} className="hover:text-[#F59E0B] transition-colors">
+                  {t('projects')}
+                </button>
+              </li>
+              <li>
+                <button onClick={() => onNavigate('/contact')} className="hover:text-[#F59E0B] transition-colors">
+                  {t('contact')}
                 </button>
               </li>
             </ul>
           </div>
 
-          {/* Products & Tech */}
-          <div className="lg:col-span-3 space-y-3">
-            <h4 className="text-xs font-bold text-white uppercase tracking-wider font-display">
-              Yechimlar va Mahsulotlar
+          {/* Col 3: Catalog Categories */}
+          <div>
+            <h4 className="text-[10px] font-bold tracking-[0.2em] uppercase text-white mb-4 border-l-2 border-[#064E3B] pl-2">
+              {t('categories')}
             </h4>
-            <ul className="space-y-2 text-xs text-slate-400">
-              <li>• Sanoat quyosh stansiyalari (1MW+)</li>
-              <li>• Tijorat gibrid stansiyalari</li>
-              <li>• LONGi N-Type TOPCon panellari</li>
-              <li>• Huawei Smart String inverterlari</li>
-              <li>• TANSO LFP Energiya saqlash batareyalari</li>
+            <ul className="space-y-2.5 text-xs text-zinc-400 font-light">
+              {categories.map((cat) => (
+                <li key={cat.id}>
+                  <button 
+                    onClick={() => onNavigate(`/catalog/${cat.slug}`)}
+                    className="hover:text-[#F59E0B] transition-colors text-left truncate max-w-[180px]"
+                  >
+                    {getLoc(cat, 'name')}
+                  </button>
+                </li>
+              ))}
             </ul>
           </div>
 
-          {/* Newsletter Subscription */}
-          <div className="lg:col-span-3 space-y-3">
-            <h4 className="text-xs font-bold text-white uppercase tracking-wider font-display">
-              {t.newsletterTitle}
+          {/* Col 4: Contact Info */}
+          <div>
+            <h4 className="text-[10px] font-bold tracking-[0.2em] uppercase text-white mb-4 border-l-2 border-[#064E3B] pl-2">
+              {t('contact')}
             </h4>
-            <p className="text-xs text-slate-400 leading-relaxed">
-              {t.newsletterDesc}
-            </p>
+            <div className="space-y-3 text-xs text-zinc-400 font-light">
+              <a href={`tel:${settings.phone1.replace(/\s+/g, '')}`} className="flex items-start gap-2.5 hover:text-[#F59E0B] transition-colors">
+                <Phone className="w-4 h-4 text-[#064E3B] flex-shrink-0 mt-0.5" />
+                <div>
+                  <span className="block text-zinc-200 font-bold">{settings.phone1}</span>
+                  <span className="text-[11px] text-zinc-500">{settings.phone2}</span>
+                </div>
+              </a>
 
-            {subscribed ? (
-              <div className="p-3.5 rounded-full bg-emerald-950/60 border border-emerald-500/40 text-emerald-300 text-xs flex items-center gap-2">
-                <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
-                <span>Rahmat! Obuna muvaffaqiyatli amalga oshirildi.</span>
+              <div className="flex items-start gap-2.5">
+                <MapPin className="w-4 h-4 text-[#064E3B] flex-shrink-0 mt-0.5" />
+                <span>{getLoc(settings, 'address')}</span>
               </div>
-            ) : (
-              <form onSubmit={handleSubscribe} className="space-y-2">
-                <input
-                  type="email"
-                  required
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder={t.newsletterPlaceholder}
-                  className="w-full px-4 py-2.5 rounded-full bg-slate-900 border border-slate-800 text-xs text-slate-100 placeholder:text-slate-500 focus:outline-none focus:border-cyan-500"
-                />
-                <button
-                  type="submit"
-                  className="w-full py-2.5 rounded-full bg-[#0E7490] hover:bg-[#0F766E] text-white font-bold text-xs transition-all shadow-md"
-                >
-                  {t.subscribeBtn}
-                </button>
-              </form>
-            )}
+
+              <div className="flex items-start gap-2.5">
+                <Clock className="w-4 h-4 text-[#064E3B] flex-shrink-0 mt-0.5" />
+                <span>{getLoc(settings, 'workingHours')}</span>
+              </div>
+            </div>
           </div>
 
         </div>
 
-        {/* Bottom Rights & Back to Top */}
-        <div className="pt-8 border-t border-slate-900 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-500">
-          <p>© 2026 TANSO Renewable Energy Group. {t.rightsReserved}</p>
-
+        {/* Bottom bar */}
+        <div className="pt-8 flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-zinc-500">
+          <p>© {new Date().getFullYear()} {settings.companyName}. {t('copyright')}</p>
+          
           <div className="flex items-center gap-6">
-            <span className="hover:text-slate-400 cursor-pointer">{t.privacyPolicy}</span>
-            <span className="hover:text-slate-400 cursor-pointer">{t.termsOfService}</span>
-            
-            <button
-              onClick={scrollToTop}
-              className="flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-slate-900 border border-slate-800 text-slate-300 hover:text-cyan-400 hover:border-slate-700 transition-colors"
+            <button 
+              onClick={() => onNavigate('/admin')}
+              className="text-zinc-500 hover:text-zinc-300 transition-colors flex items-center gap-1 uppercase tracking-wider text-[10px]"
             >
-              <span>{t.backToTop}</span>
-              <ArrowUp className="w-3.5 h-3.5" />
+              <span>Admin Dashboard</span>
+              <ArrowUpRight className="w-3 h-3" />
             </button>
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => setLanguage('uz')}
+                className={`hover:text-white ${language === 'uz' ? 'text-[#F59E0B] font-bold' : ''}`}
+              >
+                O‘zbekcha
+              </button>
+              <span>•</span>
+              <button
+                onClick={() => setLanguage('ru')}
+                className={`hover:text-white ${language === 'ru' ? 'text-[#F59E0B] font-bold' : ''}`}
+              >
+                Русский
+              </button>
+            </div>
           </div>
         </div>
 

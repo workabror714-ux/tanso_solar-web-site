@@ -1,6 +1,6 @@
 {
-  "name": "TANSO Renewable Energy",
-  "description": "Modern international corporate website for TANSO Solar & Renewable Energy solutions",
+  "name": "TANSO SOLAR Uzbekistan",
+  "description": "Quyosh energiyasi va suv isitish tizimlari platformasi - Tanso Solar Uzbekistan",
   "requestFramePermissions": [],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }
