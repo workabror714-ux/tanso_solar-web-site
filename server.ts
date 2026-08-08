@@ -10,7 +10,7 @@ import {
   initialPartners, 
   initialSiteSettings, 
   initialLeads 
-} from './src/data/initialData.js';
+} from './packages/shared/data/initialData.ts';
 
 // In-memory data store synchronized with client requests
 let categoriesData = [...initialCategories];
@@ -74,10 +74,10 @@ async function sendTelegramNotification(lead: any) {
   }
 }
 
-async function startServer() {
-  const app = express();
-  const PORT = 3000;
+const app = express();
+const PORT = 3000;
 
+async function startServer() {
   app.use(express.json({ limit: '10mb' }));
 
   // API Routes
@@ -341,9 +341,13 @@ async function startServer() {
     });
   }
 
-  app.listen(PORT, '0.0.0.0', () => {
-    console.log(`[TANSO SOLAR Server] Server listening on http://0.0.0.0:${PORT}`);
-  });
+  if (process.env.VERCEL !== '1') {
+    app.listen(PORT, '0.0.0.0', () => {
+      console.log(`[TANSO SOLAR Server] Server listening on http://0.0.0.0:${PORT}`);
+    });
+  }
 }
 
 startServer();
+
+export default app;

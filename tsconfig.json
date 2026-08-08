@@ -15,10 +15,11 @@
     "moduleDetection": "force",
     "allowJs": true,
     "jsx": "react-jsx",
+    "baseUrl": ".",
     "paths": {
-      "@/*": [
-        "./*"
-      ]
+      "@/*": ["./*"],
+      "@tanso/shared": ["./packages/shared/types/index.ts"],
+      "@tanso/shared/*": ["./packages/shared/*"]
     },
     "allowImportingTsExtensions": true,
     "noEmit": true
