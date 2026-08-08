@@ -33,7 +33,7 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ slug, onNa
           </p>
           <button
             onClick={() => onNavigate('/catalog')}
-            className="px-6 py-2.5 bg-[#04AF9D] hover:bg-[#038a7c] rounded-xl text-xs font-bold text-white transition-colors"
+            className="px-6 py-2.5 bg-[#08B4A5] hover:bg-[#078F84] rounded-xl text-xs font-bold text-white transition-colors"
           >
             {t('catalog')}
           </button>
@@ -86,14 +86,14 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ slug, onNa
       ];
     } else {
       return language === 'ru' ? [
-        'Помогает снизить расходы на электричество и газ до 80%',
+        'Помогает снизить расходы на электричество и газ',
         'Эффективное поглощение солнечной энергии через вакуумные трубки',
         'Минимальные теплопотери благодаря 50мм пенополиуретану',
         'Простая, долговечная и надежная конструкция',
         'Подача воды естественным самотеком',
         'Идеально подходит для частных домов и дач'
       ] : [
-        'Elektr va gaz sarfini 80% gacha kamaytirishga yordam beradi',
+        'Elektr va gaz sarfini kamaytirishga yordam beradi',
         'Vakuum trubkalar orqali samarali quyosh energiyasi yutilishi',
         '50 mm poliuretan izolyatsiyasi tufayli kam issiqlik yo‘qotilishi',
         'Oddiy, chidamli va ishonchli konstruksiya',
@@ -148,7 +148,7 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ slug, onNa
             </>
           )}
           <ChevronRight className="w-3.5 h-3.5 text-zinc-600" />
-          <span className="text-[#04AF9D] font-bold truncate max-w-[200px] sm:max-w-none">
+          <span className="text-[#08B4A5] font-bold truncate max-w-[200px] sm:max-w-none">
             {getLoc(product, 'title')}
           </span>
         </div>
@@ -158,11 +158,11 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ slug, onNa
           
           {/* Gallery */}
           <div className="space-y-4">
-            <div className="relative h-[380px] sm:h-[480px] bg-[#151D1C] border border-[#222E2B] rounded-2xl overflow-hidden shadow-2xl">
+            <div className="relative h-[380px] sm:h-[500px] bg-[#F4F7F6] border border-white/10 rounded-3xl overflow-hidden shadow-2xl">
               <img 
-                src={product.images?.[selectedImageIndex] || product.images?.[0] || 'https://images.unsplash.com/photo-1508514177221-188b1cf16e9d?auto=format&fit=crop&q=80&w=1000'} 
+                src={product.images?.[selectedImageIndex] || product.images?.[0] || '/images/products/tanso-bosimsiz-main.png'} 
                 alt={getLoc(product, 'title')}
-                className="w-full h-full object-cover object-center"
+                className="w-full h-full object-contain object-center p-5 sm:p-8"
               />
 
               <div className="absolute top-4 left-4 flex gap-2 z-10">
@@ -171,7 +171,7 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ slug, onNa
                     {getLoc(product.specs[0], 'value')}
                   </span>
                 )}
-                <span className="px-3 py-1 rounded-lg bg-[#04AF9D] text-white font-bold text-xs shadow-md">
+                <span className="px-3 py-1 rounded-lg bg-[#08B4A5] text-white font-bold text-xs shadow-md">
                   {product.inStock ? (language === 'ru' ? 'В наличии' : 'Sotuvda mavjud') : (language === 'ru' ? 'Под заказ' : 'Buyurtma berish')}
                 </span>
               </div>
@@ -185,7 +185,7 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ slug, onNa
                     key={idx}
                     onClick={() => setSelectedImageIndex(idx)}
                     className={`w-20 h-20 rounded-xl overflow-hidden border-2 transition-all flex-shrink-0 ${
-                      selectedImageIndex === idx ? 'border-[#04AF9D] scale-105' : 'border-[#222E2B] opacity-60 hover:opacity-100'
+                      selectedImageIndex === idx ? 'border-[#08B4A5] scale-105' : 'border-[#222E2B] opacity-60 hover:opacity-100'
                     }`}
                   >
                     <img src={img} alt="Thumbnail" className="w-full h-full object-cover" />
@@ -225,7 +225,7 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ slug, onNa
                 <span className="text-xs text-zinc-400 block font-semibold uppercase tracking-wider">
                   {language === 'ru' ? 'Статус:' : 'Holati:'}
                 </span>
-                <span className="text-xs text-[#04AF9D] font-extrabold block mt-1 flex items-center justify-end gap-1">
+                <span className="text-xs text-[#08B4A5] font-extrabold block mt-1 flex items-center justify-end gap-1">
                   <CheckCircle2 className="w-3.5 h-3.5" />
                   <span>{language === 'ru' ? 'В наличии' : 'Mavjud'}</span>
                 </span>
@@ -236,7 +236,7 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ slug, onNa
             <div className="space-y-3 pt-2">
               <button
                 onClick={() => onOpenConsultation(product)}
-                className="w-full py-4 px-6 rounded-xl bg-[#04AF9D] hover:bg-[#038a7c] text-white font-black text-sm tracking-widest uppercase shadow-xl shadow-[#04AF9D]/20 flex items-center justify-center gap-2 transition-all transform hover:-translate-y-0.5"
+                className="w-full py-4 px-6 rounded-xl bg-[#08B4A5] hover:bg-[#078F84] text-white font-black text-sm tracking-widest uppercase shadow-xl shadow-[#04AF9D]/20 flex items-center justify-center gap-2 transition-all transform hover:-translate-y-0.5"
                 id={`btn-detail-order-${product.id}`}
               >
                 <ShoppingBag className="w-4 h-4" />
@@ -245,9 +245,9 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ slug, onNa
 
               <button
                 onClick={() => onOpenConsultation(product)}
-                className="w-full py-3.5 px-6 rounded-xl bg-[#151D1C] border border-[#222E2B] hover:border-[#04AF9D]/50 text-white font-bold text-xs uppercase tracking-wider transition-colors flex items-center justify-center gap-2"
+                className="w-full py-3.5 px-6 rounded-xl bg-[#151D1C] border border-[#222E2B] hover:border-[#08B4A5]/50 text-white font-bold text-xs uppercase tracking-wider transition-colors flex items-center justify-center gap-2"
               >
-                <Phone className="w-4 h-4 text-[#04AF9D]" />
+                <Phone className="w-4 h-4 text-[#08B4A5]" />
                 <span>{language === 'ru' ? 'Получить консультацию' : 'Konsultatsiya olish'}</span>
               </button>
             </div>
@@ -276,7 +276,7 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ slug, onNa
             
             {/* MAHSULOT HAQIDA */}
             <section>
-              <h2 className="text-xl font-bold text-white mb-4 border-l-4 border-[#04AF9D] pl-3 uppercase tracking-wider">
+              <h2 className="text-xl font-bold text-white mb-4 border-l-4 border-[#08B4A5] pl-3 uppercase tracking-wider">
                 {language === 'ru' ? 'О продукте' : 'Mahsulot haqida'}
               </h2>
               <div className="bg-[#151D1C] border border-[#222E2B] rounded-2xl p-6 text-xs sm:text-sm text-zinc-300 leading-relaxed space-y-4">
@@ -294,13 +294,13 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ slug, onNa
 
             {/* ASOSIY AFZALLIKLAR */}
             <section>
-              <h2 className="text-xl font-bold text-white mb-4 border-l-4 border-[#04AF9D] pl-3 uppercase tracking-wider">
+              <h2 className="text-xl font-bold text-white mb-4 border-l-4 border-[#08B4A5] pl-3 uppercase tracking-wider">
                 {language === 'ru' ? 'Основные преимущества' : 'Asosiy afzalliklar'}
               </h2>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 {advantages.map((adv, idx) => (
                   <div key={idx} className="p-4 bg-[#151D1C] border border-[#222E2B] rounded-xl flex items-start gap-3">
-                    <CheckCircle2 className="w-5 h-5 text-[#04AF9D] flex-shrink-0 mt-0.5" />
+                    <CheckCircle2 className="w-5 h-5 text-[#08B4A5] flex-shrink-0 mt-0.5" />
                     <span className="text-xs sm:text-sm text-zinc-200 font-medium">{adv}</span>
                   </div>
                 ))}
@@ -309,7 +309,7 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ slug, onNa
 
             {/* TEXNIK XUSUSIYATLAR */}
             <section>
-              <h2 className="text-xl font-bold text-white mb-4 border-l-4 border-[#04AF9D] pl-3 uppercase tracking-wider">
+              <h2 className="text-xl font-bold text-white mb-4 border-l-4 border-[#08B4A5] pl-3 uppercase tracking-wider">
                 {language === 'ru' ? 'Технические характеристики' : 'Texnik xususiyatlar'}
               </h2>
               <div className="bg-[#151D1C] border border-[#222E2B] rounded-2xl overflow-hidden divide-y divide-[#222E2B]">
@@ -318,7 +318,7 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ slug, onNa
                     <span className="font-semibold text-zinc-400 w-full sm:w-1/2">
                       {getLoc(spec, 'key')}
                     </span>
-                    <span className="font-bold text-[#04AF9D] w-full sm:w-1/2">
+                    <span className="font-bold text-[#08B4A5] w-full sm:w-1/2">
                       {getLoc(spec, 'value')}
                     </span>
                   </div>
@@ -328,7 +328,7 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ slug, onNa
 
             {/* ISHLASH PRINSIPI */}
             <section>
-              <h2 className="text-xl font-bold text-white mb-4 border-l-4 border-[#04AF9D] pl-3 uppercase tracking-wider flex items-center gap-2">
+              <h2 className="text-xl font-bold text-white mb-4 border-l-4 border-[#08B4A5] pl-3 uppercase tracking-wider flex items-center gap-2">
                 <Flame className="w-5 h-5 text-[#F6852D]" />
                 <span>{language === 'ru' ? 'Принцип работы' : 'Ishlash prinsipi'}</span>
               </h2>
@@ -339,7 +339,7 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ slug, onNa
 
             {/* KIMLAR UCHUN MOS */}
             <section>
-              <h2 className="text-xl font-bold text-white mb-4 border-l-4 border-[#04AF9D] pl-3 uppercase tracking-wider">
+              <h2 className="text-xl font-bold text-white mb-4 border-l-4 border-[#08B4A5] pl-3 uppercase tracking-wider">
                 {language === 'ru' ? 'Кому подходит' : 'Kimlar uchun mos'}
               </h2>
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
@@ -350,13 +350,13 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ slug, onNa
                   </span>
                 </div>
                 <div className="p-4 bg-[#151D1C] border border-[#222E2B] rounded-xl text-center space-y-2">
-                  <Building2 className="w-6 h-6 text-[#04AF9D] mx-auto" />
+                  <Building2 className="w-6 h-6 text-[#08B4A5] mx-auto" />
                   <span className="text-xs font-bold block text-zinc-200">
                     {language === 'ru' ? 'Дачные участки' : 'Dala hovlilar'}
                   </span>
                 </div>
                 <div className="p-4 bg-[#151D1C] border border-[#222E2B] rounded-xl text-center space-y-2">
-                  <Hotel className="w-6 h-6 text-[#04AF9D] mx-auto" />
+                  <Hotel className="w-6 h-6 text-[#08B4A5] mx-auto" />
                   <span className="text-xs font-bold block text-zinc-200">
                     {language === 'ru' ? 'Гостиницы и отели' : 'Mehmonxonalar'}
                   </span>
@@ -368,7 +368,7 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ slug, onNa
                   </span>
                 </div>
                 <div className="p-4 bg-[#151D1C] border border-[#222E2B] rounded-xl text-center space-y-2 col-span-2 sm:col-span-1">
-                  <Layers className="w-6 h-6 text-[#04AF9D] mx-auto" />
+                  <Layers className="w-6 h-6 text-[#08B4A5] mx-auto" />
                   <span className="text-xs font-bold block text-zinc-200">
                     {language === 'ru' ? 'Коммерческие объекты' : 'Tijorat obyektlari'}
                   </span>
@@ -382,8 +382,8 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ slug, onNa
           <div className="space-y-6">
             
             {/* KAFOLAT VA SERVIS */}
-            <div className="p-6 bg-[#151D1C] border border-[#04AF9D]/40 rounded-2xl space-y-4 shadow-xl">
-              <div className="flex items-center gap-3 text-[#04AF9D]">
+            <div className="p-6 bg-[#151D1C] border border-[#08B4A5]/40 rounded-2xl space-y-4 shadow-xl">
+              <div className="flex items-center gap-3 text-[#08B4A5]">
                 <ShieldCheck className="w-6 h-6" />
                 <h3 className="font-bold text-sm text-white uppercase tracking-wider">
                   {language === 'ru' ? 'Гарантия и сервис' : 'Kafolat va servis'}
@@ -398,7 +398,7 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ slug, onNa
               <div className="pt-2">
                 <button
                   onClick={() => onOpenConsultation(product)}
-                  className="w-full py-2.5 px-4 bg-[#04AF9D] hover:bg-[#038a7c] text-white rounded-xl text-xs font-bold transition-colors uppercase tracking-wider"
+                  className="w-full py-2.5 px-4 bg-[#08B4A5] hover:bg-[#078F84] text-white rounded-xl text-xs font-bold transition-colors uppercase tracking-wider"
                 >
                   {language === 'ru' ? 'Связаться со специалистом' : 'Mutaxassis bilan bog‘lanish'}
                 </button>
@@ -432,7 +432,7 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ slug, onNa
               </h3>
               <button
                 onClick={() => onNavigate(`/catalog/${category?.slug || ''}`)}
-                className="text-xs font-bold text-[#04AF9D] hover:text-[#038a7c] flex items-center gap-1 uppercase tracking-wider"
+                className="text-xs font-bold text-[#08B4A5] hover:text-[#038a7c] flex items-center gap-1 uppercase tracking-wider"
               >
                 <span>{language === 'ru' ? 'Смотреть все' : 'Barchasini ko‘rish'}</span>
                 <ChevronRight className="w-4 h-4" />

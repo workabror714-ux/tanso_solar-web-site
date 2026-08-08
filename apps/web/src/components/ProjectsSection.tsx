@@ -20,9 +20,9 @@ export const ProjectsSection: React.FC<ProjectsSectionProps> = ({ onNavigate }) 
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12 border-b border-[#E2E8E6] pb-8">
           <div className="max-w-2xl">
-            <div className="inline-flex items-center gap-2 px-3 py-1 bg-[#04AF9D]/10 rounded-full border border-[#04AF9D]/20 mb-3">
+            <div className="inline-flex items-center gap-2 px-3 py-1 bg-[#08B4A5]/10 rounded-full border border-[#08B4A5]/20 mb-3">
               <span className="w-2 h-2 rounded-full bg-[#F6852D]" />
-              <span className="text-[10px] font-bold tracking-[0.2em] uppercase text-[#04AF9D]">
+              <span className="text-[10px] font-bold tracking-[0.2em] uppercase text-[#08B4A5]">
                 AMALGA OSHIRILGAN LOYIHALAR
               </span>
             </div>
@@ -31,14 +31,14 @@ export const ProjectsSection: React.FC<ProjectsSectionProps> = ({ onNavigate }) 
             </h2>
             <p className="text-xs sm:text-sm text-zinc-600 mt-2 max-w-xl">
               {language === 'ru'
-                ? 'Реализованные солнечные системы в Ташкенте, Самарканде, Бухаре и других регионах'
-                : 'Toshkent, Samarqand, Buxoro va boshqa viloyatlarda o’rnatilgan quyosh isitish va elektr stantsiyalari'}
+                ? 'Примеры установок и объектов с оборудованием TANSO'
+                : 'TANSO uskunalari o‘rnatilgan obyekt va montajlardan namunalar'}
             </p>
           </div>
 
           <button
             onClick={() => onNavigate('/projects')}
-            className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-[#04AF9D] hover:text-[#038a7c] transition-colors group"
+            className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-[#08B4A5] hover:text-[#038a7c] transition-colors group"
           >
             <span>{language === 'ru' ? 'Bсе объекты' : 'Barcha loyihalar'}</span>
             <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
@@ -51,15 +51,15 @@ export const ProjectsSection: React.FC<ProjectsSectionProps> = ({ onNavigate }) 
             <div
               key={project.id}
               onClick={() => onNavigate('/projects')}
-              className="group bg-[#0F1514] text-white rounded-2xl overflow-hidden border border-[#222E2B] hover:border-[#04AF9D] transition-all cursor-pointer shadow-xl"
+              className="group bg-[#0F1514] text-white rounded-2xl overflow-hidden border border-[#222E2B] hover:border-[#08B4A5] transition-all cursor-pointer shadow-xl"
             >
               <div className="relative h-64 overflow-hidden">
                 <img 
-                  src={project.images?.[0] || project.imageUrl || 'https://images.unsplash.com/photo-1509391365360-2e959784a276?auto=format&fit=crop&q=80&w=1000'} 
+                  src={project.imageUrl || '/images/products/tanso-showroom-wide.png'} 
                   alt={getLoc(project, 'title')}
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 opacity-90 group-hover:opacity-100"
                 />
-                <div className="absolute top-3 left-3 bg-[#04AF9D] text-white text-[10px] font-bold uppercase tracking-wider px-3 py-1 rounded-lg shadow-md">
+                <div className="absolute top-3 left-3 bg-[#08B4A5] text-white text-[10px] font-bold uppercase tracking-wider px-3 py-1 rounded-lg shadow-md">
                   {project.capacity}
                 </div>
               </div>
@@ -72,7 +72,7 @@ export const ProjectsSection: React.FC<ProjectsSectionProps> = ({ onNavigate }) 
                   <span>{project.year}</span>
                 </div>
 
-                <h3 className="text-base font-extrabold text-white group-hover:text-[#04AF9D] transition-colors line-clamp-2 uppercase">
+                <h3 className="text-base font-extrabold text-white group-hover:text-[#08B4A5] transition-colors line-clamp-2 uppercase">
                   {getLoc(project, 'title')}
                 </h3>
 

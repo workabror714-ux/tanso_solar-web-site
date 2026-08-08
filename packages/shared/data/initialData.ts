@@ -4,6 +4,8 @@ export const initialCategories: Category[] = [
   {
     id: 'cat-1',
     slug: 'bosimsiz',
+    iconName: 'Sun',
+    imageUrl: '/images/products/tanso-bosimsiz-main.png',
     nameUz: 'Bosimsiz',
     nameRu: 'Без давления',
     descriptionUz: 'Bosimsiz quyosh suv isitish tizimlari hamda kollektorlari.',
@@ -14,6 +16,8 @@ export const initialCategories: Category[] = [
   {
     id: 'cat-2',
     slug: 'bosimli',
+    iconName: 'Droplets',
+    imageUrl: '/images/products/tanso-silver.jpg',
     nameUz: 'Bosimli',
     nameRu: 'С давлением',
     descriptionUz: 'Bosim ostida ishlaydigan yuqori samarali quyosh suv isitish tizimlari.',
@@ -24,6 +28,8 @@ export const initialCategories: Category[] = [
   {
     id: 'cat-3',
     slug: 'split-bosimli-20-kolba',
+    iconName: 'Layers',
+    imageUrl: '/images/products/tanso-split.jpg',
     nameUz: 'Bosimli SPLIT — 20 dona kolba',
     nameRu: 'Сплит с давлением 20шт колба',
     descriptionUz: 'Bosimli SPLIT tizimlari uchun 20 dona kolbali issiqlik kollektorlari.',
@@ -34,6 +40,8 @@ export const initialCategories: Category[] = [
   {
     id: 'cat-4',
     slug: 'split-bosimsiz',
+    iconName: 'PanelsTopLeft',
+    imageUrl: '/images/products/tanso-split.jpg',
     nameUz: 'Bosimsiz SPLIT',
     nameRu: 'Сплит без давления',
     descriptionUz: 'Bosimsiz SPLIT quyosh issiqlik kollektor tizimlari.',
@@ -72,9 +80,9 @@ export const initialProducts: Product[] = [
     fullDescUz: bosimsizCommonDescUz,
     fullDescRu: bosimsizCommonDescRu,
     images: [
-      'https://images.unsplash.com/photo-1508514177221-188b1cf16e9d?auto=format&fit=crop&q=80&w=1000',
-      'https://images.unsplash.com/photo-1613665813446-82a78c468a1d?auto=format&fit=crop&q=80&w=1000',
-      'https://images.unsplash.com/photo-1509391365360-2e959784a276?auto=format&fit=crop&q=80&w=1000'
+      '/images/products/tanso-showroom-wide.png',
+      '/images/products/tanso-bosimsiz-main.png',
+      '/images/products/tanso-showroom.png'
     ],
     priceUSD: 0,
     priceUZS: 9591750,
@@ -108,8 +116,9 @@ export const initialProducts: Product[] = [
     fullDescUz: bosimsizCommonDescUz,
     fullDescRu: bosimsizCommonDescRu,
     images: [
-      'https://images.unsplash.com/photo-1508514177221-188b1cf16e9d?auto=format&fit=crop&q=80&w=1000',
-      'https://images.unsplash.com/photo-1613665813446-82a78c468a1d?auto=format&fit=crop&q=80&w=1000'
+      '/images/products/tanso-showroom.png',
+      '/images/products/tanso-bosimsiz-main.png',
+      '/images/products/tanso-silver.jpg'
     ],
     priceUSD: 0,
     priceUZS: 7177500,
@@ -142,8 +151,8 @@ export const initialProducts: Product[] = [
     fullDescUz: bosimsizCommonDescUz,
     fullDescRu: bosimsizCommonDescRu,
     images: [
-      'https://images.unsplash.com/photo-1508514177221-188b1cf16e9d?auto=format&fit=crop&q=80&w=1000',
-      'https://images.unsplash.com/photo-1509391365360-2e959784a276?auto=format&fit=crop&q=80&w=1000'
+      '/images/products/tanso-bosimsiz-main.png',
+      '/images/products/tanso-showroom.png'
     ],
     priceUSD: 0,
     priceUZS: 3340800,
@@ -178,8 +187,8 @@ ${bosimsizCommonDescUz}`,
 
 ${bosimsizCommonDescRu}`,
     images: [
-      'https://images.unsplash.com/photo-1508514177221-188b1cf16e9d?auto=format&fit=crop&q=80&w=1000',
-      'https://images.unsplash.com/photo-1613665813446-82a78c468a1d?auto=format&fit=crop&q=80&w=1000'
+      '/images/products/tanso-silver.jpg',
+      '/images/products/tanso-showroom.png'
     ],
     priceUSD: 0,
     priceUZS: 6068250,
@@ -211,8 +220,8 @@ ${bosimsizCommonDescRu}`,
     fullDescUz: bosimsizCommonDescUz,
     fullDescRu: bosimsizCommonDescRu,
     images: [
-      'https://images.unsplash.com/photo-1508514177221-188b1cf16e9d?auto=format&fit=crop&q=80&w=1000',
-      'https://images.unsplash.com/photo-1509391365360-2e959784a276?auto=format&fit=crop&q=80&w=1000'
+      '/images/products/tanso-bosimsiz-main.png',
+      '/images/products/tanso-silver.jpg'
     ],
     priceUSD: 0,
     priceUZS: 5154750,
@@ -243,8 +252,8 @@ ${bosimsizCommonDescRu}`,
     fullDescUz: bosimsizCommonDescUz,
     fullDescRu: bosimsizCommonDescRu,
     images: [
-      'https://images.unsplash.com/photo-1508514177221-188b1cf16e9d?auto=format&fit=crop&q=80&w=1000',
-      'https://images.unsplash.com/photo-1613665813446-82a78c468a1d?auto=format&fit=crop&q=80&w=1000'
+      '/images/products/tanso-silver.jpg',
+      '/images/products/tanso-bosimsiz-main.png'
     ],
     priceUSD: 0,
     priceUZS: 3500000,
@@ -275,8 +284,8 @@ ${bosimsizCommonDescRu}`,
     fullDescUz: bosimliCommonDescUz,
     fullDescRu: bosimliCommonDescRu,
     images: [
-      'https://images.unsplash.com/photo-1509391365360-2e959784a276?auto=format&fit=crop&q=80&w=1000',
-      'https://images.unsplash.com/photo-1508514177221-188b1cf16e9d?auto=format&fit=crop&q=80&w=1000'
+      '/images/products/tanso-showroom-wide.png',
+      '/images/products/tanso-silver.jpg'
     ],
     priceUSD: 0,
     priceUZS: 10896750,
@@ -307,8 +316,8 @@ ${bosimsizCommonDescRu}`,
     fullDescUz: bosimliCommonDescUz,
     fullDescRu: bosimliCommonDescRu,
     images: [
-      'https://images.unsplash.com/photo-1509391365360-2e959784a276?auto=format&fit=crop&q=80&w=1000',
-      'https://images.unsplash.com/photo-1508514177221-188b1cf16e9d?auto=format&fit=crop&q=80&w=1000'
+      '/images/products/tanso-silver.jpg',
+      '/images/products/tanso-showroom.png'
     ],
     priceUSD: 0,
     priceUZS: 7503750,
@@ -338,8 +347,8 @@ ${bosimsizCommonDescRu}`,
     fullDescUz: bosimliCommonDescUz,
     fullDescRu: bosimliCommonDescRu,
     images: [
-      'https://images.unsplash.com/photo-1509391365360-2e959784a276?auto=format&fit=crop&q=80&w=1000',
-      'https://images.unsplash.com/photo-1508514177221-188b1cf16e9d?auto=format&fit=crop&q=80&w=1000'
+      '/images/products/tanso-bosimsiz-main.png',
+      '/images/products/tanso-silver.jpg'
     ],
     priceUSD: 0,
     priceUZS: 4632750,
@@ -369,8 +378,8 @@ ${bosimsizCommonDescRu}`,
     fullDescUz: `SPLIT turidagi quyosh kollektori vakuum issiqlik trubkalari yordamida quyosh energiyasini issiqlikka aylantirish uchun mo‘ljallangan. Kollektor va issiq suv saqlash tizimi alohida joylashtiriladigan konfiguratsiyalar uchun mo‘ljallangan.`,
     fullDescRu: `Солнечный коллектор SPLIT типа предназначен для преобразования солнечной энергии в тепловую с помощью вакуумных тепловых трубок. Разработан для конфигураций, где коллектор и бак-аккумулятор размещаются раздельно.`,
     images: [
-      'https://images.unsplash.com/photo-1613665813446-82a78c468a1d?auto=format&fit=crop&q=80&w=1000',
-      'https://images.unsplash.com/photo-1509391365360-2e959784a276?auto=format&fit=crop&q=80&w=1000'
+      '/images/products/tanso-split.jpg',
+      '/images/products/tanso-showroom-wide.png'
     ],
     priceUSD: 0,
     priceUZS: 5481000,
@@ -398,8 +407,8 @@ ${bosimsizCommonDescRu}`,
     fullDescUz: `Bosimsiz quyosh issiqlik kollektor tizimi TS-LPC5818-50. Ushbu tizim yuqori samaradorlik va ishonchlilik bilan ishlaydi.`,
     fullDescRu: `Non-Pressurized солнечная тепловая коллекторная система TS-LPC5818-50. Данная система обеспечивает высокую эффективность и надежность.`,
     images: [
-      'https://images.unsplash.com/photo-1613665813446-82a78c468a1d?auto=format&fit=crop&q=80&w=1000',
-      'https://images.unsplash.com/photo-1508514177221-188b1cf16e9d?auto=format&fit=crop&q=80&w=1000'
+      '/images/products/tanso-split.jpg',
+      '/images/products/tanso-marketing-wide.png'
     ],
     priceUSD: 0,
     priceUZS: 3353850,
@@ -419,11 +428,11 @@ ${bosimsizCommonDescRu}`,
 export const initialHeroBanners: HeroBanner[] = [
   {
     id: 'hero-1',
-    titleUz: 'Quyosh Energiyasi Bilan Bepul Issiq Suv',
-    titleRu: 'Горячая Вода От Солнца Без Лишних Затрат',
-    subtitleUz: 'TANSO SOLAR quyosh suv isitgichlari bilan gaz va elektr energiyasini 80% gacha tejang.',
-    subtitleRu: 'Экономьте до 80% расходов на газ и электричество с напорными и безнапорными водонагревателями TANSO.',
-    bgImageUrl: 'https://images.unsplash.com/photo-1508514177221-188b1cf16e9d?auto=format&fit=crop&q=80&w=1920',
+    titleUz: 'Quyoshdan issiq suv — har kuni',
+    titleRu: 'Горячая вода от солнца — каждый день',
+    subtitleUz: 'Uy va biznes uchun TANSO quyosh suv isitgichlari: bosimli, bosimsiz va SPLIT tizimlar.',
+    subtitleRu: 'Солнечные водонагреватели TANSO для дома и бизнеса: напорные, безнапорные и SPLIT-системы.',
+    bgImageUrl: '/images/products/tanso-showroom-wide.png',
     buttonTextUz: 'Katalogga o‘tish',
     buttonTextRu: 'Перейти в каталог',
     buttonLink: '/catalog',
@@ -464,7 +473,7 @@ export const initialProjects: Project[] = [
     locationRu: 'Ташкентская область',
     capacity: '300 L',
     year: '2025',
-    imageUrl: 'https://images.unsplash.com/photo-1508514177221-188b1cf16e9d?auto=format&fit=crop&q=80&w=1000',
+    imageUrl: '/images/products/tanso-showroom-wide.png',
     featured: true,
     active: true,
   }
@@ -474,7 +483,7 @@ export const initialPartners: Partner[] = [
   {
     id: 'part-1',
     name: 'TANSO Solar Energy',
-    logoUrl: 'https://images.unsplash.com/photo-1508514177221-188b1cf16e9d?auto=format&fit=crop&q=80&w=200',
+    logoUrl: '/images/brand/tanso-logo-header.png',
     websiteUrl: 'https://tansosolar.uz',
     active: true,
     sortOrder: 1,

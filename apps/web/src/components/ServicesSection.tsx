@@ -60,7 +60,7 @@ export const ServicesSection: React.FC<ServicesSectionProps> = ({ onNavigate, on
         {/* Services Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {activeServices.map((serv) => {
-            const IconComp = iconMap[serv.icon] || Wrench;
+            const IconComp = iconMap[serv.iconName] || Wrench;
             return (
               <div
                 key={serv.id}

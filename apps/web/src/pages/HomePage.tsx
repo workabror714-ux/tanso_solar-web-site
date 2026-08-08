@@ -10,6 +10,7 @@ import { ProjectsSection } from '../components/ProjectsSection';
 import { WhyTanso } from '../components/WhyTanso';
 import { PartnersSection } from '../components/PartnersSection';
 import { ContactSection } from '../components/ContactSection';
+import { Reveal } from '../components/Reveal';
 import { Product } from '../types';
 
 interface HomePageProps {
@@ -19,18 +20,18 @@ interface HomePageProps {
 
 export const HomePage: React.FC<HomePageProps> = ({ onNavigate, onOpenConsultation }) => {
   return (
-    <div className="min-h-screen bg-zinc-950 text-white">
+    <div className="min-h-screen bg-[#0D1514] text-white overflow-hidden">
       <Hero onNavigate={onNavigate} onOpenConsultation={() => onOpenConsultation(null)} />
-      <StatsSection />
-      <CategorySection onNavigate={onNavigate} />
-      <FeaturedProducts onNavigate={onNavigate} onOpenLead={(prod) => onOpenConsultation(prod)} />
-      <AboutSection onNavigate={onNavigate} />
-      <ServicesSection onNavigate={onNavigate} onOpenConsultation={() => onOpenConsultation(null)} />
-      <ProcessSection />
-      <ProjectsSection onNavigate={onNavigate} />
-      <WhyTanso />
-      <PartnersSection />
-      <ContactSection />
+      <Reveal><StatsSection /></Reveal>
+      <Reveal><CategorySection onNavigate={onNavigate} /></Reveal>
+      <Reveal><FeaturedProducts onNavigate={onNavigate} onOpenLead={(prod) => onOpenConsultation(prod)} /></Reveal>
+      <Reveal><AboutSection onNavigate={onNavigate} /></Reveal>
+      <Reveal><ServicesSection onNavigate={onNavigate} onOpenConsultation={() => onOpenConsultation(null)} /></Reveal>
+      <Reveal><ProcessSection /></Reveal>
+      <Reveal><ProjectsSection onNavigate={onNavigate} /></Reveal>
+      <Reveal><WhyTanso /></Reveal>
+      <Reveal><PartnersSection /></Reveal>
+      <Reveal><ContactSection /></Reveal>
     </div>
   );
 };

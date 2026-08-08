@@ -17,11 +17,37 @@
     "jsx": "react-jsx",
     "baseUrl": ".",
     "paths": {
-      "@/*": ["./*"],
-      "@tanso/shared": ["./packages/shared/types/index.ts"],
-      "@tanso/shared/*": ["./packages/shared/*"]
+      "@/*": [
+        "./*"
+      ],
+      "@tanso/shared": [
+        "./packages/shared/types/index.ts"
+      ],
+      "@tanso/shared/*": [
+        "./packages/shared/*"
+      ]
     },
     "allowImportingTsExtensions": true,
     "noEmit": true
-  }
+  },
+  "include": [
+    "src/main.tsx",
+    "src/App.tsx",
+    "apps/web/src/**/*.ts",
+    "apps/web/src/**/*.tsx",
+    "apps/admin/src/**/*.ts",
+    "apps/admin/src/**/*.tsx",
+    "packages/shared/**/*.ts",
+    "server.ts",
+    "api/**/*.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "src/components/**",
+    "src/context/**",
+    "src/data/**",
+    "src/pages/**",
+    "src/types.ts"
+  ]
 }

@@ -130,7 +130,7 @@ export const LeadModal: React.FC<LeadModalProps> = ({ isOpen, onClose, product, 
               {product && (
                 <div className="p-3 bg-[#0F1514] border border-[#04AF9D]/30 rounded-xl flex items-center gap-3">
                   <img 
-                    src={product.images?.[0] || 'https://images.unsplash.com/photo-1508514177221-188b1cf16e9d?auto=format&fit=crop&q=80&w=800'} 
+                    src={product.images?.[0] || '/images/products/tanso-bosimsiz-main.png'} 
                     alt={getLoc(product, 'title')} 
                     className="w-14 h-14 object-cover rounded-lg flex-shrink-0"
                   />

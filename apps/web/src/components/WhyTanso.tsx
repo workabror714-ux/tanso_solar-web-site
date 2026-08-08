@@ -1,5 +1,5 @@
 import React from 'react';
-import { ShieldCheck, Cpu, Wrench, Zap, Headphones, Truck } from 'lucide-react';
+import { PackageCheck, Droplets, Wrench, Headphones, Layers3, ClipboardCheck } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 
 export const WhyTanso: React.FC = () => {
@@ -7,104 +7,86 @@ export const WhyTanso: React.FC = () => {
 
   const benefits = [
     {
-      titleUz: 'Original va sertifikatlangan uskunalar',
-      titleRu: 'Оригинальное сертифицированное оборудование',
-      descUz: 'Zavod kafolati va xalqaro ISO/CE sertifikatlariga ega uskunalar.',
-      descRu: 'Прямые поставки с завода с сертификатами качества ISO/CE.',
-      icon: ShieldCheck
+      titleUz: 'TANSO mahsulotlari',
+      titleRu: 'Продукция TANSO',
+      descUz: 'Katalogda TANSO quyosh suv isitgichlari va kollektor tizimlari.',
+      descRu: 'В каталоге солнечные водонагреватели и коллекторные системы TANSO.',
+      icon: PackageCheck,
     },
     {
-      titleUz: 'Professional injenering',
-      titleRu: 'Профессиональный инжиниринг',
-      descUz: 'Tajribali energetik va gidravlik muhandislar jamoasi.',
-      descRu: 'Команда дипломированных инженеров-энергетиков.',
-      icon: Cpu
+      titleUz: 'Bosimli va bosimsiz yechimlar',
+      titleRu: 'Напорные и безнапорные решения',
+      descUz: 'Suv tizimingiz va foydalanish sharoitiga mos konfiguratsiyani tanlash imkoniyati.',
+      descRu: 'Подбор конфигурации под водопровод и условия эксплуатации объекта.',
+      icon: Droplets,
     },
     {
-      titleUz: 'Respublika bo’ylab montaj',
-      titleRu: 'Монтаж по всему Узбекистану',
-      descUz: 'Toshkent va barcha viloyatlarda montaj va servis brigadalari.',
-      descRu: 'Выездные сервисные бригады во все регионы страны.',
-      icon: Truck
+      titleUz: 'SPLIT tizimlar',
+      titleRu: 'SPLIT-системы',
+      descUz: 'Alohida kollektor konfiguratsiyasi kerak bo‘lgan obyektlar uchun SPLIT yechimlar.',
+      descRu: 'SPLIT-решения для объектов, где требуется раздельная конфигурация коллектора.',
+      icon: Layers3,
     },
     {
-      titleUz: 'Moslashtirilgan loyiha va smeta',
-      titleRu: 'Индивидуальный проект и смета',
-      descUz: 'Ob’yektingiz me’morchiligi va ehtiyojingizga mos aniq loyiha.',
-      descRu: 'Точный видео- и 3D-расчет выработки энергии для вашего дома.',
-      icon: Zap
+      titleUz: 'Mos mahsulotni tanlash',
+      titleRu: 'Подбор подходящей модели',
+      descUz: 'Hajm, tizim turi va obyekt ehtiyojidan kelib chiqib model tanlashga yordam beramiz.',
+      descRu: 'Поможем подобрать модель по объему, типу системы и потребностям объекта.',
+      icon: ClipboardCheck,
     },
     {
-      titleUz: 'Kafolat va texnik ko’rik',
-      titleRu: 'Гарантия и техническое ТО',
-      descUz: '5 yildan 10 yilgacha kafolat va doimiy profilaktika xizmati.',
-      descRu: 'Гарантийные обязательства до 10 лет с плановым сервисом.',
-      icon: Wrench
+      titleUz: 'Montaj va servis',
+      titleRu: 'Монтаж и сервис',
+      descUz: 'Quyosh suv isitish tizimlarini o‘rnatish va texnik xizmat bo‘yicha yordam.',
+      descRu: 'Помощь с монтажом и техническим обслуживанием солнечных водонагревателей.',
+      icon: Wrench,
     },
     {
-      titleUz: '24/7 Qo’llab-quvvatlash',
-      titleRu: 'Поддержка 24/7',
-      descUz: 'Muammolar paydo bo’lganda tezkor masofaviy diagnostika.',
-      descRu: 'Круглосуточная горячая линия и удаленный мониторинг.',
-      icon: Headphones
-    }
+      titleUz: 'Konsultatsiya',
+      titleRu: 'Консультация',
+      descUz: 'Savollaringiz bo‘yicha TANSO mutaxassisi bilan bog‘lanish uchun so‘rov qoldiring.',
+      descRu: 'Оставьте заявку, чтобы связаться со специалистом TANSO по вашему вопросу.',
+      icon: Headphones,
+    },
   ];
 
   return (
-    <section className="py-20 bg-[#F8FAF9] text-[#0F1514] relative border-b border-[#E2E8E6]">
+    <section className="py-20 sm:py-24 bg-[#F5F8F7] text-[#0E1715] border-b border-[#DDE7E4]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        
-        <div className="text-center max-w-2xl mx-auto mb-16">
-          <div className="inline-flex items-center gap-2 mb-3 px-3 py-1 bg-[#04AF9D]/10 rounded-full border border-[#04AF9D]/20">
-            <span className="w-2 h-2 rounded-full bg-[#F6852D]" />
-            <span className="text-[10px] font-bold tracking-[0.25em] uppercase text-[#04AF9D]">
-              AFZALLIKLAR VA SIFAT
-            </span>
-          </div>
-          <h2 className="text-3xl sm:text-4xl font-black tracking-tight text-[#0F1514] uppercase">
+        <div className="text-center max-w-2xl mx-auto mb-12 sm:mb-14">
+          <div className="section-kicker justify-center">TANSO ADVANTAGES</div>
+          <h2 className="mt-4 text-3xl sm:text-4xl lg:text-5xl font-black tracking-[-0.035em] text-[#0E1715]">
             {t('whyTanso')}
           </h2>
-          <p className="text-xs sm:text-sm text-zinc-600 mt-2">
+          <p className="text-sm text-[#63716E] mt-3">
             {language === 'ru'
-              ? 'Надежность, технологичность и максимальная окупаемость для каждого клиента'
-              : 'Har bir mijoz uchun ishonchlilik, yuqori samaradorlik va tezkor tejamkorlik'}
+              ? 'Понятный каталог, несколько типов систем и помощь на этапе выбора и сервиса.'
+              : 'Tushunarli katalog, bir nechta tizim turi va tanlashdan servisgacha yordam.'}
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
           {benefits.map((item, idx) => {
-            const IconComp = item.icon;
-            const numStr = `0${idx + 1}`.slice(-2);
+            const Icon = item.icon;
             return (
-              <div 
-                key={idx}
-                className="p-8 bg-white rounded-xl border border-[#E2E8E6] hover:border-[#04AF9D] transition-all duration-300 group shadow-sm flex flex-col justify-between"
-              >
-                <div>
-                  <div className="flex items-center justify-between mb-6">
-                    <div className="p-3.5 rounded-xl bg-[#04AF9D]/10 text-[#04AF9D] group-hover:bg-[#04AF9D] group-hover:text-white transition-colors duration-300">
-                      <IconComp className="w-5 h-5" />
-                    </div>
-                    <span className="text-sm font-bold text-zinc-300 font-mono">
-                      #{numStr}
-                    </span>
-                  </div>
-
-                  <h3 className="text-sm font-bold uppercase tracking-wider text-[#0F1514] mb-2">
-                    {language === 'ru' ? item.titleRu : item.titleUz}
-                  </h3>
-
-                  <p className="text-xs text-zinc-600 leading-relaxed font-normal">
-                    {language === 'ru' ? item.descRu : item.descUz}
-                  </p>
+              <div key={item.titleUz} className="group rounded-2xl bg-white border border-[#DDE7E4] p-6 sm:p-7 shadow-[0_12px_40px_rgba(14,35,31,.06)] hover:-translate-y-1 hover:border-[#08B4A5]/45 hover:shadow-[0_20px_55px_rgba(8,180,165,.10)] transition-all duration-300">
+                <div className="flex items-start justify-between gap-4 mb-5">
+                  <span className="grid place-items-center w-11 h-11 rounded-xl bg-[#08B4A5]/10 text-[#08B4A5] group-hover:bg-[#08B4A5] group-hover:text-white transition-colors">
+                    <Icon className="w-5 h-5" />
+                  </span>
+                  <span className="text-[10px] font-black tracking-[.14em] text-[#C5CECB]">0{idx + 1}</span>
                 </div>
+                <h3 className="text-sm sm:text-base font-extrabold text-[#0E1715]">
+                  {language === 'ru' ? item.titleRu : item.titleUz}
+                </h3>
+                <p className="mt-2 text-xs sm:text-sm leading-relaxed text-[#63716E]">
+                  {language === 'ru' ? item.descRu : item.descUz}
+                </p>
               </div>
             );
           })}
         </div>
-
       </div>
     </section>
   );
 };
-

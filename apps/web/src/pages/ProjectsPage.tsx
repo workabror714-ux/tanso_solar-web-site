@@ -41,7 +41,7 @@ export const ProjectsPage: React.FC<ProjectsPageProps> = ({ onNavigate, onOpenCo
             >
               <div className="relative h-64 overflow-hidden">
                 <img 
-                  src={project.images?.[0] || project.imageUrl || 'https://images.unsplash.com/photo-1509391365360-2e959784a276?auto=format&fit=crop&q=80&w=1000'} 
+                  src={project.imageUrl || '/images/products/tanso-showroom-wide.png'} 
                   alt={getLoc(project, 'title')}
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                 />

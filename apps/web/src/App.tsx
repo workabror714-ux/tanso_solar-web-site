@@ -69,14 +69,14 @@ const WebRouter: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#111111] text-white flex flex-col font-sans selection:bg-[#064E3B] selection:text-white">
+    <div className="min-h-screen bg-[#0D1514] text-white flex flex-col font-sans">
       <Header 
         currentPath={currentPath} 
         onNavigate={navigate} 
         onOpenConsultation={() => handleOpenConsultation()} 
       />
 
-      <main className="flex-1 pt-20">
+      <main className="flex-1">
         {renderContent()}
       </main>
 

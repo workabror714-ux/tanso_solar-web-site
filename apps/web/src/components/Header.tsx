@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { Phone, Menu, X, ChevronRight, Lock } from 'lucide-react';
+import React, { useEffect, useState } from 'react';
+import { Phone, Menu, X, ChevronRight } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 import { useData } from '../context/DataContext';
 import { TansoLogo } from './TansoLogo';
@@ -17,12 +17,15 @@ export const Header: React.FC<HeaderProps> = ({ currentPath, onNavigate, onOpenC
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 20);
-    };
-    window.addEventListener('scroll', handleScroll);
+    const handleScroll = () => setIsScrolled(window.scrollY > 24);
+    handleScroll();
+    window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
+  useEffect(() => {
+    setMobileMenuOpen(false);
+  }, [currentPath]);
 
   const navItems = [
     { label: t('home'), path: '/' },
@@ -39,180 +42,127 @@ export const Header: React.FC<HeaderProps> = ({ currentPath, onNavigate, onOpenC
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
+  const isActivePath = (path: string) =>
+    currentPath === path || (path !== '/' && currentPath.startsWith(path));
+
   return (
-    <header 
-      className={`fixed top-0 left-0 right-0 z-40 transition-all duration-300 ${
-        isScrolled 
-          ? 'bg-[#0F1514]/95 backdrop-blur-md border-b border-[#222E2B] py-3.5 shadow-xl' 
-          : 'bg-gradient-to-b from-[#0F1514]/90 via-[#0F1514]/60 to-transparent py-5'
+    <header
+      className={`fixed inset-x-0 top-0 z-40 transition-all duration-300 ${
+        isScrolled
+          ? 'bg-[#0D1514]/88 backdrop-blur-2xl border-b border-white/10 shadow-[0_16px_50px_rgba(0,0,0,.18)]'
+          : 'bg-gradient-to-b from-[#0D1514]/95 via-[#0D1514]/60 to-transparent'
       }`}
     >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between">
-          
-          {/* Logo */}
-          <button 
+      <div className={`max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 transition-all duration-300 ${isScrolled ? 'py-2.5' : 'py-4'}`}>
+        <div className="flex items-center justify-between gap-5">
+          <button
             onClick={() => handleNavClick('/')}
-            className="text-left group cursor-pointer"
-            id="logo-button"
+            className="shrink-0 rounded-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-[#08B4A5]"
+            aria-label="TANSO bosh sahifa"
           >
-            <TansoLogo variant="light" className="h-9 sm:h-10" />
+            <TansoLogo className="h-8 sm:h-9 lg:h-10" />
           </button>
 
-          {/* Desktop Nav */}
-          <nav className="hidden lg:flex items-center gap-1 bg-[#151D1C]/80 px-2 py-1.5 rounded-xl border border-[#222E2B] backdrop-blur-md shadow-inner">
+          <nav className="hidden lg:flex items-center gap-0.5 rounded-xl border border-white/8 bg-white/[0.035] p-1 backdrop-blur-xl">
             {navItems.map((item) => {
-              const isActive = currentPath === item.path || (item.path !== '/' && currentPath.startsWith(item.path));
+              const active = isActivePath(item.path);
               return (
                 <button
                   key={item.path}
                   onClick={() => handleNavClick(item.path)}
-                  className={`px-4 py-2 text-[11px] font-bold uppercase tracking-[0.1em] rounded-lg transition-all ${
-                    isActive
-                      ? 'bg-[#04AF9D] text-white shadow-md shadow-[#04AF9D]/20'
-                      : 'text-zinc-300 hover:text-white hover:bg-white/5'
+                  className={`relative px-3.5 xl:px-4 py-2 rounded-lg text-[10px] xl:text-[11px] font-extrabold uppercase tracking-[0.08em] transition-colors ${
+                    active ? 'text-white' : 'text-zinc-400 hover:text-white'
                   }`}
                 >
+                  {active && <span className="absolute inset-x-3 bottom-0 h-0.5 rounded-full bg-[#08B4A5]" />}
                   {item.label}
                 </button>
               );
             })}
           </nav>
 
-          {/* Right Controls */}
-          <div className="hidden lg:flex items-center gap-5">
-            
-            {/* Language Switcher */}
-            <div className="flex items-center gap-1.5 border-r border-[#222E2B] pr-5 text-[11px] font-bold uppercase tracking-wider">
+          <div className="hidden lg:flex items-center gap-3 xl:gap-4">
+            <div className="flex items-center rounded-lg border border-white/10 bg-white/[0.035] p-0.5 text-[10px] font-extrabold uppercase tracking-wider">
               <button
                 onClick={() => setLanguage('uz')}
-                className={`transition-colors px-1.5 py-0.5 rounded ${
-                  language === 'uz' ? 'text-[#F6852D] font-black' : 'text-zinc-400 hover:text-white'
-                }`}
-              >
-                UZ
-              </button>
-              <span className="text-zinc-600">/</span>
-              <button
-                onClick={() => setLanguage('ru')}
-                className={`transition-colors px-1.5 py-0.5 rounded ${
-                  language === 'ru' ? 'text-[#F6852D] font-black' : 'text-zinc-400 hover:text-white'
-                }`}
-              >
-                RU
-              </button>
-            </div>
-
-            {/* Phone Call Button */}
-            <a
-              href={`tel:${settings.phone1.replace(/\s+/g, '')}`}
-              className="flex items-center gap-2 text-xs font-semibold text-zinc-200 hover:text-[#04AF9D] transition-colors"
-            >
-              <Phone className="w-3.5 h-3.5 text-[#F6852D]" />
-              <span>{settings.phone1}</span>
-            </a>
-
-            {/* Primary CTA */}
-            <button
-              onClick={onOpenConsultation}
-              className="btn-tanso-primary"
-              id="btn-header-consultation"
-            >
-              <span>{t('consultation')}</span>
-            </button>
-
-            {/* Quick Admin Access Icon */}
-            <button
-              onClick={() => handleNavClick('/admin')}
-              title="Admin Dashboard"
-              className="p-2.5 rounded-lg border border-[#222E2B] hover:border-[#04AF9D]/50 text-zinc-400 hover:text-white transition-colors bg-[#151D1C]"
-            >
-              <Lock className="w-3.5 h-3.5" />
-            </button>
-          </div>
-
-          {/* Mobile Menu controls */}
-          <div className="flex lg:hidden items-center gap-3">
-            <div className="flex items-center bg-[#151D1C] border border-[#222E2B] rounded-lg p-0.5 text-xs text-zinc-300">
-              <button
-                onClick={() => setLanguage('uz')}
-                className={`px-2 py-0.5 rounded ${language === 'uz' ? 'bg-[#04AF9D] text-white font-bold' : ''}`}
+                className={`px-2 py-1.5 rounded-md transition-colors ${language === 'uz' ? 'bg-[#08B4A5] text-white' : 'text-zinc-500 hover:text-white'}`}
               >
                 UZ
               </button>
               <button
                 onClick={() => setLanguage('ru')}
-                className={`px-2 py-0.5 rounded ${language === 'ru' ? 'bg-[#04AF9D] text-white font-bold' : ''}`}
+                className={`px-2 py-1.5 rounded-md transition-colors ${language === 'ru' ? 'bg-[#08B4A5] text-white' : 'text-zinc-500 hover:text-white'}`}
               >
                 RU
               </button>
             </div>
 
-            <button
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="p-2.5 rounded-xl bg-[#151D1C] border border-[#222E2B] text-zinc-200 hover:text-white"
-              id="btn-mobile-menu"
-            >
-              {mobileMenuOpen ? <X className="w-6 h-6 text-[#04AF9D]" /> : <Menu className="w-6 h-6" />}
+            {settings.phone1 && (
+              <a
+                href={`tel:${settings.phone1.replace(/\s+/g, '')}`}
+                className="hidden xl:flex items-center gap-2 text-[11px] font-bold text-zinc-300 hover:text-white transition-colors"
+              >
+                <span className="grid place-items-center w-8 h-8 rounded-lg border border-[#08B4A5]/25 bg-[#08B4A5]/10">
+                  <Phone className="w-3.5 h-3.5 text-[#08B4A5]" />
+                </span>
+                <span>{settings.phone1}</span>
+              </a>
+            )}
+
+            <button onClick={onOpenConsultation} className="btn-tanso-primary whitespace-nowrap">
+              {t('consultation')}
             </button>
           </div>
 
+          <div className="flex lg:hidden items-center gap-2">
+            <div className="flex items-center rounded-lg border border-white/10 bg-white/[0.04] p-0.5 text-[10px] font-extrabold">
+              <button onClick={() => setLanguage('uz')} className={`px-2 py-1 rounded-md ${language === 'uz' ? 'bg-[#08B4A5] text-white' : 'text-zinc-400'}`}>UZ</button>
+              <button onClick={() => setLanguage('ru')} className={`px-2 py-1 rounded-md ${language === 'ru' ? 'bg-[#08B4A5] text-white' : 'text-zinc-400'}`}>RU</button>
+            </div>
+            <button
+              onClick={() => setMobileMenuOpen((v) => !v)}
+              className="grid place-items-center w-10 h-10 rounded-xl border border-white/10 bg-white/[0.04] text-white"
+              aria-label="Menyu"
+            >
+              {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+            </button>
+          </div>
         </div>
       </div>
 
-      {/* Mobile Drawer Menu */}
       {mobileMenuOpen && (
-        <div className="lg:hidden bg-[#0F1514]/98 border-b border-[#222E2B] backdrop-blur-xl px-6 py-6 space-y-4 animate-fade-in shadow-2xl">
-          <div className="flex flex-col gap-2">
+        <div className="lg:hidden border-t border-white/8 bg-[#0D1514]/98 backdrop-blur-2xl shadow-2xl animate-fade-in">
+          <div className="px-4 sm:px-6 py-5 space-y-2">
             {navItems.map((item) => {
-              const isActive = currentPath === item.path;
+              const active = isActivePath(item.path);
               return (
                 <button
                   key={item.path}
                   onClick={() => handleNavClick(item.path)}
-                  className={`flex items-center justify-between w-full px-4 py-3 rounded-xl text-sm font-semibold transition-all ${
-                    isActive 
-                      ? 'bg-[#04AF9D]/15 text-[#04AF9D] border border-[#04AF9D]/30' 
-                      : 'text-zinc-300 hover:bg-[#151D1C]'
+                  className={`flex items-center justify-between w-full rounded-xl px-4 py-3.5 text-sm font-bold transition-colors ${
+                    active ? 'bg-[#08B4A5]/12 text-[#25D4C4] border border-[#08B4A5]/20' : 'text-zinc-300 hover:bg-white/[0.04]'
                   }`}
                 >
                   <span>{item.label}</span>
-                  <ChevronRight className="w-4 h-4 text-[#F6852D]" />
+                  <ChevronRight className="w-4 h-4 text-[#F58A36]" />
                 </button>
               );
             })}
-          </div>
 
-          <div className="pt-4 border-t border-[#222E2B] space-y-3">
-            <a
-              href={`tel:${settings.phone1.replace(/\s+/g, '')}`}
-              className="flex items-center justify-center gap-2 w-full py-3 rounded-xl bg-[#151D1C] border border-[#222E2B] text-zinc-200 text-sm font-semibold"
-            >
-              <Phone className="w-4 h-4 text-[#F6852D]" />
-              <span>{settings.phone1}</span>
-            </a>
-
-            <button
-              onClick={() => {
-                setMobileMenuOpen(false);
-                onOpenConsultation();
-              }}
-              className="w-full py-3 rounded-xl bg-[#04AF9D] text-white text-sm font-bold uppercase tracking-wider shadow-lg shadow-[#04AF9D]/20 flex items-center justify-center gap-2"
-            >
-              <span>{t('consultation')}</span>
-            </button>
-
-            <button
-              onClick={() => handleNavClick('/admin')}
-              className="w-full py-2 text-center text-xs text-zinc-400 hover:text-zinc-200 flex items-center justify-center gap-1.5"
-            >
-              <Lock className="w-3.5 h-3.5" />
-              <span>Admin Dashboard</span>
-            </button>
+            <div className="pt-4 mt-4 border-t border-white/8 grid gap-3">
+              {settings.phone1 && (
+                <a href={`tel:${settings.phone1.replace(/\s+/g, '')}`} className="btn-tanso-secondary w-full">
+                  <Phone className="w-4 h-4 text-[#08B4A5]" />
+                  {settings.phone1}
+                </a>
+              )}
+              <button onClick={() => { setMobileMenuOpen(false); onOpenConsultation(); }} className="btn-tanso-primary w-full">
+                {t('consultation')}
+              </button>
+            </div>
           </div>
         </div>
       )}
     </header>
   );
 };
-

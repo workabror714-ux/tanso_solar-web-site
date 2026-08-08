@@ -1,15 +1,14 @@
 import React from 'react';
-import { Phone, Send, MapPin, Clock, Instagram, Facebook, Youtube, ArrowUpRight } from 'lucide-react';
+import { Phone, Send, MapPin, Clock, Instagram, Facebook, Youtube } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 import { useData } from '../context/DataContext';
 import { TansoLogo } from './TansoLogo';
 
 interface FooterProps {
   onNavigate: (path: string) => void;
-  onOpenConsultation: () => void;
 }
 
-export const Footer: React.FC<FooterProps> = ({ onNavigate, onOpenConsultation }) => {
+export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
   const { language, setLanguage, t, getLoc } = useLanguage();
   const { settings, categories } = useData();
 
@@ -26,53 +25,37 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate, onOpenConsultation }
               onClick={() => onNavigate('/')}
               className="text-left group cursor-pointer block"
             >
-              <TansoLogo variant="light" className="h-10" />
+              <TansoLogo variant="light" className="h-14 sm:h-16" showSubtitle />
             </button>
 
             <p className="text-xs text-zinc-400 leading-relaxed max-w-sm font-normal">
-              {language === 'ru' 
-                ? 'Инновационные решения в сфере солнечного водонагрева и возобновляемой энергетики для частных домов, гостиниц и бизнеса по всему Узбекистану.'
-                : 'O’zbekistonda quyosh suv isitish tizimlari hamda fotoelektrik qayta tiklanuvchi energiya echimlarini yetkazib berish va montaj qilish.'}
+              {language === 'ru'
+                ? 'Солнечные водонагреватели TANSO для дома и бизнеса: подбор, консультация и сервис.'
+                : 'Uy va biznes uchun TANSO quyosh suv isitgichlari: tanlash, konsultatsiya va servis.'}
             </p>
 
             {/* Social Icons */}
             <div className="flex items-center gap-3 pt-2">
-              <a
-                href={settings.telegram}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-9 h-9 rounded-lg bg-[#151D1C] border border-[#222E2B] hover:border-[#04AF9D] text-zinc-400 hover:text-white flex items-center justify-center transition-all"
-                title="Telegram"
-              >
-                <Send className="w-4 h-4 text-[#04AF9D]" />
-              </a>
-              <a
-                href={settings.instagram}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-9 h-9 rounded-lg bg-[#151D1C] border border-[#222E2B] hover:border-[#04AF9D] text-zinc-400 hover:text-white flex items-center justify-center transition-all"
-                title="Instagram"
-              >
-                <Instagram className="w-4 h-4 text-[#F6852D]" />
-              </a>
-              <a
-                href={settings.facebook}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-9 h-9 rounded-lg bg-[#151D1C] border border-[#222E2B] hover:border-[#04AF9D] text-zinc-400 hover:text-white flex items-center justify-center transition-all"
-                title="Facebook"
-              >
-                <Facebook className="w-4 h-4 text-[#04AF9D]" />
-              </a>
-              <a
-                href={settings.youtube}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-9 h-9 rounded-lg bg-[#151D1C] border border-[#222E2B] hover:border-[#04AF9D] text-zinc-400 hover:text-white flex items-center justify-center transition-all"
-                title="YouTube"
-              >
-                <Youtube className="w-4 h-4 text-[#F6852D]" />
-              </a>
+              {settings.telegram && (
+                <a href={settings.telegram} target="_blank" rel="noopener noreferrer" className="w-9 h-9 rounded-xl bg-white/[0.035] border border-white/10 hover:border-[#08B4A5]/50 text-zinc-400 hover:text-white flex items-center justify-center transition-all" title="Telegram">
+                  <Send className="w-4 h-4 text-[#08B4A5]" />
+                </a>
+              )}
+              {settings.instagram && (
+                <a href={settings.instagram} target="_blank" rel="noopener noreferrer" className="w-9 h-9 rounded-xl bg-white/[0.035] border border-white/10 hover:border-[#08B4A5]/50 text-zinc-400 hover:text-white flex items-center justify-center transition-all" title="Instagram">
+                  <Instagram className="w-4 h-4 text-[#F58A36]" />
+                </a>
+              )}
+              {settings.facebook && (
+                <a href={settings.facebook} target="_blank" rel="noopener noreferrer" className="w-9 h-9 rounded-xl bg-white/[0.035] border border-white/10 hover:border-[#08B4A5]/50 text-zinc-400 hover:text-white flex items-center justify-center transition-all" title="Facebook">
+                  <Facebook className="w-4 h-4 text-[#08B4A5]" />
+                </a>
+              )}
+              {settings.youtube && (
+                <a href={settings.youtube} target="_blank" rel="noopener noreferrer" className="w-9 h-9 rounded-xl bg-white/[0.035] border border-white/10 hover:border-[#08B4A5]/50 text-zinc-400 hover:text-white flex items-center justify-center transition-all" title="YouTube">
+                  <Youtube className="w-4 h-4 text-[#F58A36]" />
+                </a>
+              )}
             </div>
           </div>
 
@@ -167,13 +150,6 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate, onOpenConsultation }
           <p>© {new Date().getFullYear()} {settings.companyName}. {t('copyright')}</p>
           
           <div className="flex items-center gap-6">
-            <button 
-              onClick={() => onNavigate('/admin')}
-              className="text-zinc-500 hover:text-zinc-300 transition-colors flex items-center gap-1 uppercase tracking-wider text-[10px]"
-            >
-              <span>Admin Dashboard</span>
-              <ArrowUpRight className="w-3 h-3" />
-            </button>
             <div className="flex items-center gap-2">
               <button
                 onClick={() => setLanguage('uz')}

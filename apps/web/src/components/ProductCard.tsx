@@ -23,32 +23,32 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onNavigate, o
 
   return (
     <div 
-      className="group bg-[#151D1C] text-white border border-[#222E2B] rounded-xl overflow-hidden shadow-lg hover:border-[#04AF9D]/70 hover:shadow-xl hover:shadow-[#04AF9D]/10 transition-all duration-300 flex flex-col justify-between"
+      className="group bg-[#131D1B] text-white border border-white/10 rounded-2xl overflow-hidden shadow-[0_16px_50px_rgba(0,0,0,.18)] hover:border-[#08B4A5]/55 hover:shadow-[0_22px_70px_rgba(8,180,165,.12)] hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between"
       id={`product-card-${product.id}`}
     >
       <div>
         {/* Image Container */}
         <div 
           onClick={() => onNavigate(`/product/${product.slug}`)}
-          className="relative h-60 bg-[#0F1514] overflow-hidden cursor-pointer"
+          className="relative h-64 bg-[#F4F7F6] overflow-hidden cursor-pointer"
         >
           <img 
-            src={product.images?.[0] || 'https://images.unsplash.com/photo-1508514177221-188b1cf16e9d?auto=format&fit=crop&q=80&w=800'} 
+            src={product.images?.[0] || '/images/products/tanso-bosimsiz-main.png'} 
             alt={getLoc(product, 'title')}
-            className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500 opacity-90 group-hover:opacity-100"
+            className="w-full h-full object-contain object-center p-4 group-hover:scale-[1.035] transition-transform duration-500"
           />
 
           {/* Capacity/Model Badge */}
           {product.specs?.[0]?.valueUz && (
             <div className="absolute top-3 left-3 z-10">
-              <span className="px-2.5 py-1 bg-[#04AF9D] text-white font-bold text-[10px] uppercase tracking-wider rounded shadow-sm">
+              <span className="px-2.5 py-1 bg-[#08B4A5] text-white font-bold text-[10px] uppercase tracking-wider rounded shadow-sm">
                 {getLoc(product.specs[0], 'value')}
               </span>
             </div>
           )}
 
           <div className="absolute bottom-3 right-3 z-10">
-            <span className="px-2.5 py-1 bg-[#0F1514]/90 text-[#04AF9D] text-[10px] font-bold uppercase tracking-wider rounded border border-[#222E2B] backdrop-blur-md">
+            <span className="px-2.5 py-1 bg-[#0F1514]/90 text-[#08B4A5] text-[10px] font-bold uppercase tracking-wider rounded border border-[#222E2B] backdrop-blur-md">
               {product.inStock ? (language === 'ru' ? 'В наличии' : 'Sotuvda mavjud') : (language === 'ru' ? 'Под заказ' : 'Buyurtmaga')}
             </span>
           </div>
@@ -65,7 +65,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onNavigate, o
           {/* Product Title */}
           <h3 
             onClick={() => onNavigate(`/product/${product.slug}`)}
-            className="text-base font-bold text-white group-hover:text-[#04AF9D] transition-colors line-clamp-2 cursor-pointer leading-snug"
+            className="text-base font-bold text-white group-hover:text-[#08B4A5] transition-colors line-clamp-2 cursor-pointer leading-snug"
           >
             {getLoc(product, 'title')}
           </h3>
@@ -111,7 +111,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onNavigate, o
 
           <button
             onClick={() => onOpenLead(product)}
-            className="py-2.5 px-3 bg-[#04AF9D] hover:bg-[#038a7c] text-white text-[10px] font-bold uppercase tracking-widest rounded-lg transition-all flex items-center justify-center gap-1.5 shadow-md shadow-[#04AF9D]/20"
+            className="py-2.5 px-3 bg-[#08B4A5] hover:bg-[#078F84] text-white text-[10px] font-bold uppercase tracking-widest rounded-lg transition-all flex items-center justify-center gap-1.5 shadow-md shadow-[#08B4A5]/20"
             id={`btn-buy-${product.id}`}
           >
             <ShoppingBag className="w-3.5 h-3.5" />
