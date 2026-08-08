@@ -36,3 +36,11 @@ The project still contains whatever contact details were present in the uploaded
 - Reduced hero product visual slightly to improve balance and prevent lower-edge crowding.
 - Rebuilt category cards into a true two-column text/image layout so long names such as “Bosimli SPLIT — 20 dona kolba” never overlap the product image.
 - Added stable section anchors and scroll margins for the homepage navigation.
+
+## Final card polish
+- Rebuilt product cards for equal heights and cleaner information hierarchy.
+- Improved product image area, category/status badges, specs, price display and CTA buttons.
+- Replaced shopping-bag visual language with lead/request messaging.
+- Added safer long-title handling and responsive spec blocks.
+- Refined homepage category cards so long category names never collide with imagery.
+- Added subtle TANSO teal/orange hover accents while preserving the approved overall UI.
