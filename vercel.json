@@ -1,10 +1,17 @@
 {
-  "version": 2,
-  "cleanUrls": true,
+  "$schema": "https://openapi.vercel.sh/vercel.json",
   "rewrites": [
     {
       "source": "/api/(.*)",
       "destination": "/api"
+    },
+    {
+      "source": "/admin",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/admin/(.*)",
+      "destination": "/index.html"
     },
     {
       "source": "/(.*)",
