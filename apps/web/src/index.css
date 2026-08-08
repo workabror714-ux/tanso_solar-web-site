@@ -1,11 +1,89 @@
 @import "tailwindcss";
 
+@layer base {
+  :root {
+    --tanso-teal: #04AF9D;
+    --tanso-teal-dark: #038a7c;
+    --tanso-teal-light: #12ccb9;
+    --tanso-teal-subtle: rgba(4, 175, 157, 0.1);
+    
+    --tanso-orange: #F6852D;
+    --tanso-orange-dark: #d96d19;
+    --tanso-orange-subtle: rgba(246, 133, 45, 0.12);
+    
+    --tanso-dark: #0F1514;
+    --tanso-dark-card: #151D1C;
+    --tanso-dark-border: #222E2B;
+    
+    --tanso-light: #F8FAF9;
+    --tanso-light-card: #FFFFFF;
+    --tanso-light-border: #E2E8E6;
+    
+    --tanso-text-dark: #0F1514;
+    --tanso-text-muted: #5C6E6B;
+  }
+}
+
 @layer utilities {
-  .font-editorial {
-    font-family: 'Playfair Display', Georgia, serif;
+  .bg-tanso-teal { background-color: #04AF9D; }
+  .bg-tanso-teal-dark { background-color: #038a7c; }
+  .bg-tanso-teal-subtle { background-color: rgba(4, 175, 157, 0.1); }
+  
+  .text-tanso-teal { color: #04AF9D; }
+  .text-tanso-teal-dark { color: #038a7c; }
+  .border-tanso-teal { border-color: #04AF9D; }
+
+  .bg-tanso-orange { background-color: #F6852D; }
+  .text-tanso-orange { color: #F6852D; }
+  .border-tanso-orange { border-color: #F6852D; }
+
+  .bg-tanso-dark { background-color: #0F1514; }
+  .bg-tanso-dark-card { background-color: #151D1C; }
+  .border-tanso-dark-border { border-color: #222E2B; }
+
+  .bg-tanso-light { background-color: #F8FAF9; }
+  .bg-tanso-light-card { background-color: #FFFFFF; }
+  .border-tanso-light-border { border-color: #E2E8E6; }
+
+  /* Premium Buttons */
+  .btn-tanso-primary {
+    background-color: #04AF9D;
+    color: #FFFFFF;
+    font-weight: 700;
+    font-size: 0.8125rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.5rem;
+    transition: all 0.2s ease-in-out;
+  }
+  .btn-tanso-primary:hover {
+    background-color: #038a7c;
+    box-shadow: 0 10px 25px -5px rgba(4, 175, 157, 0.4);
+    transform: translateY(-1px);
+  }
+
+  .btn-tanso-secondary {
+    background-color: transparent;
+    color: #FFFFFF;
+    font-weight: 700;
+    font-size: 0.8125rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.5rem;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    transition: all 0.2s ease-in-out;
+  }
+  .btn-tanso-secondary:hover {
+    background-color: rgba(255, 255, 255, 0.08);
+    border-color: rgba(255, 255, 255, 0.4);
   }
 }
 
 body {
   font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+  background-color: #0F1514;
+  color: #FFFFFF;
 }
+

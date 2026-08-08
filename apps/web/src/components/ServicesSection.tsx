@@ -26,22 +26,22 @@ export const ServicesSection: React.FC<ServicesSectionProps> = ({ onNavigate, on
   const activeServices = services.filter(s => s.active).sort((a, b) => a.sortOrder - b.sortOrder);
 
   return (
-    <section className="py-20 bg-[#1A1A1A] border-b border-white/10 text-white">
+    <section className="py-20 bg-[#0F1514] border-b border-[#222E2B] text-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Header */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12 border-b border-white/10 pb-8">
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12 border-b border-[#222E2B] pb-8">
           <div className="max-w-2xl">
-            <div className="flex items-center gap-2 mb-2">
-              <span className="w-2 h-2 bg-[#F59E0B]" />
-              <span className="text-[10px] font-bold tracking-[0.3em] uppercase text-[#F59E0B]">
-                04. SERVICES & ENGINEERING
+            <div className="inline-flex items-center gap-2 px-3 py-1 bg-[#04AF9D]/10 rounded-full border border-[#04AF9D]/20 mb-3">
+              <span className="w-2 h-2 rounded-full bg-[#F6852D]" />
+              <span className="text-[10px] font-bold tracking-[0.2em] uppercase text-[#04AF9D]">
+                INJENERLIK VA SERVIS XIZMATLARI
               </span>
             </div>
-            <h2 className="font-editorial text-3xl sm:text-5xl font-light tracking-tight text-[#F9F8F6] italic">
+            <h2 className="text-3xl sm:text-4xl font-black tracking-tight text-white uppercase">
               {t('services')}
             </h2>
-            <p className="text-xs sm:text-sm text-zinc-400 mt-3 max-w-xl">
+            <p className="text-xs sm:text-sm text-zinc-400 mt-2 max-w-xl">
               {language === 'ru'
                 ? 'Полный комплекс услуг от бесплатного аудита до долгосрочного сервиса'
                 : 'Bepul konsultatsiyadan tortib to professional montaj va uzoq muddatli servis xizmati'}
@@ -50,7 +50,7 @@ export const ServicesSection: React.FC<ServicesSectionProps> = ({ onNavigate, on
 
           <button
             onClick={() => onNavigate('/services')}
-            className="inline-flex items-center gap-2 text-[11px] font-bold uppercase tracking-widest text-emerald-400 hover:text-white transition-colors group"
+            className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-[#04AF9D] hover:text-[#038a7c] transition-colors group"
           >
             <span>{language === 'ru' ? 'Все услуги' : 'Barcha xizmatlar'}</span>
             <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
@@ -64,29 +64,29 @@ export const ServicesSection: React.FC<ServicesSectionProps> = ({ onNavigate, on
             return (
               <div
                 key={serv.id}
-                className="p-8 bg-black/40 border border-white/10 hover:border-[#064E3B] transition-all duration-300 group flex flex-col justify-between"
+                className="p-8 bg-[#151D1C] border border-[#222E2B] hover:border-[#04AF9D] rounded-2xl transition-all duration-300 group flex flex-col justify-between shadow-xl"
               >
                 <div>
-                  <div className="p-3 bg-[#064E3B] text-white w-fit mb-6 group-hover:bg-[#F59E0B] group-hover:text-[#1A1A1A] transition-colors">
+                  <div className="p-3 bg-[#04AF9D] text-white rounded-xl w-fit mb-6 group-hover:bg-[#F6852D] transition-colors shadow-md">
                     <IconComp className="w-5 h-5" />
                   </div>
 
-                  <h3 className="font-editorial text-xl font-normal text-white mb-2 group-hover:text-[#F59E0B] transition-colors italic">
+                  <h3 className="text-lg font-extrabold text-white mb-2 uppercase tracking-wide group-hover:text-[#04AF9D] transition-colors">
                     {getLoc(serv, 'title')}
                   </h3>
 
-                  <p className="text-xs text-zinc-400 leading-relaxed font-light">
+                  <p className="text-xs text-zinc-400 leading-relaxed font-normal">
                     {getLoc(serv, 'description')}
                   </p>
                 </div>
 
-                <div className="pt-6 border-t border-white/10 mt-6 flex items-center justify-between">
+                <div className="pt-6 border-t border-[#222E2B] mt-6 flex items-center justify-between">
                   <span className="text-[9px] font-bold text-zinc-500 uppercase tracking-[0.2em]">
                     TANSO SERVICE
                   </span>
                   <button 
                     onClick={onOpenConsultation}
-                    className="text-[10px] font-bold uppercase tracking-widest text-emerald-400 hover:text-white flex items-center gap-1.5"
+                    className="text-[10px] font-bold uppercase tracking-wider text-[#04AF9D] hover:text-[#038a7c] flex items-center gap-1.5"
                   >
                     <span>{t('consultation')}</span>
                     <ArrowRight className="w-3.5 h-3.5" />
@@ -101,3 +101,4 @@ export const ServicesSection: React.FC<ServicesSectionProps> = ({ onNavigate, on
     </section>
   );
 };
+

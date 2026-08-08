@@ -42,13 +42,18 @@ const WebRouter: React.FC = () => {
 
   const renderContent = () => {
     if (currentPath.startsWith('/product/')) {
-      const productId = currentPath.replace('/product/', '');
-      return <ProductDetailPage productId={productId} onNavigate={navigate} onOrder={handleOpenConsultation} />;
+      const slug = currentPath.replace('/product/', '');
+      return <ProductDetailPage slug={slug} onNavigate={navigate} onOpenConsultation={handleOpenConsultation} />;
+    }
+
+    if (currentPath.startsWith('/catalog/')) {
+      const catSlug = currentPath.replace('/catalog/', '');
+      return <CatalogPage categorySlug={catSlug} onNavigate={navigate} onOpenConsultation={handleOpenConsultation} />;
     }
 
     switch (currentPath) {
       case '/catalog':
-        return <CatalogPage onNavigate={navigate} onOrder={handleOpenConsultation} />;
+        return <CatalogPage onNavigate={navigate} onOpenConsultation={handleOpenConsultation} />;
       case '/services':
         return <ServicesPage onNavigate={navigate} onConsult={handleOpenConsultation} />;
       case '/projects':

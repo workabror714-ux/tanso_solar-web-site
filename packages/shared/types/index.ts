@@ -28,6 +28,7 @@ export interface Product {
   inStock: boolean;
   featured: boolean;
   popular: boolean;
+  active?: boolean;
   viewsCount?: number;
   salesCount?: number;
   createdAt?: string;

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Award, Zap, ShieldCheck, Wrench, CheckCircle } from 'lucide-react';
+import { Award, Zap, ShieldCheck, CheckCircle } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 
 export const StatsSection: React.FC = () => {
@@ -41,7 +41,7 @@ export const StatsSection: React.FC = () => {
   ];
 
   return (
-    <section className="bg-[#F9F8F6] text-[#1A1A1A] border-b border-[#1A1A1A]/10 py-12">
+    <section className="bg-[#F8FAF9] text-[#0F1514] border-b border-[#E2E8E6] py-12">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
           {stats.map((item, index) => {
@@ -49,20 +49,20 @@ export const StatsSection: React.FC = () => {
             return (
               <div 
                 key={index}
-                className="p-6 bg-white border border-[#1A1A1A]/10 hover:border-[#064E3B] transition-all group shadow-sm"
+                className="p-6 bg-[#0F1514] text-white rounded-2xl border border-[#222E2B] hover:border-[#04AF9D] transition-all group shadow-lg"
               >
                 <div className="flex items-center justify-between mb-4">
-                  <span className="font-editorial text-3xl sm:text-4xl font-light text-[#1A1A1A] tracking-tight group-hover:text-[#064E3B] transition-colors">
+                  <span className="text-3xl sm:text-4xl font-black text-[#F6852D] font-mono tracking-tight group-hover:text-[#04AF9D] transition-colors">
                     {item.value}
                   </span>
-                  <div className="p-2 bg-[#064E3B]/10 text-[#064E3B] group-hover:bg-[#064E3B] group-hover:text-white transition-all">
+                  <div className="p-2.5 bg-[#04AF9D]/10 text-[#04AF9D] rounded-xl group-hover:bg-[#04AF9D] group-hover:text-white transition-all">
                     <IconComp className="w-5 h-5" />
                   </div>
                 </div>
-                <h4 className="text-xs font-bold uppercase tracking-wider text-[#1A1A1A]">
+                <h4 className="text-xs font-bold uppercase tracking-wider text-white">
                   {language === 'ru' ? item.titleRu : item.titleUz}
                 </h4>
-                <p className="text-[11px] text-[#1A1A1A]/60 mt-1">
+                <p className="text-[11px] text-zinc-400 mt-1">
                   {language === 'ru' ? item.descRu : item.descUz}
                 </p>
               </div>
@@ -73,3 +73,4 @@ export const StatsSection: React.FC = () => {
     </section>
   );
 };
+

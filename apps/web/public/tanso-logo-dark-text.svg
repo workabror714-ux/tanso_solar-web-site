@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 80" fill="none">
+  <!-- TANSO Solar Official Logo Vector for Light Backgrounds -->
+  <g transform="translate(10, 10)">
+    <!-- Sun & Solar Collector Symbol -->
+    <path d="M 30 0 L 60 30 L 30 60 L 0 30 Z" fill="#04AF9D"/>
+    <circle cx="30" cy="30" r="11" fill="#F6852D"/>
+    <path d="M 30 11 L 30 49 M 11 30 L 49 30" stroke="#FFFFFF" stroke-width="2.5" stroke-linecap="round"/>
+    <circle cx="30" cy="30" r="4" fill="#FFFFFF"/>
+  </g>
+
+  <!-- Typography TANSO -->
+  <text x="82" y="44" font-family="'Plus Jakarta Sans', system-ui, -apple-system, sans-serif" font-weight="900" font-size="28" letter-spacing="1" fill="#0F1514">
+    TANSO
+  </text>
+
+  <!-- Typography SOLAR -->
+  <text x="188" y="44" font-family="'Plus Jakarta Sans', system-ui, -apple-system, sans-serif" font-weight="800" font-size="28" letter-spacing="1" fill="#04AF9D">
+    SOLAR
+  </text>
+
+  <!-- Tagline / Subtitle UZBEKISTAN -->
+  <text x="83" y="62" font-family="'Plus Jakarta Sans', system-ui, -apple-system, sans-serif" font-weight="700" font-size="9" letter-spacing="3" fill="#F6852D">
+    SOLAR ENERGY SYSTEMS
+  </text>
+</svg>

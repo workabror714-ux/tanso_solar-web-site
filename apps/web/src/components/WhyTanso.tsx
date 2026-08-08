@@ -1,5 +1,5 @@
 import React from 'react';
-import { ShieldCheck, Cpu, Wrench, CheckCircle, Zap, Headphones, Truck } from 'lucide-react';
+import { ShieldCheck, Cpu, Wrench, Zap, Headphones, Truck } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 
 export const WhyTanso: React.FC = () => {
@@ -28,8 +28,8 @@ export const WhyTanso: React.FC = () => {
       icon: Truck
     },
     {
-      titleUz: 'Moslashtirilgan 3D smeta va loyiha',
-      titleRu: 'Индивидуальный 3D проект и смета',
+      titleUz: 'Moslashtirilgan loyiha va smeta',
+      titleRu: 'Индивидуальный проект и смета',
       descUz: 'Ob’yektingiz me’morchiligi va ehtiyojingizga mos aniq loyiha.',
       descRu: 'Точный видео- и 3D-расчет выработки энергии для вашего дома.',
       icon: Zap
@@ -51,20 +51,20 @@ export const WhyTanso: React.FC = () => {
   ];
 
   return (
-    <section className="py-20 bg-[#F9F8F6] text-[#1A1A1A] relative border-b border-[#1A1A1A]/10">
+    <section className="py-20 bg-[#F8FAF9] text-[#0F1514] relative border-b border-[#E2E8E6]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         <div className="text-center max-w-2xl mx-auto mb-16">
-          <div className="flex items-center justify-center gap-2 mb-2">
-            <span className="w-2 h-2 bg-[#064E3B]" />
-            <span className="text-[10px] font-bold tracking-[0.3em] uppercase text-[#064E3B]">
-              03. ADVANTAGES & QUALITY
+          <div className="inline-flex items-center gap-2 mb-3 px-3 py-1 bg-[#04AF9D]/10 rounded-full border border-[#04AF9D]/20">
+            <span className="w-2 h-2 rounded-full bg-[#F6852D]" />
+            <span className="text-[10px] font-bold tracking-[0.25em] uppercase text-[#04AF9D]">
+              AFZALLIKLAR VA SIFAT
             </span>
           </div>
-          <h2 className="font-editorial text-3xl sm:text-5xl font-light tracking-tight text-[#1A1A1A] italic">
+          <h2 className="text-3xl sm:text-4xl font-black tracking-tight text-[#0F1514] uppercase">
             {t('whyTanso')}
           </h2>
-          <p className="text-xs sm:text-sm text-[#1A1A1A]/70 mt-3">
+          <p className="text-xs sm:text-sm text-zinc-600 mt-2">
             {language === 'ru'
               ? 'Надежность, технологичность и максимальная окупаемость для каждого клиента'
               : 'Har bir mijoz uchun ishonchlilik, yuqori samaradorlik va tezkor tejamkorlik'}
@@ -78,23 +78,23 @@ export const WhyTanso: React.FC = () => {
             return (
               <div 
                 key={idx}
-                className="p-8 bg-white border border-[#1A1A1A]/10 hover:border-[#064E3B] transition-all group shadow-sm flex flex-col justify-between"
+                className="p-8 bg-white rounded-xl border border-[#E2E8E6] hover:border-[#04AF9D] transition-all duration-300 group shadow-sm flex flex-col justify-between"
               >
                 <div>
                   <div className="flex items-center justify-between mb-6">
-                    <div className="p-3 bg-[#064E3B]/10 text-[#064E3B] group-hover:bg-[#064E3B] group-hover:text-white transition-colors">
+                    <div className="p-3.5 rounded-xl bg-[#04AF9D]/10 text-[#04AF9D] group-hover:bg-[#04AF9D] group-hover:text-white transition-colors duration-300">
                       <IconComp className="w-5 h-5" />
                     </div>
-                    <span className="font-editorial text-xl font-light text-[#1A1A1A]/30 font-mono">
+                    <span className="text-sm font-bold text-zinc-300 font-mono">
                       #{numStr}
                     </span>
                   </div>
 
-                  <h3 className="text-sm font-bold uppercase tracking-wider text-[#1A1A1A] mb-2">
+                  <h3 className="text-sm font-bold uppercase tracking-wider text-[#0F1514] mb-2">
                     {language === 'ru' ? item.titleRu : item.titleUz}
                   </h3>
 
-                  <p className="text-xs text-[#1A1A1A]/70 leading-relaxed font-light">
+                  <p className="text-xs text-zinc-600 leading-relaxed font-normal">
                     {language === 'ru' ? item.descRu : item.descUz}
                   </p>
                 </div>
@@ -107,3 +107,4 @@ export const WhyTanso: React.FC = () => {
     </section>
   );
 };
+

@@ -1,5 +1,5 @@
-import React, { useState, useMemo } from 'react';
-import { Search, Filter, SlidersHorizontal, ChevronRight, LayoutGrid, List } from 'lucide-react';
+import React, { useState, useMemo, useEffect } from 'react';
+import { Search, ChevronRight } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 import { useData } from '../context/DataContext';
 import { ProductCard } from '../components/ProductCard';
@@ -19,37 +19,54 @@ export const CatalogPage: React.FC<CatalogPageProps> = ({ categorySlug, onNaviga
   const [searchQuery, setSearchQuery] = useState('');
   const [sortBy, setSortBy] = useState<'featured' | 'price_asc' | 'price_desc' | 'newest'>('featured');
 
+  useEffect(() => {
+    if (categorySlug) {
+      setSelectedCategorySlug(categorySlug);
+    }
+  }, [categorySlug]);
+
   // Active category
-  const activeCategory = categories.find(c => c.slug === selectedCategorySlug);
+  const activeCategory = categories.find(c => c.slug === selectedCategorySlug || c.id === selectedCategorySlug);
 
   const filteredProducts = useMemo(() => {
-    let list = products.filter(p => p.active);
+    let list = products.filter(p => p.active !== false);
 
     if (selectedCategorySlug && selectedCategorySlug !== 'all') {
-      const cat = categories.find(c => c.slug === selectedCategorySlug);
+      const cat = categories.find(c => c.slug === selectedCategorySlug || c.id === selectedCategorySlug);
       if (cat) {
         list = list.filter(p => p.categoryId === cat.id);
       }
     }
 
     if (searchQuery.trim()) {
-      const q = searchQuery.toLowerCase();
-      list = list.filter(p => 
-        p.nameUz.toLowerCase().includes(q) ||
-        p.nameRu.toLowerCase().includes(q) ||
-        p.capacity.toLowerCase().includes(q) ||
-        p.power.toLowerCase().includes(q) ||
-        p.shortDescriptionUz.toLowerCase().includes(q)
-      );
+      const q = searchQuery.toLowerCase().trim();
+      list = list.filter(p => {
+        const titleUz = (p.titleUz || (p as any).nameUz || '').toLowerCase();
+        const titleRu = (p.titleRu || (p as any).nameRu || '').toLowerCase();
+        const shortDescUz = (p.shortDescUz || (p as any).shortDescriptionUz || '').toLowerCase();
+        const shortDescRu = (p.shortDescRu || (p as any).shortDescriptionRu || '').toLowerCase();
+        const fullDescUz = (p.fullDescUz || (p as any).fullDescriptionUz || '').toLowerCase();
+        const fullDescRu = (p.fullDescRu || (p as any).fullDescriptionRu || '').toLowerCase();
+        const specsText = (p.specs || []).map(s => `${s.keyUz} ${s.keyRu} ${s.valueUz} ${s.valueRu}`).join(' ').toLowerCase();
+        return (
+          titleUz.includes(q) ||
+          titleRu.includes(q) ||
+          shortDescUz.includes(q) ||
+          shortDescRu.includes(q) ||
+          fullDescUz.includes(q) ||
+          fullDescRu.includes(q) ||
+          specsText.includes(q)
+        );
+      });
     }
 
     // Sort
     if (sortBy === 'price_asc') {
-      list.sort((a, b) => (a.price || 0) - (b.price || 0));
+      list.sort((a, b) => (a.priceUZS || a.priceUSD || 0) - (b.priceUZS || b.priceUSD || 0));
     } else if (sortBy === 'price_desc') {
-      list.sort((a, b) => (b.price || 0) - (a.price || 0));
+      list.sort((a, b) => (b.priceUZS || b.priceUSD || 0) - (a.priceUZS || a.priceUSD || 0));
     } else if (sortBy === 'newest') {
-      list.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+      list.sort((a, b) => new Date(b.createdAt || 0).getTime() - new Date(a.createdAt || 0).getTime());
     } else {
       list.sort((a, b) => (b.featured ? 1 : 0) - (a.featured ? 1 : 0));
     }
@@ -58,7 +75,7 @@ export const CatalogPage: React.FC<CatalogPageProps> = ({ categorySlug, onNaviga
   }, [products, categories, selectedCategorySlug, searchQuery, sortBy]);
 
   return (
-    <div className="min-h-screen bg-zinc-950 text-white pt-28 pb-20">
+    <div className="min-h-screen bg-[#0F1514] text-white pt-28 pb-20">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Breadcrumbs */}
@@ -67,7 +84,7 @@ export const CatalogPage: React.FC<CatalogPageProps> = ({ categorySlug, onNaviga
             {t('home')}
           </button>
           <ChevronRight className="w-3.5 h-3.5 text-zinc-600" />
-          <span className="text-emerald-400 font-semibold">{t('catalog')}</span>
+          <span className="text-[#04AF9D] font-bold">{t('catalog')}</span>
           {activeCategory && (
             <>
               <ChevronRight className="w-3.5 h-3.5 text-zinc-600" />
@@ -78,18 +95,18 @@ export const CatalogPage: React.FC<CatalogPageProps> = ({ categorySlug, onNaviga
 
         {/* Title */}
         <div className="mb-8">
-          <h1 className="text-3xl sm:text-4xl font-black text-white tracking-tight">
+          <h1 className="text-3xl sm:text-4xl font-black text-white tracking-tight uppercase">
             {activeCategory ? getLoc(activeCategory, 'name') : t('catalog')}
           </h1>
           <p className="text-xs sm:text-sm text-zinc-400 mt-2">
             {activeCategory 
               ? getLoc(activeCategory, 'description')
-              : (language === 'ru' ? 'Высококачественное солнечные системы, панели, инверторы и накопители' : 'Quyosh suv isitish tizimlari, fotopaneellar, inverterlar hamda akkumulyatorlar')}
+              : (language === 'ru' ? 'Высококачественные солнечные системы, водонагреватели и комплектующие TANSO' : 'Quyosh suv isitish tizimlari va fotopaneellar xalqaro sifat standarti bilan')}
           </p>
         </div>
 
         {/* Filter / Search Bar */}
-        <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-4 mb-8 space-y-4">
+        <div className="bg-[#151D1C] border border-[#222E2B] rounded-2xl p-4 mb-8 space-y-4 shadow-lg">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
             
             {/* Search Input */}
@@ -100,7 +117,7 @@ export const CatalogPage: React.FC<CatalogPageProps> = ({ categorySlug, onNaviga
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder={language === 'ru' ? 'Поиск по названию или характеристикам...' : 'Mahsulot nomi yoki xususiyati bo‘yicha qidiruv...'}
-                className="w-full pl-10 pr-4 py-2.5 text-sm bg-zinc-950 border border-zinc-800 rounded-xl text-white focus:outline-none focus:border-emerald-500 transition-colors"
+                className="w-full pl-10 pr-4 py-2.5 text-sm bg-[#0F1514] border border-[#222E2B] rounded-xl text-white focus:outline-none focus:border-[#04AF9D] transition-colors"
               />
             </div>
 
@@ -110,7 +127,7 @@ export const CatalogPage: React.FC<CatalogPageProps> = ({ categorySlug, onNaviga
               <select
                 value={sortBy}
                 onChange={(e: any) => setSortBy(e.target.value)}
-                className="px-3 py-2 text-xs bg-zinc-950 border border-zinc-800 rounded-xl text-zinc-200 focus:outline-none focus:border-emerald-500 cursor-pointer"
+                className="px-3 py-2 text-xs bg-[#0F1514] border border-[#222E2B] rounded-xl text-zinc-200 focus:outline-none focus:border-[#04AF9D] cursor-pointer"
               >
                 <option value="featured">{language === 'ru' ? 'Популярные' : 'Ommabop'}</option>
                 <option value="price_asc">{language === 'ru' ? 'Сначала дешевле' : 'Arzonroq'}</option>
@@ -125,10 +142,10 @@ export const CatalogPage: React.FC<CatalogPageProps> = ({ categorySlug, onNaviga
           <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none">
             <button
               onClick={() => setSelectedCategorySlug('all')}
-              className={`px-4 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition-all ${
+              className={`px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider whitespace-nowrap transition-all ${
                 selectedCategorySlug === 'all'
-                  ? 'bg-emerald-600 text-white shadow-md shadow-emerald-950/50'
-                  : 'bg-zinc-950 border border-zinc-800 text-zinc-400 hover:text-white'
+                  ? 'bg-[#04AF9D] text-white shadow-md shadow-[#04AF9D]/20'
+                  : 'bg-[#0F1514] border border-[#222E2B] text-zinc-400 hover:text-white hover:border-[#04AF9D]/40'
               }`}
             >
               {language === 'ru' ? 'Все товары' : 'Barcha mahsulotlar'} ({products.length})
@@ -140,10 +157,10 @@ export const CatalogPage: React.FC<CatalogPageProps> = ({ categorySlug, onNaviga
                 <button
                   key={cat.id}
                   onClick={() => setSelectedCategorySlug(cat.slug)}
-                  className={`px-4 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition-all ${
+                  className={`px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider whitespace-nowrap transition-all ${
                     isSelected
-                      ? 'bg-emerald-600 text-white shadow-md shadow-emerald-950/50'
-                      : 'bg-zinc-950 border border-zinc-800 text-zinc-400 hover:text-white'
+                      ? 'bg-[#04AF9D] text-white shadow-md shadow-[#04AF9D]/20'
+                      : 'bg-[#0F1514] border border-[#222E2B] text-zinc-400 hover:text-white hover:border-[#04AF9D]/40'
                   }`}
                 >
                   {getLoc(cat, 'name')}
@@ -155,7 +172,7 @@ export const CatalogPage: React.FC<CatalogPageProps> = ({ categorySlug, onNaviga
 
         {/* Product Cards Grid */}
         {filteredProducts.length === 0 ? (
-          <div className="py-20 text-center bg-zinc-900/40 rounded-2xl border border-zinc-800/80 p-8">
+          <div className="py-20 text-center bg-[#151D1C] rounded-2xl border border-[#222E2B] p-8">
             <p className="text-zinc-400 text-sm">
               {language === 'ru' ? 'По вашему запросу ничего не найдено.' : 'So‘rovingiz bo‘yicha mahsulot topilmadi.'}
             </p>
@@ -177,3 +194,4 @@ export const CatalogPage: React.FC<CatalogPageProps> = ({ categorySlug, onNaviga
     </div>
   );
 };
+
