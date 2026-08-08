@@ -14,7 +14,7 @@ export const ProjectsSection: React.FC<ProjectsSectionProps> = ({ onNavigate }) 
   const activeProjects = projects.filter(p => p.active).slice(0, 3);
 
   return (
-    <section className="py-20 bg-[#F8FAF9] border-b border-[#E2E8E6] text-[#0F1514]">
+    <section id="projects-home" className="scroll-mt-28 py-20 bg-[#F8FAF9] border-b border-[#E2E8E6] text-[#0F1514]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Header */}

@@ -110,7 +110,7 @@ export const AdminLogin: React.FC<AdminLoginProps> = ({ onNavigate }) => {
 
         <div className="mt-6 pt-4 border-t border-white/10 text-center">
           <button
-            onClick={() => onNavigate('/')}
+            onClick={() => window.location.assign('/')}
             className="text-xs text-zinc-500 hover:text-zinc-300 transition-colors uppercase tracking-wider"
           >
             ← Bosh sahifaga qaytish

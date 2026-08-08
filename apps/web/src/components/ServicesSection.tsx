@@ -26,7 +26,7 @@ export const ServicesSection: React.FC<ServicesSectionProps> = ({ onNavigate, on
   const activeServices = services.filter(s => s.active).sort((a, b) => a.sortOrder - b.sortOrder);
 
   return (
-    <section className="py-20 bg-[#0F1514] border-b border-[#222E2B] text-white">
+    <section id="services-home" className="scroll-mt-28 py-20 bg-[#0F1514] border-b border-[#222E2B] text-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Header */}

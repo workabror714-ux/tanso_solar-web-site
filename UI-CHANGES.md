@@ -23,3 +23,16 @@ This variant focuses on the public-site UI without changing product prices, lead
 
 ## Final business-data check before launch
 The project still contains whatever contact details were present in the uploaded source. Confirm phone, address, working hours, and social links before final submission/domain switch.
+
+## Final bug-fix pass (navbar + hero + category + admin)
+
+- Rebuilt the public header as a cleaner floating glass navbar.
+- Added homepage scroll-spy: active nav item now follows the visible section while scrolling.
+- Homepage nav buttons smoothly scroll to Home / Catalog / About / Services / Projects / Contact sections.
+- Fixed phone number wrapping: full phone chip on very large screens, compact phone icon on narrower desktop widths.
+- Restored direct Admin access with a lock button in the header and a subtle Admin link in the footer.
+- Fixed Admin Login → public website navigation to correctly switch applications.
+- Fixed hero product caption layering/position so the label is fully visible instead of being covered/cropped.
+- Reduced hero product visual slightly to improve balance and prevent lower-edge crowding.
+- Rebuilt category cards into a true two-column text/image layout so long names such as “Bosimli SPLIT — 20 dona kolba” never overlap the product image.
+- Added stable section anchors and scroll margins for the homepage navigation.

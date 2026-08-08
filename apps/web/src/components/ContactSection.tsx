@@ -33,7 +33,7 @@ export const ContactSection: React.FC = () => {
   };
 
   return (
-    <section className="py-20 sm:py-24 bg-[#0D1514] text-white relative overflow-hidden" id="consultation">
+    <section id="contact-home" className="scroll-mt-28 py-20 sm:py-24 bg-[#0D1514] text-white relative overflow-hidden">
       <div className="absolute -top-36 right-0 w-[420px] h-[420px] rounded-full bg-[#08B4A5]/12 blur-[100px]" />
       <div className="absolute -bottom-48 left-0 w-[360px] h-[360px] rounded-full bg-[#F58A36]/7 blur-[100px]" />
 

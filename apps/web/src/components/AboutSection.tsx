@@ -10,7 +10,7 @@ export const AboutSection: React.FC<AboutSectionProps> = ({ onNavigate }) => {
   const { language } = useLanguage();
 
   return (
-    <section className="py-20 sm:py-24 bg-[#F5F8F7] text-[#0E1715] relative overflow-hidden border-b border-[#DDE7E4]">
+    <section id="about-home" className="scroll-mt-28 py-20 sm:py-24 bg-[#F5F8F7] text-[#0E1715] relative overflow-hidden border-b border-[#DDE7E4]">
       <div className="absolute -top-24 -left-24 w-80 h-80 rounded-full bg-[#08B4A5]/8 blur-3xl" />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">

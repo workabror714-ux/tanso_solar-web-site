@@ -24,7 +24,7 @@ export const Hero: React.FC<HeroProps> = ({ onNavigate, onOpenConsultation }) =>
     : 'Uy va biznes uchun TANSO quyosh suv isitgichlari: bosimli, bosimsiz va SPLIT tizimlar.');
 
   return (
-    <section className="relative min-h-[92vh] flex items-center overflow-hidden bg-[#0D1514] border-b border-white/8 pt-24 lg:pt-20">
+    <section id="home" className="scroll-mt-28 relative min-h-[92vh] flex items-center overflow-hidden bg-[#0D1514] border-b border-white/8 pt-24 lg:pt-20">
       <div className="absolute inset-0">
         {banner?.bgImageUrl && (
           <img
@@ -118,13 +118,13 @@ export const Hero: React.FC<HeroProps> = ({ onNavigate, onOpenConsultation }) =>
             initial={{ opacity: 0, x: 55, scale: .94 }}
             animate={{ opacity: 1, x: 0, scale: 1 }}
             transition={{ duration: .9, delay: .12, ease: [0.22, 1, 0.36, 1] }}
-            className="relative min-h-[390px] sm:min-h-[480px] lg:min-h-[620px] flex items-center justify-center"
+            className="relative min-h-[410px] sm:min-h-[500px] lg:min-h-[620px] flex items-center justify-center pb-10 lg:pb-8"
           >
             <div className="absolute w-[75%] aspect-square rounded-full bg-[#08B4A5]/20 blur-[90px] animate-orbit-glow" />
             <div className="absolute w-[58%] aspect-square rounded-full border border-[#08B4A5]/15" />
             <div className="absolute w-[78%] aspect-square rounded-full border border-white/[0.05]" />
 
-            <div className="relative z-10 w-[82%] sm:w-[76%] lg:w-[92%] animate-soft-float drop-shadow-[0_42px_55px_rgba(0,0,0,.48)]">
+            <div className="relative z-10 w-[78%] sm:w-[72%] lg:w-[84%] animate-soft-float drop-shadow-[0_42px_55px_rgba(0,0,0,.48)]">
               <img
                 src="/images/products/tanso-bosimsiz-main.png"
                 alt="TANSO quyosh suv isitgichi"
@@ -132,7 +132,7 @@ export const Hero: React.FC<HeroProps> = ({ onNavigate, onOpenConsultation }) =>
               />
             </div>
 
-            <div className="absolute right-0 sm:right-5 lg:right-0 bottom-12 sm:bottom-16 tanso-glass rounded-2xl px-4 py-3 shadow-2xl">
+            <div className="absolute z-30 right-2 sm:right-6 lg:right-3 bottom-3 sm:bottom-5 lg:bottom-7 max-w-[250px] tanso-glass rounded-2xl px-4 py-3 shadow-2xl border border-[#08B4A5]/20">
               <div className="flex items-center gap-3">
                 <span className="w-2.5 h-2.5 rounded-full bg-[#F58A36] shadow-[0_0_0_6px_rgba(245,138,54,.1)]" />
                 <div>

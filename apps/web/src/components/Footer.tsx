@@ -1,5 +1,5 @@
 import React from 'react';
-import { Phone, Send, MapPin, Clock, Instagram, Facebook, Youtube } from 'lucide-react';
+import { Phone, Send, MapPin, Clock, Instagram, Facebook, Youtube, LockKeyhole } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 import { useData } from '../context/DataContext';
 import { TansoLogo } from './TansoLogo';
@@ -150,6 +150,15 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
           <p>© {new Date().getFullYear()} {settings.companyName}. {t('copyright')}</p>
           
           <div className="flex items-center gap-6">
+            <button
+              onClick={() => window.location.assign('/admin')}
+              className="inline-flex items-center gap-1.5 text-zinc-600 hover:text-[#08B4A5] transition-colors"
+              title={language === 'ru' ? 'Админ-панель' : 'Admin panel'}
+            >
+              <LockKeyhole className="w-3.5 h-3.5" />
+              <span>Admin</span>
+            </button>
+
             <div className="flex items-center gap-2">
               <button
                 onClick={() => setLanguage('uz')}
