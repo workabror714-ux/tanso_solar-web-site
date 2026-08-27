@@ -13,7 +13,7 @@ export const ServicesPage: React.FC<ServicesPageProps> = ({ onNavigate, onOpenCo
   const { t } = useLanguage();
 
   return (
-    <div className="min-h-screen bg-zinc-950 text-white pt-28">
+    <div className="min-h-screen bg-[var(--paper)] text-[var(--ink)] pt-28">
       <ServicesSection onNavigate={onNavigate} onOpenConsultation={onOpenConsultation} />
       <ProcessSection />
       <ContactSection />

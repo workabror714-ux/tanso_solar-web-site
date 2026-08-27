@@ -69,7 +69,7 @@ const WebRouter: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#0D1514] text-white flex flex-col font-sans">
+    <div className="min-h-screen bg-[var(--paper)] text-[var(--ink)] flex flex-col font-sans">
       <Header 
         currentPath={currentPath} 
         onNavigate={navigate} 

@@ -12,11 +12,11 @@ export const PartnersSection: React.FC = () => {
   if (activePartners.length < 2) return null;
 
   return (
-    <section className="py-16 bg-[#F5F8F7] border-b border-[#DDE7E4] text-[#0E1715]">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section className="py-16 bg-[var(--teal-tint)] text-[var(--ink)]">
+      <div className="tanso-container">
         <div className="text-center mb-8">
-          <div className="section-kicker justify-center">PARTNERS</div>
-          <h2 className="mt-3 text-2xl sm:text-3xl font-black tracking-tight">{t('partners')}</h2>
+          <div className="kicker justify-center">HAMKORLAR</div>
+          <h2 className="mt-3 text-2xl sm:text-3xl font-extrabold tracking-[-0.01em]">{t('partners')}</h2>
         </div>
         <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-4">
           {activePartners.map((partner) => (
@@ -25,9 +25,9 @@ export const PartnersSection: React.FC = () => {
               href={partner.websiteUrl || '#'}
               target={partner.websiteUrl ? '_blank' : undefined}
               rel={partner.websiteUrl ? 'noopener noreferrer' : undefined}
-              className="h-20 min-w-[180px] px-6 rounded-2xl bg-white border border-[#DDE7E4] flex items-center justify-center hover:border-[#08B4A5]/45 transition-colors"
+              className="h-20 min-w-[180px] px-6 rounded-[14px] bg-[var(--surface)] border border-[var(--border)] flex items-center justify-center hover:border-[var(--teal)] transition-colors"
             >
-              {partner.logoUrl ? <img src={partner.logoUrl} alt={partner.name} className="max-h-10 max-w-[150px] object-contain" /> : <span className="text-xs font-extrabold text-[#63716E]">{partner.name}</span>}
+              {partner.logoUrl ? <img src={partner.logoUrl} alt={partner.name} className="max-h-10 max-w-[150px] object-contain" /> : <span className="text-xs font-extrabold text-[var(--muted)]">{partner.name}</span>}
             </a>
           ))}
         </div>

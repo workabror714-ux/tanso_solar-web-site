@@ -86,24 +86,24 @@ export const LeadModal: React.FC<LeadModalProps> = ({ isOpen, onClose, product, 
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#0F1514]/80 backdrop-blur-md animate-fade-in">
-      <div 
-        className="relative w-full max-w-lg bg-[#151D1C] rounded-2xl shadow-2xl border border-[#222E2B] overflow-hidden text-white"
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm animate-fade-in">
+      <div
+        className="relative w-full max-w-lg bg-[var(--ink)] rounded-[14px] shadow-2xl border border-white/10 overflow-hidden text-white"
         id="lead-modal-container"
       >
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-5 border-b border-[#222E2B] bg-[#0F1514]/50">
+        <div className="flex items-center justify-between px-6 py-5 border-b border-white/10">
           <div>
-            <span className="text-[10px] font-bold tracking-[0.2em] uppercase text-[#04AF9D]">
+            <span className="text-[10px] font-bold tracking-[0.2em] uppercase text-[#7FD8C7]">
               TANSO SOLAR • UZBEKISTAN
             </span>
-            <h3 className="text-lg font-bold text-white uppercase tracking-wide">
+            <h3 className="text-lg font-bold text-white">
               {product ? t('buyNow') : t('consultation')}
             </h3>
           </div>
           <button
             onClick={onClose}
-            className="p-2 rounded-full hover:bg-[#222E2B] text-zinc-400 hover:text-white transition-colors"
+            className="p-2 rounded-full hover:bg-white/10 text-[var(--muted-dark)] hover:text-white transition-colors"
             id="btn-close-lead-modal"
           >
             <X className="w-5 h-5" />
@@ -114,13 +114,13 @@ export const LeadModal: React.FC<LeadModalProps> = ({ isOpen, onClose, product, 
         <div className="p-6">
           {isSuccess ? (
             <div className="py-8 text-center space-y-4">
-              <div className="w-16 h-16 mx-auto bg-[#04AF9D]/20 text-[#04AF9D] rounded-full flex items-center justify-center">
+              <div className="w-16 h-16 mx-auto bg-[var(--teal)]/15 text-[var(--teal)] rounded-full flex items-center justify-center border border-white/10">
                 <CheckCircle2 className="w-10 h-10" />
               </div>
-              <h4 className="text-xl font-bold text-white uppercase">
+              <h4 className="text-xl font-bold text-white">
                 {t('successTitle')}
               </h4>
-              <p className="text-sm text-zinc-300 max-w-sm mx-auto">
+              <p className="text-sm text-[var(--muted-dark)] max-w-sm mx-auto">
                 {t('successMsg')}
               </p>
             </div>
@@ -128,20 +128,20 @@ export const LeadModal: React.FC<LeadModalProps> = ({ isOpen, onClose, product, 
             <form onSubmit={handleSubmit} className="space-y-4">
               {/* Product summary pill if selected */}
               {product && (
-                <div className="p-3 bg-[#0F1514] border border-[#04AF9D]/30 rounded-xl flex items-center gap-3">
-                  <img 
-                    src={product.images?.[0] || '/images/products/tanso-bosimsiz-main.png'} 
-                    alt={getLoc(product, 'title')} 
-                    className="w-14 h-14 object-cover rounded-lg flex-shrink-0"
+                <div className="p-3 bg-white/[0.04] border border-white/10 rounded-md flex items-center gap-3">
+                  <img
+                    src={product.images?.[0] || '/images/products/tanso-bosimsiz-main.png'}
+                    alt={getLoc(product, 'title')}
+                    className="w-14 h-14 object-cover rounded-md flex-shrink-0 bg-white"
                   />
                   <div className="min-w-0">
-                    <p className="text-xs text-[#04AF9D] font-bold uppercase tracking-wider">
+                    <p className="text-xs text-[#7FD8C7] font-bold uppercase tracking-wider">
                       {categoryName || 'Tanso Solar'}
                     </p>
                     <p className="text-sm font-bold truncate text-white">
                       {getLoc(product, 'title')}
                     </p>
-                    <p className="text-xs text-[#F6852D] font-bold mt-0.5">
+                    <p className="text-xs text-[var(--amber)] font-mono-num font-bold mt-0.5">
                       {product.priceUSD ? `$${product.priceUSD}` : (product.priceUZS ? `${product.priceUZS.toLocaleString()} UZS` : 'TANSO SOLAR')}
                     </p>
                   </div>
@@ -149,43 +149,43 @@ export const LeadModal: React.FC<LeadModalProps> = ({ isOpen, onClose, product, 
               )}
 
               {errorMessage && (
-                <div className="p-3 bg-rose-950/40 border border-rose-800 text-rose-300 text-xs rounded-lg">
+                <div className="p-3 bg-[var(--danger)]/15 border border-[var(--danger)]/40 text-[#F3B7A8] text-xs rounded-md">
                   {errorMessage}
                 </div>
               )}
 
               {/* Full Name */}
               <div>
-                <label className="block text-xs font-semibold uppercase text-zinc-400 mb-1.5">
+                <label className="field-label !text-[var(--muted-dark)]">
                   {t('fullName')} *
                 </label>
                 <div className="relative">
-                  <User className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-500" />
+                  <User className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--muted-dark)]" />
                   <input
                     type="text"
                     required
                     value={fullName}
                     onChange={(e) => setFullName(e.target.value)}
                     placeholder={language === 'ru' ? 'Например: Алишер Усманов' : 'Masalan: Alisher Usmanov'}
-                    className="w-full pl-10 pr-4 py-2.5 text-sm bg-[#0F1514] border border-[#222E2B] rounded-xl text-white focus:outline-none focus:border-[#04AF9D] transition-all"
+                    className="field-input-dark"
                   />
                 </div>
               </div>
 
               {/* Phone */}
               <div>
-                <label className="block text-xs font-semibold uppercase text-zinc-400 mb-1.5">
+                <label className="field-label !text-[var(--muted-dark)]">
                   {t('phoneNumber')} *
                 </label>
                 <div className="relative">
-                  <Phone className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-500" />
+                  <Phone className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--muted-dark)]" />
                   <input
                     type="tel"
                     required
                     value={phone}
                     onChange={(e) => setPhone(e.target.value)}
                     placeholder="+998 90 123 45 67"
-                    className="w-full pl-10 pr-4 py-2.5 text-sm bg-[#0F1514] border border-[#222E2B] rounded-xl text-white focus:outline-none focus:border-[#04AF9D] transition-all"
+                    className="field-input-dark"
                   />
                 </div>
               </div>
@@ -193,18 +193,18 @@ export const LeadModal: React.FC<LeadModalProps> = ({ isOpen, onClose, product, 
               {/* Quantity (if product selected) */}
               {product && (
                 <div>
-                  <label className="block text-xs font-semibold uppercase text-zinc-400 mb-1.5">
+                  <label className="field-label !text-[var(--muted-dark)]">
                     {t('quantity')}
                   </label>
                   <div className="relative">
-                    <Hash className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-500" />
+                    <Hash className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--muted-dark)]" />
                     <input
                       type="number"
                       min={1}
                       max={100}
                       value={quantity}
                       onChange={(e) => setQuantity(Math.max(1, parseInt(e.target.value) || 1))}
-                      className="w-full pl-10 pr-4 py-2.5 text-sm bg-[#0F1514] border border-[#222E2B] rounded-xl text-white focus:outline-none focus:border-[#04AF9D] transition-all"
+                      className="field-input-dark"
                     />
                   </div>
                 </div>
@@ -212,26 +212,26 @@ export const LeadModal: React.FC<LeadModalProps> = ({ isOpen, onClose, product, 
 
               {/* Comment */}
               <div>
-                <label className="block text-xs font-semibold uppercase text-zinc-400 mb-1.5">
+                <label className="field-label !text-[var(--muted-dark)]">
                   {t('comment')}
                 </label>
                 <div className="relative">
-                  <FileText className="absolute left-3.5 top-3 w-4 h-4 text-zinc-500" />
+                  <FileText className="absolute left-3.5 top-3 w-4 h-4 text-[var(--muted-dark)]" />
                   <textarea
                     rows={3}
                     value={comment}
                     onChange={(e) => setComment(e.target.value)}
                     placeholder={language === 'ru' ? 'Вопросы по замеру, доставке или монтажу...' : 'Obyekt manzili, montaj vaqti yoki qo‘shimcha savollar...'}
-                    className="w-full pl-10 pr-4 py-2.5 text-sm bg-[#0F1514] border border-[#222E2B] rounded-xl text-white focus:outline-none focus:border-[#04AF9D] transition-all resize-none"
+                    className="field-input-dark resize-none"
                   />
                 </div>
               </div>
 
               {/* Security info note */}
-              <div className="flex items-center gap-2 text-xs text-zinc-400 pt-1">
-                <ShieldCheck className="w-4 h-4 text-[#04AF9D] flex-shrink-0" />
+              <div className="flex items-center gap-2 text-xs text-[var(--muted-dark)] pt-1">
+                <ShieldCheck className="w-4 h-4 text-[var(--teal)] flex-shrink-0" />
                 <span>
-                  {language === 'ru' 
+                  {language === 'ru'
                     ? 'Ваши данные защищены и передаются напрямую инженерам Tanso Solar'
                     : 'Ma’lumotlaringiz maxfiy saqlanadi va bevosita Tanso Solar muhandislariga yuboriladi'}
                 </span>
@@ -241,7 +241,7 @@ export const LeadModal: React.FC<LeadModalProps> = ({ isOpen, onClose, product, 
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="w-full mt-2 py-3.5 px-6 rounded-xl bg-[#04AF9D] hover:bg-[#038a7c] text-white font-bold text-sm shadow-lg shadow-[#04AF9D]/20 flex items-center justify-center gap-2 transition-all disabled:opacity-50 uppercase tracking-wider"
+                className="btn-primary w-full mt-2 !min-h-[52px] disabled:opacity-50"
                 id="btn-submit-lead"
               >
                 {isSubmitting ? (

@@ -20,7 +20,7 @@ interface HomePageProps {
 
 export const HomePage: React.FC<HomePageProps> = ({ onNavigate, onOpenConsultation }) => {
   return (
-    <div className="min-h-screen bg-[#0D1514] text-white overflow-hidden">
+    <div className="min-h-screen bg-[var(--paper)] text-[var(--ink)] overflow-hidden">
       <Hero onNavigate={onNavigate} onOpenConsultation={() => onOpenConsultation(null)} />
       <Reveal><StatsSection /></Reveal>
       <Reveal><CategorySection onNavigate={onNavigate} /></Reveal>

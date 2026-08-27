@@ -51,14 +51,14 @@ export const WhyTanso: React.FC = () => {
   ];
 
   return (
-    <section className="py-20 sm:py-24 bg-[#F5F8F7] text-[#0E1715] border-b border-[#DDE7E4]">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section className="py-20 sm:py-24 bg-[var(--paper)] text-[var(--ink)]">
+      <div className="tanso-container">
         <div className="text-center max-w-2xl mx-auto mb-12 sm:mb-14">
-          <div className="section-kicker justify-center">TANSO ADVANTAGES</div>
-          <h2 className="mt-4 text-3xl sm:text-4xl lg:text-5xl font-black tracking-[-0.035em] text-[#0E1715]">
+          <div className="kicker justify-center">TANSO AFZALLIKLARI</div>
+          <h2 className="mt-4 text-3xl sm:text-4xl lg:text-[2.75rem] font-extrabold tracking-[-0.02em] text-[var(--ink)]">
             {t('whyTanso')}
           </h2>
-          <p className="text-sm text-[#63716E] mt-3">
+          <p className="text-sm text-[var(--muted)] mt-3">
             {language === 'ru'
               ? 'Понятный каталог, несколько типов систем и помощь на этапе выбора и сервиса.'
               : 'Tushunarli katalog, bir nechta tizim turi va tanlashdan servisgacha yordam.'}
@@ -69,17 +69,17 @@ export const WhyTanso: React.FC = () => {
           {benefits.map((item, idx) => {
             const Icon = item.icon;
             return (
-              <div key={item.titleUz} className="group rounded-2xl bg-white border border-[#DDE7E4] p-6 sm:p-7 shadow-[0_12px_40px_rgba(14,35,31,.06)] hover:-translate-y-1 hover:border-[#08B4A5]/45 hover:shadow-[0_20px_55px_rgba(8,180,165,.10)] transition-all duration-300">
+              <div key={item.titleUz} className="card-interactive p-6 sm:p-7">
                 <div className="flex items-start justify-between gap-4 mb-5">
-                  <span className="grid place-items-center w-11 h-11 rounded-xl bg-[#08B4A5]/10 text-[#08B4A5] group-hover:bg-[#08B4A5] group-hover:text-white transition-colors">
+                  <span className="grid place-items-center w-11 h-11 rounded-md bg-[var(--teal-tint)] text-[var(--teal-dark)]">
                     <Icon className="w-5 h-5" />
                   </span>
-                  <span className="text-[10px] font-black tracking-[.14em] text-[#C5CECB]">0{idx + 1}</span>
+                  <span className="step-number">0{idx + 1}</span>
                 </div>
-                <h3 className="text-sm sm:text-base font-extrabold text-[#0E1715]">
+                <h3 className="text-sm sm:text-base font-extrabold text-[var(--ink)]">
                   {language === 'ru' ? item.titleRu : item.titleUz}
                 </h3>
-                <p className="mt-2 text-xs sm:text-sm leading-relaxed text-[#63716E]">
+                <p className="mt-2 text-xs sm:text-sm leading-relaxed text-[var(--muted)]">
                   {language === 'ru' ? item.descRu : item.descUz}
                 </p>
               </div>

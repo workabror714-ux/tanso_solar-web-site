@@ -24,37 +24,36 @@ export const Hero: React.FC<HeroProps> = ({ onNavigate, onOpenConsultation }) =>
     : 'Uy va biznes uchun TANSO quyosh suv isitgichlari: bosimli, bosimsiz va SPLIT tizimlar.');
 
   return (
-    <section id="home" className="scroll-mt-28 relative min-h-[92vh] flex items-center overflow-hidden bg-[#0D1514] border-b border-white/8 pt-24 lg:pt-20">
+    <section id="home" className="scroll-mt-28 relative min-h-[92vh] flex items-center overflow-hidden bg-[var(--ink)] pt-24 lg:pt-20">
       <div className="absolute inset-0">
         {banner?.bgImageUrl && (
           <img
             src={banner.bgImageUrl}
             alt=""
-            className="absolute inset-0 h-full w-full object-cover opacity-[0.12] scale-105"
+            className="absolute inset-0 h-full w-full object-cover opacity-[0.16]"
           />
         )}
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_76%_46%,rgba(8,180,165,.22),transparent_27%),radial-gradient(circle_at_60%_15%,rgba(245,138,54,.08),transparent_22%),linear-gradient(90deg,#0D1514_0%,#0D1514_43%,rgba(13,21,20,.84)_66%,rgba(13,21,20,.96)_100%)]" />
-        <div className="hero-grid absolute inset-0" />
-        <div className="hero-noise absolute inset-0" />
+        <div className="absolute inset-0 bg-[linear-gradient(90deg,var(--ink)_0%,var(--ink)_46%,rgba(16,33,27,.82)_70%,rgba(16,33,27,.95)_100%)]" />
+        <div className="bg-line-grid-dark absolute inset-0 opacity-60" />
       </div>
 
-      <div className="relative z-10 max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-14 lg:py-20">
+      <div className="relative z-10 tanso-container w-full py-14 lg:py-20">
         <div className="grid lg:grid-cols-[1.02fr_.98fr] items-center gap-10 lg:gap-6">
           <div className="max-w-3xl">
             <motion.div
               initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: .55, ease: [0.22, 1, 0.36, 1] }}
-              className="section-kicker mb-5"
+              className="kicker-dark mb-5"
             >
-              TANSO • UZBEKISTAN
+              TANSO • O‘ZBEKISTON
             </motion.div>
 
             <motion.h1
               initial={{ opacity: 0, y: 22 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: .7, delay: .08, ease: [0.22, 1, 0.36, 1] }}
-              className="text-[clamp(2.55rem,6vw,5.2rem)] font-black leading-[.98] tracking-[-0.045em] text-white"
+              className="text-[clamp(2.35rem,5.4vw,4.6rem)] font-extrabold leading-[1.02] tracking-[-0.02em] text-white"
             >
               {title}
             </motion.h1>
@@ -63,7 +62,7 @@ export const Hero: React.FC<HeroProps> = ({ onNavigate, onOpenConsultation }) =>
               initial={{ opacity: 0, y: 18 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: .65, delay: .16, ease: [0.22, 1, 0.36, 1] }}
-              className="mt-6 max-w-2xl text-sm sm:text-base lg:text-lg leading-relaxed text-zinc-300"
+              className="mt-6 max-w-2xl text-sm sm:text-base lg:text-lg leading-relaxed text-[var(--muted-dark)]"
             >
               {subtitle}
             </motion.p>
@@ -74,12 +73,12 @@ export const Hero: React.FC<HeroProps> = ({ onNavigate, onOpenConsultation }) =>
               transition={{ duration: .65, delay: .24, ease: [0.22, 1, 0.36, 1] }}
               className="mt-8 flex flex-col sm:flex-row gap-3"
             >
-              <button onClick={() => onNavigate(banner?.buttonLink || '/catalog')} className="btn-tanso-primary group">
+              <button onClick={() => onNavigate(banner?.buttonLink || '/catalog')} className="btn-primary group">
                 <span>{getLoc(banner, 'buttonText') || t('viewProducts')}</span>
                 <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
               </button>
-              <button onClick={onOpenConsultation} className="btn-tanso-secondary">
-                <Phone className="w-4 h-4 text-[#F58A36]" />
+              <button onClick={onOpenConsultation} className="btn-secondary-dark">
+                <Phone className="w-4 h-4 text-[var(--amber)]" />
                 <span>{t('freeConsultation')}</span>
               </button>
             </motion.div>
@@ -90,41 +89,39 @@ export const Hero: React.FC<HeroProps> = ({ onNavigate, onOpenConsultation }) =>
               transition={{ duration: .8, delay: .36 }}
               className="mt-9 grid grid-cols-3 gap-2 sm:gap-3 max-w-2xl"
             >
-              <div className="tanso-card rounded-xl px-3 sm:px-4 py-3.5">
-                <PackageCheck className="w-4 h-4 text-[#08B4A5] mb-2" />
-                <div className="text-lg sm:text-xl font-black text-white">{productCount}</div>
-                <div className="mt-0.5 text-[9px] sm:text-[10px] uppercase tracking-wider text-zinc-500">
+              <div className="card-dark px-3 sm:px-4 py-3.5">
+                <PackageCheck className="w-4 h-4 text-[var(--teal)] mb-2" />
+                <div className="text-lg sm:text-xl font-mono-num font-bold text-white">{productCount}</div>
+                <div className="mt-0.5 text-[9px] sm:text-[10px] uppercase tracking-wider text-[var(--muted-dark)]">
                   {language === 'ru' ? 'моделей' : 'model'}
                 </div>
               </div>
-              <div className="tanso-card rounded-xl px-3 sm:px-4 py-3.5">
-                <Layers3 className="w-4 h-4 text-[#F58A36] mb-2" />
-                <div className="text-lg sm:text-xl font-black text-white">{categoryCount}</div>
-                <div className="mt-0.5 text-[9px] sm:text-[10px] uppercase tracking-wider text-zinc-500">
+              <div className="card-dark px-3 sm:px-4 py-3.5">
+                <Layers3 className="w-4 h-4 text-[var(--amber)] mb-2" />
+                <div className="text-lg sm:text-xl font-mono-num font-bold text-white">{categoryCount}</div>
+                <div className="mt-0.5 text-[9px] sm:text-[10px] uppercase tracking-wider text-[var(--muted-dark)]">
                   {language === 'ru' ? 'категории' : 'kategoriya'}
                 </div>
               </div>
-              <div className="tanso-card rounded-xl px-3 sm:px-4 py-3.5">
-                <Droplets className="w-4 h-4 text-[#08B4A5] mb-2" />
-                <div className="text-xs sm:text-sm font-extrabold text-white leading-tight">
+              <div className="card-dark px-3 sm:px-4 py-3.5">
+                <Droplets className="w-4 h-4 text-[var(--teal)] mb-2" />
+                <div className="text-xs sm:text-sm font-semibold text-white leading-tight">
                   {language === 'ru' ? 'Напорные / безнапорные' : 'Bosimli / bosimsiz'}
                 </div>
-                <div className="mt-1 text-[9px] sm:text-[10px] uppercase tracking-wider text-zinc-500">TANSO</div>
+                <div className="mt-1 text-[9px] sm:text-[10px] uppercase tracking-wider text-[var(--muted-dark)]">TANSO</div>
               </div>
             </motion.div>
           </div>
 
           <motion.div
-            initial={{ opacity: 0, x: 55, scale: .94 }}
+            initial={{ opacity: 0, x: 40, scale: .96 }}
             animate={{ opacity: 1, x: 0, scale: 1 }}
             transition={{ duration: .9, delay: .12, ease: [0.22, 1, 0.36, 1] }}
-            className="relative min-h-[410px] sm:min-h-[500px] lg:min-h-[620px] flex items-center justify-center pb-10 lg:pb-8"
+            className="relative min-h-[360px] sm:min-h-[460px] lg:min-h-[580px] flex items-center justify-center pb-10 lg:pb-8"
           >
-            <div className="absolute w-[75%] aspect-square rounded-full bg-[#08B4A5]/20 blur-[90px] animate-orbit-glow" />
-            <div className="absolute w-[58%] aspect-square rounded-full border border-[#08B4A5]/15" />
-            <div className="absolute w-[78%] aspect-square rounded-full border border-white/[0.05]" />
+            <div className="absolute w-[80%] aspect-square rounded-full border border-white/[0.06]" />
 
-            <div className="relative z-10 w-[78%] sm:w-[72%] lg:w-[84%] animate-soft-float drop-shadow-[0_42px_55px_rgba(0,0,0,.48)]">
+            <div className="relative z-10 w-[76%] sm:w-[70%] lg:w-[80%] drop-shadow-[0_36px_50px_rgba(0,0,0,.5)]">
               <img
                 src="/images/products/tanso-bosimsiz-main.png"
                 alt="TANSO quyosh suv isitgichi"
@@ -132,12 +129,12 @@ export const Hero: React.FC<HeroProps> = ({ onNavigate, onOpenConsultation }) =>
               />
             </div>
 
-            <div className="absolute z-30 right-2 sm:right-6 lg:right-3 bottom-3 sm:bottom-5 lg:bottom-7 max-w-[250px] tanso-glass rounded-2xl px-4 py-3 shadow-2xl border border-[#08B4A5]/20">
+            <div className="absolute z-30 right-2 sm:right-6 lg:right-3 bottom-3 sm:bottom-5 lg:bottom-7 max-w-[250px] card-dark px-4 py-3">
               <div className="flex items-center gap-3">
-                <span className="w-2.5 h-2.5 rounded-full bg-[#F58A36] shadow-[0_0_0_6px_rgba(245,138,54,.1)]" />
+                <span className="w-2 h-2 rounded-full bg-[var(--amber)]" />
                 <div>
-                  <p className="text-[9px] uppercase tracking-[.16em] text-zinc-500">TANSO</p>
-                  <p className="text-[11px] sm:text-xs font-extrabold text-white">
+                  <p className="text-[9px] uppercase tracking-[.16em] text-[var(--muted-dark)]">TANSO</p>
+                  <p className="text-[11px] sm:text-xs font-semibold text-white">
                     {language === 'ru' ? 'Солнечные водонагреватели' : 'Quyosh suv isitgichlari'}
                   </p>
                 </div>
@@ -147,7 +144,7 @@ export const Hero: React.FC<HeroProps> = ({ onNavigate, onOpenConsultation }) =>
         </div>
       </div>
 
-      <div className="absolute bottom-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-[#08B4A5]/60 to-transparent" />
+      <div className="absolute bottom-0 inset-x-0 h-px bg-white/10" />
     </section>
   );
 };
