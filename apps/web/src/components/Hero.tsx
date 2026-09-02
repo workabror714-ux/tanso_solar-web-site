@@ -24,7 +24,7 @@ export const Hero: React.FC<HeroProps> = ({ onNavigate, onOpenConsultation }) =>
     : 'Uy va biznes uchun TANSO quyosh suv isitgichlari: bosimli, bosimsiz va SPLIT tizimlar.');
 
   return (
-    <section id="home" className="scroll-mt-28 relative flex items-center overflow-hidden bg-[var(--ink)] pt-20 lg:pt-16">
+    <section id="home" className="scroll-mt-28 relative flex items-center overflow-hidden bg-[var(--ink)] pt-16 lg:pt-14">
       <div className="absolute inset-0">
         {banner?.bgImageUrl && (
           <img
@@ -37,8 +37,8 @@ export const Hero: React.FC<HeroProps> = ({ onNavigate, onOpenConsultation }) =>
         <div className="bg-line-grid-dark absolute inset-0 opacity-60" />
       </div>
 
-      <div className="relative z-10 tanso-container w-full py-9 lg:py-12">
-        <div className="grid lg:grid-cols-[1.02fr_.98fr] items-center gap-10 lg:gap-6">
+      <div className="relative z-10 tanso-container py-7 lg:py-9">
+        <div className="grid lg:grid-cols-[1.02fr_.98fr] items-center gap-8 lg:gap-6">
           <div className="max-w-3xl">
             <motion.div
               initial={{ opacity: 0, y: 16 }}
@@ -117,7 +117,7 @@ export const Hero: React.FC<HeroProps> = ({ onNavigate, onOpenConsultation }) =>
             initial={{ opacity: 0, x: 40, scale: .96 }}
             animate={{ opacity: 1, x: 0, scale: 1 }}
             transition={{ duration: .9, delay: .12, ease: [0.22, 1, 0.36, 1] }}
-            className="relative min-h-[280px] sm:min-h-[360px] lg:min-h-[420px] flex items-center justify-center pb-6 lg:pb-2"
+            className="relative min-h-[260px] sm:min-h-[320px] lg:min-h-[360px] flex items-center justify-center pb-4 lg:pb-0"
           >
             <div className="absolute w-[80%] aspect-square rounded-full border border-white/[0.06]" />
 
