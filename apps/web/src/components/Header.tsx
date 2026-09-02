@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { Phone, Menu, X, ChevronRight, LockKeyhole } from 'lucide-react';
+import { Phone, Menu, X, ChevronRight } from 'lucide-react';
 import { motion } from 'motion/react';
 import { useLanguage } from '../context/LanguageContext';
 import { useData } from '../context/DataContext';
@@ -110,11 +110,6 @@ export const Header: React.FC<HeaderProps> = ({ currentPath, onNavigate, onOpenC
     return currentPath === item.path || (item.path !== '/' && currentPath.startsWith(item.path));
   };
 
-  const openAdmin = () => {
-    // Root application switches between public/admin apps based on pathname, so use a full navigation.
-    window.location.assign('/admin');
-  };
-
   const phoneHref = settings.phone1 ? `tel:${settings.phone1.replace(/\s+/g, '')}` : undefined;
 
   return (
@@ -189,15 +184,6 @@ export const Header: React.FC<HeaderProps> = ({ currentPath, onNavigate, onOpenC
             <button onClick={onOpenConsultation} className="btn-primary whitespace-nowrap !min-h-[42px] !px-4">
               {t('consultation')}
             </button>
-
-            <button
-              onClick={openAdmin}
-              className="grid place-items-center w-10 h-10 rounded-md border border-white/12 text-[var(--muted-dark)] hover:text-white hover:border-white/30 transition-all"
-              title={language === 'ru' ? 'Админ-панель' : 'Admin panel'}
-              aria-label={language === 'ru' ? 'Открыть админ-панель' : 'Admin panelni ochish'}
-            >
-              <LockKeyhole className="w-4 h-4" />
-            </button>
           </div>
 
           <div className="flex xl:hidden items-center gap-2">
@@ -245,13 +231,6 @@ export const Header: React.FC<HeaderProps> = ({ currentPath, onNavigate, onOpenC
                 )}
                 <button onClick={() => { setMobileMenuOpen(false); onOpenConsultation(); }} className="btn-primary w-full">
                   {t('consultation')}
-                </button>
-                <button
-                  onClick={openAdmin}
-                  className="sm:col-span-2 inline-flex items-center justify-center gap-2 rounded-md border border-white/12 py-3 text-xs font-bold uppercase tracking-wider text-[var(--muted-dark)] hover:text-white transition-colors"
-                >
-                  <LockKeyhole className="w-4 h-4 text-[var(--amber)]" />
-                  {language === 'ru' ? 'Админ-панель' : 'Admin panel'}
                 </button>
               </div>
             </div>

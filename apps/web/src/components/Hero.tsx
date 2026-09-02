@@ -24,7 +24,7 @@ export const Hero: React.FC<HeroProps> = ({ onNavigate, onOpenConsultation }) =>
     : 'Uy va biznes uchun TANSO quyosh suv isitgichlari: bosimli, bosimsiz va SPLIT tizimlar.');
 
   return (
-    <section id="home" className="scroll-mt-28 relative min-h-[92vh] flex items-center overflow-hidden bg-[var(--ink)] pt-24 lg:pt-20">
+    <section id="home" className="scroll-mt-28 relative flex items-center overflow-hidden bg-[var(--ink)] pt-20 lg:pt-16">
       <div className="absolute inset-0">
         {banner?.bgImageUrl && (
           <img
@@ -37,7 +37,7 @@ export const Hero: React.FC<HeroProps> = ({ onNavigate, onOpenConsultation }) =>
         <div className="bg-line-grid-dark absolute inset-0 opacity-60" />
       </div>
 
-      <div className="relative z-10 tanso-container w-full py-14 lg:py-20">
+      <div className="relative z-10 tanso-container w-full py-9 lg:py-12">
         <div className="grid lg:grid-cols-[1.02fr_.98fr] items-center gap-10 lg:gap-6">
           <div className="max-w-3xl">
             <motion.div
@@ -53,7 +53,7 @@ export const Hero: React.FC<HeroProps> = ({ onNavigate, onOpenConsultation }) =>
               initial={{ opacity: 0, y: 22 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: .7, delay: .08, ease: [0.22, 1, 0.36, 1] }}
-              className="text-[clamp(2.35rem,5.4vw,4.6rem)] font-extrabold leading-[1.02] tracking-[-0.02em] text-white"
+              className="text-[clamp(2rem,4.4vw,3.6rem)] font-extrabold leading-[1.04] tracking-[-0.02em] text-white"
             >
               {title}
             </motion.h1>
@@ -62,7 +62,7 @@ export const Hero: React.FC<HeroProps> = ({ onNavigate, onOpenConsultation }) =>
               initial={{ opacity: 0, y: 18 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: .65, delay: .16, ease: [0.22, 1, 0.36, 1] }}
-              className="mt-6 max-w-2xl text-sm sm:text-base lg:text-lg leading-relaxed text-[var(--muted-dark)]"
+              className="mt-4 max-w-2xl text-sm sm:text-base leading-relaxed text-[var(--muted-dark)]"
             >
               {subtitle}
             </motion.p>
@@ -71,7 +71,7 @@ export const Hero: React.FC<HeroProps> = ({ onNavigate, onOpenConsultation }) =>
               initial={{ opacity: 0, y: 18 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: .65, delay: .24, ease: [0.22, 1, 0.36, 1] }}
-              className="mt-8 flex flex-col sm:flex-row gap-3"
+              className="mt-6 flex flex-col sm:flex-row gap-3"
             >
               <button onClick={() => onNavigate(banner?.buttonLink || '/catalog')} className="btn-primary group">
                 <span>{getLoc(banner, 'buttonText') || t('viewProducts')}</span>
@@ -87,24 +87,24 @@ export const Hero: React.FC<HeroProps> = ({ onNavigate, onOpenConsultation }) =>
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: .8, delay: .36 }}
-              className="mt-9 grid grid-cols-3 gap-2 sm:gap-3 max-w-2xl"
+              className="mt-6 grid grid-cols-3 gap-2 sm:gap-3 max-w-2xl"
             >
-              <div className="card-dark px-3 sm:px-4 py-3.5">
-                <PackageCheck className="w-4 h-4 text-[var(--teal)] mb-2" />
+              <div className="card-dark px-3 sm:px-4 py-2.5">
+                <PackageCheck className="w-4 h-4 text-[var(--teal)] mb-1.5" />
                 <div className="text-lg sm:text-xl font-mono-num font-bold text-white">{productCount}</div>
                 <div className="mt-0.5 text-[9px] sm:text-[10px] uppercase tracking-wider text-[var(--muted-dark)]">
                   {language === 'ru' ? 'моделей' : 'model'}
                 </div>
               </div>
-              <div className="card-dark px-3 sm:px-4 py-3.5">
-                <Layers3 className="w-4 h-4 text-[var(--amber)] mb-2" />
+              <div className="card-dark px-3 sm:px-4 py-2.5">
+                <Layers3 className="w-4 h-4 text-[var(--amber)] mb-1.5" />
                 <div className="text-lg sm:text-xl font-mono-num font-bold text-white">{categoryCount}</div>
                 <div className="mt-0.5 text-[9px] sm:text-[10px] uppercase tracking-wider text-[var(--muted-dark)]">
                   {language === 'ru' ? 'категории' : 'kategoriya'}
                 </div>
               </div>
-              <div className="card-dark px-3 sm:px-4 py-3.5">
-                <Droplets className="w-4 h-4 text-[var(--teal)] mb-2" />
+              <div className="card-dark px-3 sm:px-4 py-2.5">
+                <Droplets className="w-4 h-4 text-[var(--teal)] mb-1.5" />
                 <div className="text-xs sm:text-sm font-semibold text-white leading-tight">
                   {language === 'ru' ? 'Напорные / безнапорные' : 'Bosimli / bosimsiz'}
                 </div>
@@ -117,7 +117,7 @@ export const Hero: React.FC<HeroProps> = ({ onNavigate, onOpenConsultation }) =>
             initial={{ opacity: 0, x: 40, scale: .96 }}
             animate={{ opacity: 1, x: 0, scale: 1 }}
             transition={{ duration: .9, delay: .12, ease: [0.22, 1, 0.36, 1] }}
-            className="relative min-h-[360px] sm:min-h-[460px] lg:min-h-[580px] flex items-center justify-center pb-10 lg:pb-8"
+            className="relative min-h-[280px] sm:min-h-[360px] lg:min-h-[420px] flex items-center justify-center pb-6 lg:pb-2"
           >
             <div className="absolute w-[80%] aspect-square rounded-full border border-white/[0.06]" />
 
