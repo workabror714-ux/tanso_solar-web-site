@@ -1,36 +1,16 @@
 import express from 'express';
 import path from 'path';
 import { createServer as createViteServer } from 'vite';
-import { 
-  initialCategories, 
-  initialProducts, 
-  initialHeroBanners, 
-  initialServices, 
-  initialProjects, 
-  initialPartners, 
-  initialSiteSettings, 
-  initialLeads 
-} from './packages/shared/data/initialData.ts';
-
-// In-memory data store synchronized with client requests
-let categoriesData = [...initialCategories];
-let productsData = [...initialProducts];
-let bannersData = [...initialHeroBanners];
-let servicesData = [...initialServices];
-let projectsData = [...initialProjects];
-let partnersData = [...initialPartners];
-let settingsData = { ...initialSiteSettings };
-let leadsData = [...initialLeads];
-let notificationsData = leadsData
-  .filter(l => !l.isRead)
-  .map(l => ({
-    id: `notif-${l.id}`,
-    leadId: l.id,
-    title: 'Yangi so‘rov kelib tushdi',
-    message: `${l.fullName} (${l.phone}) - ${l.productName || 'Konsultatsiya'}`,
-    createdAt: l.createdAt,
-    isRead: false
-  }));
+import {
+  ensureDb,
+  getAll,
+  insertRow,
+  patchRow,
+  deleteRow,
+  getSettings,
+  updateSettings,
+  replaceAllBanners,
+} from './packages/shared/db/store.ts';
 
 async function sendTelegramNotification(lead: any) {
   const token = process.env.TELEGRAM_BOT_TOKEN;
@@ -80,14 +60,28 @@ const PORT = 3000;
 async function startServer() {
   app.use(express.json({ limit: '10mb' }));
 
+  // Ensure the database is ready (tables created + seeded) before any
+  // /api request is handled. Cheap after the first call: ensureDb()
+  // memoizes its promise per running instance.
+  app.use('/api', async (req, res, next) => {
+    try {
+      await ensureDb();
+      next();
+    } catch (err: any) {
+      console.error('[DB Init Error]', err);
+      res.status(500).json({ error: 'Database ulanishda xatolik yuz berdi.', detail: String(err?.message || err) });
+    }
+  });
+
   // API Routes
   app.get('/api/health', (req, res) => {
     res.json({ status: 'ok', timestamp: new Date().toISOString() });
   });
 
   // LEADS API
-  app.get('/api/leads', (req, res) => {
-    res.json(leadsData);
+  app.get('/api/leads', async (req, res) => {
+    const leads = await getAll('leads', 'seq DESC');
+    res.json(leads);
   });
 
   app.post('/api/leads', async (req, res) => {
@@ -115,7 +109,7 @@ async function startServer() {
       adminNotes: ''
     };
 
-    leadsData.unshift(newLead);
+    await insertRow('leads', newLead);
 
     // Create Notification
     const newNotif = {
@@ -126,7 +120,7 @@ async function startServer() {
       createdAt: newLead.createdAt,
       isRead: false
     };
-    notificationsData.unshift(newNotif);
+    await insertRow('notifications', newNotif);
 
     // Trigger Telegram Notification asynchronously
     sendTelegramNotification(newLead);
@@ -134,195 +128,193 @@ async function startServer() {
     res.status(201).json({ success: true, lead: newLead });
   });
 
-  app.patch('/api/leads/:id', (req, res) => {
+  app.patch('/api/leads/:id', async (req, res) => {
     const { id } = req.params;
     const { status, adminNotes, isRead } = req.body;
 
-    const leadIndex = leadsData.findIndex(l => l.id === id);
-    if (leadIndex === -1) {
+    const patch: Record<string, unknown> = { updatedAt: new Date().toISOString() };
+    if (status !== undefined) patch.status = status;
+    if (adminNotes !== undefined) patch.adminNotes = adminNotes;
+    if (isRead !== undefined) patch.isRead = isRead;
+
+    const updated = await patchRow('leads', id, patch);
+    if (!updated) {
       return res.status(404).json({ error: 'So‘rov topilmadi.' });
     }
 
-    if (status !== undefined) leadsData[leadIndex].status = status;
-    if (adminNotes !== undefined) leadsData[leadIndex].adminNotes = adminNotes;
-    if (isRead !== undefined) leadsData[leadIndex].isRead = isRead;
-    leadsData[leadIndex].updatedAt = new Date().toISOString();
-
-    res.json({ success: true, lead: leadsData[leadIndex] });
+    res.json({ success: true, lead: updated });
   });
 
-  app.delete('/api/leads/:id', (req, res) => {
+  app.delete('/api/leads/:id', async (req, res) => {
     const { id } = req.params;
-    leadsData = leadsData.filter(l => l.id !== id);
+    await deleteRow('leads', id);
     res.json({ success: true });
   });
 
   // PRODUCTS API
-  app.get('/api/products', (req, res) => {
-    res.json(productsData);
+  app.get('/api/products', async (req, res) => {
+    const products = await getAll('products', 'seq DESC');
+    res.json(products);
   });
 
-  app.post('/api/products', (req, res) => {
+  app.post('/api/products', async (req, res) => {
     const product = {
       ...req.body,
       id: `prod-${Date.now()}`,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString()
     };
-    productsData.unshift(product);
+    await insertRow('products', product);
     res.status(201).json(product);
   });
 
-  app.put('/api/products/:id', (req, res) => {
+  app.put('/api/products/:id', async (req, res) => {
     const { id } = req.params;
-    const index = productsData.findIndex(p => p.id === id);
-    if (index === -1) return res.status(404).json({ error: 'Mahsulot topilmadi.' });
-
-    productsData[index] = {
-      ...productsData[index],
-      ...req.body,
-      updatedAt: new Date().toISOString()
-    };
-    res.json(productsData[index]);
+    const updated = await patchRow('products', id, { ...req.body, updatedAt: new Date().toISOString() });
+    if (!updated) return res.status(404).json({ error: 'Mahsulot topilmadi.' });
+    res.json(updated);
   });
 
-  app.delete('/api/products/:id', (req, res) => {
+  app.delete('/api/products/:id', async (req, res) => {
     const { id } = req.params;
-    productsData = productsData.filter(p => p.id !== id);
+    await deleteRow('products', id);
     res.json({ success: true });
   });
 
   // CATEGORIES API
-  app.get('/api/categories', (req, res) => {
-    res.json(categoriesData);
+  app.get('/api/categories', async (req, res) => {
+    const categories = await getAll('categories', `(data->>'sortOrder')::int NULLS LAST, seq ASC`);
+    res.json(categories);
   });
 
-  app.post('/api/categories', (req, res) => {
+  app.post('/api/categories', async (req, res) => {
     const category = {
       ...req.body,
       id: `cat-${Date.now()}`
     };
-    categoriesData.push(category);
+    await insertRow('categories', category);
     res.status(201).json(category);
   });
 
-  app.put('/api/categories/:id', (req, res) => {
+  app.put('/api/categories/:id', async (req, res) => {
     const { id } = req.params;
-    const index = categoriesData.findIndex(c => c.id === id);
-    if (index === -1) return res.status(404).json({ error: 'Kategoriya topilmadi.' });
-
-    categoriesData[index] = { ...categoriesData[index], ...req.body };
-    res.json(categoriesData[index]);
+    const updated = await patchRow('categories', id, req.body);
+    if (!updated) return res.status(404).json({ error: 'Kategoriya topilmadi.' });
+    res.json(updated);
   });
 
-  app.delete('/api/categories/:id', (req, res) => {
+  app.delete('/api/categories/:id', async (req, res) => {
     const { id } = req.params;
-    categoriesData = categoriesData.filter(c => c.id !== id);
+    await deleteRow('categories', id);
     res.json({ success: true });
   });
 
   // HERO BANNERS API
-  app.get('/api/banners', (req, res) => {
-    res.json(bannersData);
+  app.get('/api/banners', async (req, res) => {
+    const banners = await getAll('hero_banners', `(data->>'sortOrder')::int NULLS LAST, seq ASC`);
+    res.json(banners);
   });
 
-  app.put('/api/banners', (req, res) => {
-    bannersData = req.body;
-    res.json(bannersData);
+  app.put('/api/banners', async (req, res) => {
+    const banners = await replaceAllBanners(req.body);
+    res.json(banners);
   });
 
   // SERVICES API
-  app.get('/api/services', (req, res) => {
-    res.json(servicesData);
+  app.get('/api/services', async (req, res) => {
+    const services = await getAll('services', `(data->>'sortOrder')::int NULLS LAST, seq ASC`);
+    res.json(services);
   });
 
-  app.post('/api/services', (req, res) => {
+  app.post('/api/services', async (req, res) => {
     const service = { ...req.body, id: `serv-${Date.now()}` };
-    servicesData.push(service);
+    await insertRow('services', service);
     res.status(201).json(service);
   });
 
-  app.put('/api/services/:id', (req, res) => {
+  app.put('/api/services/:id', async (req, res) => {
     const { id } = req.params;
-    const idx = servicesData.findIndex(s => s.id === id);
-    if (idx === -1) return res.status(404).json({ error: 'Xizmat topilmadi.' });
-    servicesData[idx] = { ...servicesData[idx], ...req.body };
-    res.json(servicesData[idx]);
+    const updated = await patchRow('services', id, req.body);
+    if (!updated) return res.status(404).json({ error: 'Xizmat topilmadi.' });
+    res.json(updated);
   });
 
-  app.delete('/api/services/:id', (req, res) => {
+  app.delete('/api/services/:id', async (req, res) => {
     const { id } = req.params;
-    servicesData = servicesData.filter(s => s.id !== id);
+    await deleteRow('services', id);
     res.json({ success: true });
   });
 
   // PROJECTS API
-  app.get('/api/projects', (req, res) => {
-    res.json(projectsData);
+  app.get('/api/projects', async (req, res) => {
+    const projects = await getAll('projects', 'seq DESC');
+    res.json(projects);
   });
 
-  app.post('/api/projects', (req, res) => {
+  app.post('/api/projects', async (req, res) => {
     const project = { ...req.body, id: `proj-${Date.now()}` };
-    projectsData.unshift(project);
+    await insertRow('projects', project);
     res.status(201).json(project);
   });
 
-  app.put('/api/projects/:id', (req, res) => {
+  app.put('/api/projects/:id', async (req, res) => {
     const { id } = req.params;
-    const idx = projectsData.findIndex(p => p.id === id);
-    if (idx === -1) return res.status(404).json({ error: 'Loyiha topilmadi.' });
-    projectsData[idx] = { ...projectsData[idx], ...req.body };
-    res.json(projectsData[idx]);
+    const updated = await patchRow('projects', id, req.body);
+    if (!updated) return res.status(404).json({ error: 'Loyiha topilmadi.' });
+    res.json(updated);
   });
 
-  app.delete('/api/projects/:id', (req, res) => {
+  app.delete('/api/projects/:id', async (req, res) => {
     const { id } = req.params;
-    projectsData = projectsData.filter(p => p.id !== id);
+    await deleteRow('projects', id);
     res.json({ success: true });
   });
 
   // PARTNERS API
-  app.get('/api/partners', (req, res) => {
-    res.json(partnersData);
+  app.get('/api/partners', async (req, res) => {
+    const partners = await getAll('partners', `(data->>'sortOrder')::int NULLS LAST, seq ASC`);
+    res.json(partners);
   });
 
-  app.post('/api/partners', (req, res) => {
+  app.post('/api/partners', async (req, res) => {
     const partner = { ...req.body, id: `part-${Date.now()}` };
-    partnersData.push(partner);
+    await insertRow('partners', partner);
     res.status(201).json(partner);
   });
 
-  app.put('/api/partners/:id', (req, res) => {
+  app.put('/api/partners/:id', async (req, res) => {
     const { id } = req.params;
-    const idx = partnersData.findIndex(p => p.id === id);
-    if (idx === -1) return res.status(404).json({ error: 'Hamkor topilmadi.' });
-    partnersData[idx] = { ...partnersData[idx], ...req.body };
-    res.json(partnersData[idx]);
+    const updated = await patchRow('partners', id, req.body);
+    if (!updated) return res.status(404).json({ error: 'Hamkor topilmadi.' });
+    res.json(updated);
   });
 
-  app.delete('/api/partners/:id', (req, res) => {
+  app.delete('/api/partners/:id', async (req, res) => {
     const { id } = req.params;
-    partnersData = partnersData.filter(p => p.id !== id);
+    await deleteRow('partners', id);
     res.json({ success: true });
   });
 
   // SETTINGS API
-  app.get('/api/settings', (req, res) => {
-    res.json(settingsData);
+  app.get('/api/settings', async (req, res) => {
+    const settings = await getSettings();
+    res.json(settings);
   });
 
-  app.put('/api/settings', (req, res) => {
-    settingsData = { ...settingsData, ...req.body };
-    res.json(settingsData);
+  app.put('/api/settings', async (req, res) => {
+    const settings = await updateSettings(req.body);
+    res.json(settings);
   });
 
   // NOTIFICATIONS API
-  app.get('/api/notifications', (req, res) => {
-    res.json(notificationsData);
+  app.get('/api/notifications', async (req, res) => {
+    const notifications = await getAll('notifications', 'seq DESC');
+    res.json(notifications);
   });
 
-  app.patch('/api/notifications/read-all', (req, res) => {
-    notificationsData.forEach(n => n.isRead = true);
+  app.patch('/api/notifications/read-all', async (req, res) => {
+    const notifications = await getAll<{ id: string }>('notifications');
+    await Promise.all(notifications.map((n) => patchRow('notifications', n.id, { isRead: true })));
     res.json({ success: true });
   });
 
