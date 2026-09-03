@@ -1,4 +1,4 @@
-import { getPool } from './client';
+import { neon } from '@neondatabase/serverless';
 import {
   initialCategories,
   initialProducts,
@@ -8,20 +8,43 @@ import {
   initialPartners,
   initialSiteSettings,
   initialLeads,
-} from '../data/initialData';
+} from './packages/shared/data/initialData.ts';
 
 /**
- * Persistence layer for TANSO's admin-editable content.
+ * Persistence layer for TANSO's admin-editable content, backed by Neon
+ * Postgres over Neon's HTTP driver (no TCP/native bindings, which plays
+ * well with Vercel's serverless function packaging).
  *
- * Design: one Postgres table per entity, each row storing the full object
- * as JSONB under a `data` column, keyed by the entity's own `id`. This
- * mirrors the exact shapes already defined in packages/shared/types and
- * used throughout the frontend, so no field-by-field column mapping is
- * needed and the API's response shapes stay unchanged.
- *
- * A `seq` column (insertion order) backs the "newest first" ordering that
- * the in-memory version got for free from Array.unshift().
+ * Design: one table per entity, each row storing the full object as JSONB
+ * under a `data` column, keyed by the entity's own `id`. This mirrors the
+ * shapes already defined in packages/shared/types and used throughout the
+ * frontend, so no field-by-field column mapping is needed.
  */
+
+type SqlFn = ReturnType<typeof neon>;
+
+let sqlClient: SqlFn | null = null;
+
+function getSql(): SqlFn {
+  if (sqlClient) return sqlClient;
+
+  const connectionString =
+    process.env.DATABASE_URL ||
+    process.env.POSTGRES_URL ||
+    process.env.POSTGRES_PRISMA_URL ||
+    process.env.DATABASE_URL_UNPOOLED ||
+    process.env.POSTGRES_URL_NON_POOLING;
+
+  if (!connectionString) {
+    throw new Error(
+      "Database ulanmagan: DATABASE_URL (yoki POSTGRES_URL) environment variable topilmadi. " +
+      "Vercel dashboard -> Storage -> Create Database -> Postgres orqali ulang."
+    );
+  }
+
+  sqlClient = neon(connectionString);
+  return sqlClient;
+}
 
 const ROW_TABLES = [
   'categories',
@@ -52,10 +75,10 @@ export function ensureDb(): Promise<void> {
 }
 
 async function doInit(): Promise<void> {
-  const pool = getPool();
+  const sql = getSql();
 
   for (const table of ROW_TABLES) {
-    await pool.query(`
+    await sql.query(`
       CREATE TABLE IF NOT EXISTS ${table} (
         id TEXT PRIMARY KEY,
         seq SERIAL,
@@ -64,7 +87,7 @@ async function doInit(): Promise<void> {
     `);
   }
 
-  await pool.query(`
+  await sql.query(`
     CREATE TABLE IF NOT EXISTS site_settings (
       id TEXT PRIMARY KEY DEFAULT 'main',
       data JSONB NOT NULL
@@ -79,14 +102,14 @@ async function doInit(): Promise<void> {
   await seedIfEmpty('partners', initialPartners as unknown as Record<string, unknown>[]);
   await seedIfEmpty('leads', initialLeads as unknown as Record<string, unknown>[]);
 
-  const { rows: settingsRows } = await pool.query(`SELECT 1 FROM site_settings WHERE id = 'main'`);
+  const settingsRows = (await sql.query(`SELECT 1 FROM site_settings WHERE id = 'main'`)) as any[];
   if (settingsRows.length === 0) {
-    await pool.query(`INSERT INTO site_settings (id, data) VALUES ('main', $1)`, [
+    await sql.query(`INSERT INTO site_settings (id, data) VALUES ('main', $1)`, [
       JSON.stringify(initialSiteSettings),
     ]);
   }
 
-  const { rows: notifRows } = await pool.query(`SELECT 1 FROM notifications LIMIT 1`);
+  const notifRows = (await sql.query(`SELECT 1 FROM notifications LIMIT 1`)) as any[];
   if (notifRows.length === 0) {
     const unread = (initialLeads as any[]).filter((l) => !l.isRead);
     for (const lead of unread) {
@@ -98,7 +121,7 @@ async function doInit(): Promise<void> {
         createdAt: lead.createdAt,
         isRead: false,
       };
-      await pool.query(
+      await sql.query(
         `INSERT INTO notifications (id, data) VALUES ($1, $2) ON CONFLICT (id) DO NOTHING`,
         [notif.id, JSON.stringify(notif)]
       );
@@ -107,11 +130,11 @@ async function doInit(): Promise<void> {
 }
 
 async function seedIfEmpty(table: RowTable, rows: Record<string, unknown>[]): Promise<void> {
-  const pool = getPool();
-  const { rows: existing } = await pool.query(`SELECT 1 FROM ${table} LIMIT 1`);
+  const sql = getSql();
+  const existing = (await sql.query(`SELECT 1 FROM ${table} LIMIT 1`)) as any[];
   if (existing.length > 0) return;
   for (const row of rows) {
-    await pool.query(`INSERT INTO ${table} (id, data) VALUES ($1, $2) ON CONFLICT (id) DO NOTHING`, [
+    await sql.query(`INSERT INTO ${table} (id, data) VALUES ($1, $2) ON CONFLICT (id) DO NOTHING`, [
       row.id,
       JSON.stringify(row),
     ]);
@@ -120,74 +143,55 @@ async function seedIfEmpty(table: RowTable, rows: Record<string, unknown>[]): Pr
 
 /** Reads every row of a table as plain objects, in the given order. */
 export async function getAll<T = any>(table: RowTable, orderBy: string = 'seq ASC'): Promise<T[]> {
-  const pool = getPool();
-  const { rows } = await pool.query(`SELECT data FROM ${table} ORDER BY ${orderBy}`);
-  return rows.map((r) => r.data as T);
+  const sql = getSql();
+  const rows = await sql.query(`SELECT data FROM ${table} ORDER BY ${orderBy}`);
+  return (rows as any[]).map((r) => r.data as T);
 }
 
 export async function insertRow<T extends { id: string }>(table: RowTable, row: T): Promise<T> {
-  const pool = getPool();
-  await pool.query(`INSERT INTO ${table} (id, data) VALUES ($1, $2)`, [row.id, JSON.stringify(row)]);
+  const sql = getSql();
+  await sql.query(`INSERT INTO ${table} (id, data) VALUES ($1, $2)`, [row.id, JSON.stringify(row)]);
   return row;
 }
 
 /** Merges `patch` into the existing row's data (shallow merge, like the old in-memory PATCH). */
 export async function patchRow<T = any>(table: RowTable, id: string, patch: Record<string, unknown>): Promise<T | null> {
-  const pool = getPool();
-  const { rows } = await pool.query(`SELECT data FROM ${table} WHERE id = $1`, [id]);
-  if (rows.length === 0) return null;
-  const updated = { ...rows[0].data, ...patch };
-  await pool.query(`UPDATE ${table} SET data = $2 WHERE id = $1`, [id, JSON.stringify(updated)]);
+  const sql = getSql();
+  const rows = await sql.query(`SELECT data FROM ${table} WHERE id = $1`, [id]);
+  if ((rows as any[]).length === 0) return null;
+  const updated = { ...(rows as any[])[0].data, ...patch };
+  await sql.query(`UPDATE ${table} SET data = $2 WHERE id = $1`, [id, JSON.stringify(updated)]);
   return updated as T;
 }
 
-/** Replaces the row's data outright (used for PUT). Returns null if the row doesn't exist. */
-export async function replaceRowData<T = any>(table: RowTable, id: string, data: Record<string, unknown>): Promise<T | null> {
-  const pool = getPool();
-  const { rows } = await pool.query(`SELECT id FROM ${table} WHERE id = $1`, [id]);
-  if (rows.length === 0) return null;
-  await pool.query(`UPDATE ${table} SET data = $2 WHERE id = $1`, [id, JSON.stringify(data)]);
-  return data as T;
-}
-
 export async function deleteRow(table: RowTable, id: string): Promise<void> {
-  const pool = getPool();
-  await pool.query(`DELETE FROM ${table} WHERE id = $1`, [id]);
+  const sql = getSql();
+  await sql.query(`DELETE FROM ${table} WHERE id = $1`, [id]);
 }
 
 export async function getSettings<T = any>(): Promise<T> {
-  const pool = getPool();
-  const { rows } = await pool.query(`SELECT data FROM site_settings WHERE id = 'main'`);
-  return rows[0]?.data as T;
+  const sql = getSql();
+  const rows = await sql.query(`SELECT data FROM site_settings WHERE id = 'main'`);
+  return (rows as any[])[0]?.data as T;
 }
 
 export async function updateSettings<T = any>(patch: Record<string, unknown>): Promise<T> {
-  const pool = getPool();
   const current = await getSettings<Record<string, unknown>>();
   const updated = { ...current, ...patch };
-  await pool.query(`UPDATE site_settings SET data = $1 WHERE id = 'main'`, [JSON.stringify(updated)]);
+  const sql = getSql();
+  await sql.query(`UPDATE site_settings SET data = $1 WHERE id = 'main'`, [JSON.stringify(updated)]);
   return updated as T;
 }
 
 /** Replaces the entire hero_banners table contents (matches the old PUT /api/banners semantics). */
 export async function replaceAllBanners<T extends { id: string }>(banners: T[]): Promise<T[]> {
-  const pool = getPool();
-  const client = await pool.connect();
-  try {
-    await client.query('BEGIN');
-    await client.query('DELETE FROM hero_banners');
-    for (const banner of banners) {
-      await client.query(`INSERT INTO hero_banners (id, data) VALUES ($1, $2)`, [
-        banner.id,
-        JSON.stringify(banner),
-      ]);
-    }
-    await client.query('COMMIT');
-  } catch (err) {
-    await client.query('ROLLBACK');
-    throw err;
-  } finally {
-    client.release();
-  }
+  const sql = getSql();
+  const statements = [
+    sql.query('DELETE FROM hero_banners'),
+    ...banners.map((banner) =>
+      sql.query(`INSERT INTO hero_banners (id, data) VALUES ($1, $2)`, [banner.id, JSON.stringify(banner)])
+    ),
+  ];
+  await sql.transaction(statements);
   return banners;
 }

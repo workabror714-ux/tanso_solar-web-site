@@ -10,7 +10,7 @@ import {
   getSettings,
   updateSettings,
   replaceAllBanners,
-} from './packages/shared/db/store.ts';
+} from './db.ts';
 
 async function sendTelegramNotification(lead: any) {
   const token = process.env.TELEGRAM_BOT_TOKEN;
