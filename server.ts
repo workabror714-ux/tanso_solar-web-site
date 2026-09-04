@@ -586,58 +586,71 @@ function ensureDb(): Promise<void> {
   return initPromise;
 }
 
+// doInit() used to run every CREATE TABLE, every table's seed check/insert,
+// and the settings/notifications seed check/insert as one long chain of
+// sequential `await`s -- each a separate network round trip to Neon. On a
+// cold serverless instance that added up to several seconds (visible on the
+// site as the header/footer phone number briefly showing the hardcoded
+// fallback before flipping to the admin-configured one). None of these
+// operations touch the same table, so there's no reason they can't run
+// concurrently -- doing so turns ~20 sequential round trips into a handful
+// of parallel batches.
 async function doInit(): Promise<void> {
   const sql = getSql();
 
-  for (const table of ROW_TABLES) {
-    await sql.query(`
-      CREATE TABLE IF NOT EXISTS ${table} (
-        id TEXT PRIMARY KEY,
-        seq SERIAL,
+  await Promise.all([
+    ...ROW_TABLES.map((table) =>
+      sql.query(`
+        CREATE TABLE IF NOT EXISTS ${table} (
+          id TEXT PRIMARY KEY,
+          seq SERIAL,
+          data JSONB NOT NULL
+        );
+      `)
+    ),
+    sql.query(`
+      CREATE TABLE IF NOT EXISTS site_settings (
+        id TEXT PRIMARY KEY DEFAULT 'main',
         data JSONB NOT NULL
       );
-    `);
-  }
+    `),
+  ]);
 
-  await sql.query(`
-    CREATE TABLE IF NOT EXISTS site_settings (
-      id TEXT PRIMARY KEY DEFAULT 'main',
-      data JSONB NOT NULL
-    );
-  `);
+  await Promise.all([
+    seedIfEmpty('categories', initialCategories as unknown as Record<string, unknown>[]),
+    seedIfEmpty('products', initialProducts as unknown as Record<string, unknown>[]),
+    seedIfEmpty('hero_banners', initialHeroBanners as unknown as Record<string, unknown>[]),
+    seedIfEmpty('services', initialServices as unknown as Record<string, unknown>[]),
+    seedIfEmpty('projects', initialProjects as unknown as Record<string, unknown>[]),
+    seedIfEmpty('partners', initialPartners as unknown as Record<string, unknown>[]),
+    seedIfEmpty('leads', initialLeads as unknown as Record<string, unknown>[]),
+    seedSettingsIfEmpty(sql),
+    seedNotificationsIfEmpty(sql),
+  ]);
+}
 
-  await seedIfEmpty('categories', initialCategories as unknown as Record<string, unknown>[]);
-  await seedIfEmpty('products', initialProducts as unknown as Record<string, unknown>[]);
-  await seedIfEmpty('hero_banners', initialHeroBanners as unknown as Record<string, unknown>[]);
-  await seedIfEmpty('services', initialServices as unknown as Record<string, unknown>[]);
-  await seedIfEmpty('projects', initialProjects as unknown as Record<string, unknown>[]);
-  await seedIfEmpty('partners', initialPartners as unknown as Record<string, unknown>[]);
-  await seedIfEmpty('leads', initialLeads as unknown as Record<string, unknown>[]);
-
+async function seedSettingsIfEmpty(sql: SqlFn): Promise<void> {
   const settingsRows = (await sql.query(`SELECT 1 FROM site_settings WHERE id = 'main'`)) as any[];
   if (settingsRows.length === 0) {
-    await sql.query(`INSERT INTO site_settings (id, data) VALUES ('main', $1)`, [
+    await sql.query(`INSERT INTO site_settings (id, data) VALUES ('main', $1) ON CONFLICT (id) DO NOTHING`, [
       JSON.stringify(initialSiteSettings),
     ]);
   }
+}
 
+async function seedNotificationsIfEmpty(sql: SqlFn): Promise<void> {
   const notifRows = (await sql.query(`SELECT 1 FROM notifications LIMIT 1`)) as any[];
   if (notifRows.length === 0) {
     const unread = (initialLeads as any[]).filter((l) => !l.isRead);
-    for (const lead of unread) {
-      const notif = {
-        id: `notif-${lead.id}`,
-        leadId: lead.id,
-        title: 'Yangi so‘rov kelib tushdi',
-        message: `${lead.fullName} (${lead.phone}) - ${lead.productName || 'Konsultatsiya'}`,
-        createdAt: lead.createdAt,
-        isRead: false,
-      };
-      await sql.query(
-        `INSERT INTO notifications (id, data) VALUES ($1, $2) ON CONFLICT (id) DO NOTHING`,
-        [notif.id, JSON.stringify(notif)]
-      );
-    }
+    const notifs = unread.map((lead) => ({
+      id: `notif-${lead.id}`,
+      leadId: lead.id,
+      title: 'Yangi so‘rov kelib tushdi',
+      message: `${lead.fullName} (${lead.phone}) - ${lead.productName || 'Konsultatsiya'}`,
+      createdAt: lead.createdAt,
+      isRead: false,
+    }));
+    await bulkInsert('notifications', notifs);
   }
 }
 
@@ -645,12 +658,27 @@ async function seedIfEmpty(table: RowTable, rows: Record<string, unknown>[]): Pr
   const sql = getSql();
   const existing = (await sql.query(`SELECT 1 FROM ${table} LIMIT 1`)) as any[];
   if (existing.length > 0) return;
-  for (const row of rows) {
-    await sql.query(`INSERT INTO ${table} (id, data) VALUES ($1, $2) ON CONFLICT (id) DO NOTHING`, [
-      row.id,
-      JSON.stringify(row),
-    ]);
-  }
+  await bulkInsert(table, rows);
+}
+
+/**
+ * Inserts every row in one round trip (a single multi-row INSERT) instead
+ * of one round trip per row -- categories/products/etc. can have enough
+ * seed rows that inserting them one at a time noticeably added to
+ * cold-start latency.
+ */
+async function bulkInsert(table: RowTable, rows: Record<string, unknown>[]): Promise<void> {
+  if (rows.length === 0) return;
+  const sql = getSql();
+  const values: unknown[] = [];
+  const tuples = rows.map((row, i) => {
+    values.push((row as any).id, JSON.stringify(row));
+    return `($${i * 2 + 1}, $${i * 2 + 2})`;
+  });
+  await sql.query(
+    `INSERT INTO ${table} (id, data) VALUES ${tuples.join(', ')} ON CONFLICT (id) DO NOTHING`,
+    values
+  );
 }
 
 /** Reads every row of a table as plain objects, in the given order. */
