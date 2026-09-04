@@ -63,8 +63,8 @@ export const AdminSettings: React.FC = () => {
               <label className="block text-[10px] font-bold uppercase text-zinc-400 mb-1">Telegram Linki</label>
               <input
                 type="text"
-                value={formData.telegramLink}
-                onChange={(e) => setFormData({ ...formData, telegramLink: e.target.value })}
+                value={formData.telegram}
+                onChange={(e) => setFormData({ ...formData, telegram: e.target.value })}
                 className="w-full p-2.5 bg-black/60 border border-white/10 font-mono"
               />
             </div>
@@ -73,8 +73,8 @@ export const AdminSettings: React.FC = () => {
               <label className="block text-[10px] font-bold uppercase text-zinc-400 mb-1">Instagram Linki</label>
               <input
                 type="text"
-                value={formData.instagramLink}
-                onChange={(e) => setFormData({ ...formData, instagramLink: e.target.value })}
+                value={formData.instagram}
+                onChange={(e) => setFormData({ ...formData, instagram: e.target.value })}
                 className="w-full p-2.5 bg-black/60 border border-white/10 font-mono"
               />
             </div>
