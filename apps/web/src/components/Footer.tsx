@@ -131,10 +131,15 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
                 </div>
               </a>
 
-              <div className="flex items-start gap-2.5">
+              <a
+                href={settings.mapIframeUrl || `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(getLoc(settings, 'address'))}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-start gap-2.5 hover:text-white transition-colors"
+              >
                 <MapPin className="w-4 h-4 text-[var(--teal)] flex-shrink-0 mt-0.5" />
                 <span>{getLoc(settings, 'address')}</span>
-              </div>
+              </a>
 
               <div className="flex items-start gap-2.5">
                 <Clock className="w-4 h-4 text-[var(--teal)] flex-shrink-0 mt-0.5" />
