@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Plus, Edit, Trash2, Building2, X } from 'lucide-react';
 import { useData } from '../context/DataContext';
 import { ProjectItem } from '@tanso/shared/types';
+import { ImageUploader } from '../components/ImageUploader';
 
 export const AdminProjects: React.FC = () => {
   const { projects, addProject, updateProject, deleteProject } = useData();
@@ -145,15 +146,11 @@ export const AdminProjects: React.FC = () => {
                 </div>
               </div>
 
-              <div>
-                <label className="block text-[10px] font-bold uppercase text-zinc-400 mb-1">Rasm URL</label>
-                <input
-                  type="text"
-                  value={editingProject.imageUrl || ''}
-                  onChange={(e) => setEditingProject({ ...editingProject, imageUrl: e.target.value })}
-                  className="w-full p-2.5 bg-black/60 border border-white/10 font-mono text-[11px]"
-                />
-              </div>
+              <ImageUploader
+                label="Rasm"
+                value={editingProject.imageUrl || ''}
+                onChange={(url) => setEditingProject({ ...editingProject, imageUrl: url })}
+              />
 
               <label className="flex items-center gap-2 cursor-pointer pt-1">
                 <input

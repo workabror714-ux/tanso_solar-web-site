@@ -2,6 +2,8 @@ import express from 'express';
 import path from 'path';
 import { createServer as createViteServer } from 'vite';
 import { neon } from '@neondatabase/serverless';
+import multer from 'multer';
+import { put as blobPut, list as blobList, del as blobDel } from '@vercel/blob';
 // --- Inlined seed data (originally packages/shared/data/initialData.ts) ---
 // Kept in this file rather than imported: see the comment on the db helpers
 // below for why.
@@ -783,6 +785,80 @@ const PORT = 3000;
 
 async function startServer() {
   app.use(express.json({ limit: '10mb' }));
+
+  // IMAGE UPLOAD (Vercel Blob storage) — registered before the DB-ready
+  // gate below since uploads don't touch Postgres at all.
+  const ALLOWED_IMAGE_TYPES = new Set(['image/jpeg', 'image/png', 'image/webp', 'image/gif', 'image/svg+xml']);
+  const upload = multer({
+    storage: multer.memoryStorage(),
+    limits: { fileSize: 10 * 1024 * 1024 }, // 10MB
+  });
+
+  app.post('/api/upload', (req, res) => {
+    upload.single('file')(req, res, async (err: any) => {
+      if (err) {
+        const message = err.code === 'LIMIT_FILE_SIZE'
+          ? 'Fayl hajmi 10MB dan katta bo‘lmasligi kerak.'
+          : 'Faylni qabul qilishda xatolik yuz berdi.';
+        return res.status(400).json({ error: message });
+      }
+      const file = (req as any).file as Express.Multer.File | undefined;
+      if (!file) {
+        return res.status(400).json({ error: 'Fayl topilmadi.' });
+      }
+      if (!ALLOWED_IMAGE_TYPES.has(file.mimetype)) {
+        return res.status(400).json({ error: 'Faqat rasm fayllari qabul qilinadi (JPG, PNG, WEBP, GIF, SVG).' });
+      }
+      if (!process.env.BLOB_READ_WRITE_TOKEN) {
+        return res.status(500).json({
+          error: 'Rasm saqlash xizmati (Vercel Blob) ulanmagan: BLOB_READ_WRITE_TOKEN topilmadi. ' +
+            'Vercel dashboard -> Storage -> Create Database -> Blob orqali ulang.',
+        });
+      }
+      try {
+        const ext = (file.originalname.split('.').pop() || 'jpg').toLowerCase().replace(/[^a-z0-9]/g, '') || 'jpg';
+        const key = `uploads/${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`;
+        const blob = await blobPut(key, file.buffer, {
+          access: 'public',
+          contentType: file.mimetype,
+        });
+        res.json({ url: blob.url });
+      } catch (uploadErr: any) {
+        console.error('[Upload Error]', uploadErr);
+        res.status(500).json({ error: 'Yuklashda xatolik yuz berdi.', detail: String(uploadErr?.message || uploadErr) });
+      }
+    });
+  });
+
+  app.get('/api/media', async (req, res) => {
+    if (!process.env.BLOB_READ_WRITE_TOKEN) {
+      return res.json([]);
+    }
+    try {
+      const { blobs } = await blobList({ prefix: 'uploads/' });
+      const items = blobs
+        .sort((a, b) => new Date(b.uploadedAt).getTime() - new Date(a.uploadedAt).getTime())
+        .map((b) => ({ url: b.url, pathname: b.pathname, size: b.size, uploadedAt: b.uploadedAt }));
+      res.json(items);
+    } catch (err: any) {
+      console.error('[Media List Error]', err);
+      res.status(500).json({ error: 'Media ro‘yxatini olishda xatolik.', detail: String(err?.message || err) });
+    }
+  });
+
+  app.delete('/api/media', async (req, res) => {
+    const { url } = req.body || {};
+    if (!url || typeof url !== 'string') {
+      return res.status(400).json({ error: 'Fayl URL kerak.' });
+    }
+    try {
+      await blobDel(url);
+      res.json({ success: true });
+    } catch (err: any) {
+      console.error('[Media Delete Error]', err);
+      res.status(500).json({ error: 'O‘chirishda xatolik.', detail: String(err?.message || err) });
+    }
+  });
 
   // Ensure the database is ready (tables created + seeded) before any
   // /api request is handled. Cheap after the first call: ensureDb()

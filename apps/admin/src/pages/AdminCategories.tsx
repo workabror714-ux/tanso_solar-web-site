@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Plus, Edit, Trash2, FolderTree, X, Sun, Droplets, Layers3, PanelsTopLeft } from 'lucide-react';
 import { useData } from '../context/DataContext';
 import { Category } from '@tanso/shared/types';
+import { ImageUploader } from '../components/ImageUploader';
 
 const ICON_OPTIONS: { value: string; Icon: any }[] = [
   { value: 'Sun', Icon: Sun },
@@ -186,16 +187,11 @@ export const AdminCategories: React.FC = () => {
                 </div>
               </div>
 
-              <div>
-                <label className="block text-[10px] font-bold uppercase text-zinc-400 mb-1">Rasm URL</label>
-                <input
-                  type="text"
-                  value={editingCategory.imageUrl || ''}
-                  onChange={(e) => setEditingCategory({ ...editingCategory, imageUrl: e.target.value })}
-                  className="w-full p-2.5 bg-black/60 border border-white/10 font-mono text-[11px]"
-                  placeholder="https://..."
-                />
-              </div>
+              <ImageUploader
+                label="Rasm"
+                value={editingCategory.imageUrl || ''}
+                onChange={(url) => setEditingCategory({ ...editingCategory, imageUrl: url })}
+              />
 
               <div>
                 <label className="block text-[10px] font-bold uppercase text-zinc-400 mb-1">Tavsif UZ</label>

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Plus, Edit, Trash2, Image as ImageIcon, X } from 'lucide-react';
 import { useData } from '../context/DataContext';
 import { HeroBanner } from '@tanso/shared/types';
+import { ImageUploader } from '../components/ImageUploader';
 
 export const AdminBanners: React.FC = () => {
   const { banners, updateBanners } = useData();
@@ -131,15 +132,11 @@ export const AdminBanners: React.FC = () => {
                 />
               </div>
 
-              <div>
-                <label className="block text-[10px] font-bold uppercase text-zinc-400 mb-1">Fon Rasm URL</label>
-                <input
-                  type="text"
-                  value={editingBanner.bgImageUrl || ''}
-                  onChange={(e) => setEditingBanner({ ...editingBanner, bgImageUrl: e.target.value })}
-                  className="w-full p-2.5 bg-black/60 border border-white/10 font-mono"
-                />
-              </div>
+              <ImageUploader
+                label="Fon rasmi"
+                value={editingBanner.bgImageUrl || ''}
+                onChange={(url) => setEditingBanner({ ...editingBanner, bgImageUrl: url })}
+              />
             </div>
 
             <div className="pt-3 border-t border-white/10 flex justify-end gap-2">

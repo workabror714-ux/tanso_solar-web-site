@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Plus, Edit, Trash2, Wrench, X, MessageSquare, Search, Calculator, Truck, ShieldCheck } from 'lucide-react';
 import { useData } from '../context/DataContext';
 import { ServiceItem } from '@tanso/shared/types';
+import { ImageUploader } from '../components/ImageUploader';
 
 const ICON_OPTIONS: { value: string; Icon: any }[] = [
   { value: 'MessageSquare', Icon: MessageSquare },
@@ -153,16 +154,11 @@ export const AdminServices: React.FC = () => {
                 </div>
               </div>
 
-              <div>
-                <label className="block text-[10px] font-bold uppercase text-zinc-400 mb-1">Rasm URL (ixtiyoriy)</label>
-                <input
-                  type="text"
-                  value={editingService.imageUrl || ''}
-                  onChange={(e) => setEditingService({ ...editingService, imageUrl: e.target.value })}
-                  className="w-full p-2.5 bg-black/60 border border-white/10 font-mono text-[11px]"
-                  placeholder="https://..."
-                />
-              </div>
+              <ImageUploader
+                label="Rasm (ixtiyoriy)"
+                value={editingService.imageUrl || ''}
+                onChange={(url) => setEditingService({ ...editingService, imageUrl: url })}
+              />
             </div>
 
             <div className="pt-3 border-t border-white/10 flex justify-end gap-2">

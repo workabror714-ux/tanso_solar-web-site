@@ -4,6 +4,7 @@ import {
 } from 'lucide-react';
 import { useData } from '../context/DataContext';
 import { Product, ProductSpec } from '@tanso/shared/types';
+import { ImageUploader } from '../components/ImageUploader';
 
 const slugify = (value: string) =>
   value
@@ -330,16 +331,12 @@ export const AdminProducts: React.FC = () => {
               </div>
             </div>
 
-            {/* Image URLs list */}
-            <div>
-              <label className="block text-[11px] font-bold text-zinc-400 uppercase mb-1">Rasm URL manbaasi</label>
-              <input
-                type="text"
-                value={editingProduct.images?.[0] || ''}
-                onChange={(e) => setEditingProduct({ ...editingProduct, images: [e.target.value] })}
-                className="w-full p-2.5 bg-black/60 border border-white/10 font-mono text-[11px]"
-              />
-            </div>
+            {/* Image */}
+            <ImageUploader
+              label="Mahsulot rasmi"
+              value={editingProduct.images?.[0] || ''}
+              onChange={(url) => setEditingProduct({ ...editingProduct, images: [url] })}
+            />
 
             {/* Descriptions */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2 border-t border-white/10">
