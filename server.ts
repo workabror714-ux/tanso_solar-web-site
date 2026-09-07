@@ -739,11 +739,24 @@ async function replaceAllBanners<T extends { id: string }>(banners: T[]): Promis
 }
 
 async function sendTelegramNotification(lead: any) {
-  const token = process.env.TELEGRAM_BOT_TOKEN;
-  const chatId = process.env.TELEGRAM_CHAT_ID;
+  // Bot token / chat id are admin-configurable via Sayt Sozlamalari (stored in
+  // site_settings, field names telegramBotToken/telegramChatId). Vercel env
+  // vars TELEGRAM_BOT_TOKEN/TELEGRAM_CHAT_ID are kept as a fallback so an
+  // env-based deployment still works without touching the admin panel.
+  let token: string | undefined;
+  let chatId: string | undefined;
+  try {
+    const settings = await getSettings<Record<string, unknown>>();
+    token = (settings?.telegramBotToken as string) || process.env.TELEGRAM_BOT_TOKEN;
+    chatId = (settings?.telegramChatId as string) || process.env.TELEGRAM_CHAT_ID;
+  } catch (err) {
+    console.error('[Telegram Notification] Failed to load settings, falling back to env vars.', err);
+    token = process.env.TELEGRAM_BOT_TOKEN;
+    chatId = process.env.TELEGRAM_CHAT_ID;
+  }
 
   if (!token || !chatId) {
-    console.log('[Telegram Notification Skipped] TELEGRAM_BOT_TOKEN or TELEGRAM_CHAT_ID not configured.');
+    console.log('[Telegram Notification Skipped] Bot token yoki Chat ID sozlanmagan (Sayt Sozlamalari yoki TELEGRAM_BOT_TOKEN/TELEGRAM_CHAT_ID env).');
     return;
   }
 
