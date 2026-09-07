@@ -11,12 +11,12 @@ export const AdminProjects: React.FC = () => {
     setEditingProject({
       titleUz: '',
       titleRu: '',
-      descUz: '',
-      descRu: '',
       locationUz: 'Toshkent shahri',
       locationRu: 'г. Ташкент',
       capacity: '500 Litr',
-      images: ['https://images.unsplash.com/photo-1508514177221-188b1cf16e9d?auto=format&fit=crop&q=80&w=800'],
+      year: String(new Date().getFullYear()),
+      imageUrl: 'https://images.unsplash.com/photo-1508514177221-188b1cf16e9d?auto=format&fit=crop&q=80&w=800',
+      featured: false,
       active: true
     });
   };
@@ -51,11 +51,11 @@ export const AdminProjects: React.FC = () => {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {projects.map((p) => (
           <div key={p.id} className="bg-black/40 border border-white/10 overflow-hidden space-y-3">
-            <img src={p.images?.[0] || p.imageUrl || 'https://images.unsplash.com/photo-1508514177221-188b1cf16e9d?auto=format&fit=crop&q=80&w=800'} alt="" className="w-full h-40 object-cover bg-black" />
+            <img src={p.imageUrl || 'https://images.unsplash.com/photo-1508514177221-188b1cf16e9d?auto=format&fit=crop&q=80&w=800'} alt="" className="w-full h-40 object-cover bg-black" />
             <div className="p-4 space-y-2">
               <span className="text-[10px] text-[#F59E0B] font-bold">{p.locationUz} • {p.capacity}</span>
               <h3 className="font-bold text-white text-sm">{p.titleUz}</h3>
-              <p className="text-zinc-400 text-[11px] line-clamp-2">{p.descUz}</p>
+              <p className="text-zinc-400 text-[11px]">{p.year || '—'}{p.featured ? ' · TOP' : ''}</p>
 
               <div className="flex items-center justify-between pt-2 border-t border-white/10">
                 <span className="text-[10px] text-zinc-500">{p.capacity}</span>
@@ -104,7 +104,7 @@ export const AdminProjects: React.FC = () => {
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-[10px] font-bold uppercase text-zinc-400 mb-1">Joylashuv</label>
+                  <label className="block text-[10px] font-bold uppercase text-zinc-400 mb-1">Joylashuv UZ</label>
                   <input
                     type="text"
                     value={editingProject.locationUz || ''}
@@ -112,6 +112,18 @@ export const AdminProjects: React.FC = () => {
                     className="w-full p-2.5 bg-black/60 border border-white/10"
                   />
                 </div>
+                <div>
+                  <label className="block text-[10px] font-bold uppercase text-zinc-400 mb-1">Joylashuv RU</label>
+                  <input
+                    type="text"
+                    value={editingProject.locationRu || ''}
+                    onChange={(e) => setEditingProject({ ...editingProject, locationRu: e.target.value })}
+                    className="w-full p-2.5 bg-black/60 border border-white/10"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
                 <div>
                   <label className="block text-[10px] font-bold uppercase text-zinc-400 mb-1">Quvvati / Hajmi</label>
                   <input
@@ -121,17 +133,37 @@ export const AdminProjects: React.FC = () => {
                     className="w-full p-2.5 bg-black/60 border border-white/10"
                   />
                 </div>
+                <div>
+                  <label className="block text-[10px] font-bold uppercase text-zinc-400 mb-1">Yil *</label>
+                  <input
+                    type="text"
+                    value={editingProject.year || ''}
+                    onChange={(e) => setEditingProject({ ...editingProject, year: e.target.value })}
+                    className="w-full p-2.5 bg-black/60 border border-white/10"
+                    placeholder="2026"
+                  />
+                </div>
               </div>
 
               <div>
                 <label className="block text-[10px] font-bold uppercase text-zinc-400 mb-1">Rasm URL</label>
                 <input
                   type="text"
-                  value={editingProject.images?.[0] || editingProject.imageUrl || ''}
-                  onChange={(e) => setEditingProject({ ...editingProject, images: [e.target.value], imageUrl: e.target.value })}
+                  value={editingProject.imageUrl || ''}
+                  onChange={(e) => setEditingProject({ ...editingProject, imageUrl: e.target.value })}
                   className="w-full p-2.5 bg-black/60 border border-white/10 font-mono text-[11px]"
                 />
               </div>
+
+              <label className="flex items-center gap-2 cursor-pointer pt-1">
+                <input
+                  type="checkbox"
+                  checked={editingProject.featured ?? false}
+                  onChange={(e) => setEditingProject({ ...editingProject, featured: e.target.checked })}
+                  className="accent-emerald-500 w-4 h-4"
+                />
+                <span>TOP (Featured)</span>
+              </label>
             </div>
 
             <div className="pt-3 border-t border-white/10 flex justify-end gap-2">

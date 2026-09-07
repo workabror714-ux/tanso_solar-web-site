@@ -1,9 +1,16 @@
 import React, { useState } from 'react';
-import { 
-  Plus, Edit, Trash2, Search, Image as ImageIcon, Check, X, Eye, EyeOff, Star 
+import {
+  Plus, Edit, Trash2, Search, Image as ImageIcon, Check, X, Eye, EyeOff, Star
 } from 'lucide-react';
 import { useData } from '../context/DataContext';
 import { Product, ProductSpec } from '@tanso/shared/types';
+
+const slugify = (value: string) =>
+  value
+    .toLowerCase()
+    .replace(/[’‘'ʻʼ`]/g, '')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '');
 
 export const AdminProducts: React.FC = () => {
   const { products, categories, addProduct, updateProduct, deleteProduct } = useData();
@@ -42,12 +49,29 @@ export const AdminProducts: React.FC = () => {
     });
   };
 
+  const makeUniqueSlug = (base: string, excludeId?: string) => {
+    const fallback = base || `mahsulot-${Date.now()}`;
+    let candidate = fallback;
+    let n = 2;
+    const taken = new Set(products.filter(p => p.id !== excludeId).map(p => p.slug));
+    while (taken.has(candidate)) {
+      candidate = `${fallback}-${n}`;
+      n += 1;
+    }
+    return candidate;
+  };
+
   const handleSave = async () => {
     if (!editingProduct || !editingProduct.titleUz) return;
+    const finalSlug = makeUniqueSlug(
+      editingProduct.slug?.trim() ? slugify(editingProduct.slug) : slugify(editingProduct.titleUz),
+      editingProduct.id
+    );
+    const payload = { ...editingProduct, slug: finalSlug };
     if (editingProduct.id) {
-      await updateProduct(editingProduct.id, editingProduct);
+      await updateProduct(editingProduct.id, payload);
     } else {
-      await addProduct(editingProduct as Omit<Product, 'id' | 'createdAt' | 'updatedAt'>);
+      await addProduct(payload as Omit<Product, 'id' | 'createdAt' | 'updatedAt'>);
     }
     setEditingProduct(null);
   };
@@ -212,7 +236,16 @@ export const AdminProducts: React.FC = () => {
                 <input
                   type="text"
                   value={editingProduct.titleUz || ''}
-                  onChange={(e) => setEditingProduct({ ...editingProduct, titleUz: e.target.value })}
+                  onChange={(e) => {
+                    const titleUz = e.target.value;
+                    const prevAutoSlug = slugify(editingProduct.titleUz || '');
+                    const slugFollowsTitle = !editingProduct.id && (!editingProduct.slug || editingProduct.slug === prevAutoSlug);
+                    setEditingProduct({
+                      ...editingProduct,
+                      titleUz,
+                      ...(slugFollowsTitle ? { slug: slugify(titleUz) } : {})
+                    });
+                  }}
                   className="w-full p-2.5 bg-black/60 border border-white/10"
                   placeholder="TANSO Solar Water Heater 200L"
                 />
@@ -227,6 +260,18 @@ export const AdminProducts: React.FC = () => {
                   className="w-full p-2.5 bg-black/60 border border-white/10"
                   placeholder="Солнечный водонагреватель TANSO 200L"
                 />
+              </div>
+
+              <div>
+                <label className="block text-[11px] font-bold text-zinc-400 uppercase mb-1">Slug (URL) *</label>
+                <input
+                  type="text"
+                  value={editingProduct.slug || ''}
+                  onChange={(e) => setEditingProduct({ ...editingProduct, slug: e.target.value })}
+                  className="w-full p-2.5 bg-black/60 border border-white/10 font-mono text-[11px]"
+                  placeholder="tanso-solar-200l"
+                />
+                <p className="mt-1 text-[10px] text-zinc-500">Mahsulot sahifasi manzili: /product/{editingProduct.slug || '...'}</p>
               </div>
 
               <div>
@@ -294,6 +339,48 @@ export const AdminProducts: React.FC = () => {
                 onChange={(e) => setEditingProduct({ ...editingProduct, images: [e.target.value] })}
                 className="w-full p-2.5 bg-black/60 border border-white/10 font-mono text-[11px]"
               />
+            </div>
+
+            {/* Descriptions */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2 border-t border-white/10">
+              <div>
+                <label className="block text-[11px] font-bold text-zinc-400 uppercase mb-1">Qisqa tavsif UZ</label>
+                <textarea
+                  rows={2}
+                  value={editingProduct.shortDescUz || ''}
+                  onChange={(e) => setEditingProduct({ ...editingProduct, shortDescUz: e.target.value })}
+                  className="w-full p-2.5 bg-black/60 border border-white/10"
+                  placeholder="Katalog kartochkasida ko‘rinadigan qisqa tavsif"
+                />
+              </div>
+              <div>
+                <label className="block text-[11px] font-bold text-zinc-400 uppercase mb-1">Qisqa tavsif RU</label>
+                <textarea
+                  rows={2}
+                  value={editingProduct.shortDescRu || ''}
+                  onChange={(e) => setEditingProduct({ ...editingProduct, shortDescRu: e.target.value })}
+                  className="w-full p-2.5 bg-black/60 border border-white/10"
+                />
+              </div>
+              <div>
+                <label className="block text-[11px] font-bold text-zinc-400 uppercase mb-1">To‘liq tavsif UZ</label>
+                <textarea
+                  rows={4}
+                  value={editingProduct.fullDescUz || ''}
+                  onChange={(e) => setEditingProduct({ ...editingProduct, fullDescUz: e.target.value })}
+                  className="w-full p-2.5 bg-black/60 border border-white/10"
+                  placeholder="Mahsulot sahifasida ko‘rinadigan to‘liq tavsif"
+                />
+              </div>
+              <div>
+                <label className="block text-[11px] font-bold text-zinc-400 uppercase mb-1">To‘liq tavsif RU</label>
+                <textarea
+                  rows={4}
+                  value={editingProduct.fullDescRu || ''}
+                  onChange={(e) => setEditingProduct({ ...editingProduct, fullDescRu: e.target.value })}
+                  className="w-full p-2.5 bg-black/60 border border-white/10"
+                />
+              </div>
             </div>
 
             {/* Specifications builder */}

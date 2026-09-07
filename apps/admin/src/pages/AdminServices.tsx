@@ -1,7 +1,16 @@
 import React, { useState } from 'react';
-import { Plus, Edit, Trash2, Wrench, X } from 'lucide-react';
+import { Plus, Edit, Trash2, Wrench, X, MessageSquare, Search, Calculator, Truck, ShieldCheck } from 'lucide-react';
 import { useData } from '../context/DataContext';
 import { ServiceItem } from '@tanso/shared/types';
+
+const ICON_OPTIONS: { value: string; Icon: any }[] = [
+  { value: 'MessageSquare', Icon: MessageSquare },
+  { value: 'Search', Icon: Search },
+  { value: 'Calculator', Icon: Calculator },
+  { value: 'Truck', Icon: Truck },
+  { value: 'Wrench', Icon: Wrench },
+  { value: 'ShieldCheck', Icon: ShieldCheck },
+];
 
 export const AdminServices: React.FC = () => {
   const { services, addService, updateService, deleteService } = useData();
@@ -13,6 +22,8 @@ export const AdminServices: React.FC = () => {
       titleRu: '',
       descUz: '',
       descRu: '',
+      iconName: 'Wrench',
+      imageUrl: '',
       active: true,
       sortOrder: services.length + 1
     });
@@ -46,8 +57,13 @@ export const AdminServices: React.FC = () => {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {services.map((s) => (
+        {services.map((s) => {
+          const IconComp = ICON_OPTIONS.find(o => o.value === s.iconName)?.Icon || Wrench;
+          return (
           <div key={s.id} className="bg-black/40 border border-white/10 p-5 space-y-3">
+            <span className="grid h-9 w-9 place-items-center rounded bg-[#064E3B]/30 text-emerald-400">
+              <IconComp className="w-4 h-4" />
+            </span>
             <h3 className="font-bold text-white text-base">{s.titleUz}</h3>
             <p className="text-zinc-400 text-xs leading-relaxed">{s.descUz}</p>
 
@@ -63,7 +79,8 @@ export const AdminServices: React.FC = () => {
               </div>
             </div>
           </div>
-        ))}
+          );
+        })}
       </div>
 
       {editingService && (
@@ -112,6 +129,38 @@ export const AdminServices: React.FC = () => {
                   value={editingService.descRu || ''}
                   onChange={(e) => setEditingService({ ...editingService, descRu: e.target.value })}
                   className="w-full p-2.5 bg-black/60 border border-white/10"
+                />
+              </div>
+
+              <div>
+                <label className="block text-[10px] font-bold uppercase text-zinc-400 mb-1">Ikonka</label>
+                <div className="flex flex-wrap gap-2">
+                  {ICON_OPTIONS.map(({ value, Icon }) => (
+                    <button
+                      key={value}
+                      type="button"
+                      onClick={() => setEditingService({ ...editingService, iconName: value })}
+                      title={value}
+                      className={`grid h-10 w-10 place-items-center border ${
+                        (editingService.iconName || 'Wrench') === value
+                          ? 'border-[#064E3B] bg-[#064E3B]/40 text-emerald-400'
+                          : 'border-white/10 bg-black/60 text-zinc-400'
+                      }`}
+                    >
+                      <Icon className="w-4 h-4" />
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-[10px] font-bold uppercase text-zinc-400 mb-1">Rasm URL (ixtiyoriy)</label>
+                <input
+                  type="text"
+                  value={editingService.imageUrl || ''}
+                  onChange={(e) => setEditingService({ ...editingService, imageUrl: e.target.value })}
+                  className="w-full p-2.5 bg-black/60 border border-white/10 font-mono text-[11px]"
+                  placeholder="https://..."
                 />
               </div>
             </div>

@@ -1,7 +1,14 @@
 import React, { useState } from 'react';
-import { Plus, Edit, Trash2, FolderTree, X } from 'lucide-react';
+import { Plus, Edit, Trash2, FolderTree, X, Sun, Droplets, Layers3, PanelsTopLeft } from 'lucide-react';
 import { useData } from '../context/DataContext';
 import { Category } from '@tanso/shared/types';
+
+const ICON_OPTIONS: { value: string; Icon: any }[] = [
+  { value: 'Sun', Icon: Sun },
+  { value: 'Droplets', Icon: Droplets },
+  { value: 'Layers', Icon: Layers3 },
+  { value: 'PanelsTopLeft', Icon: PanelsTopLeft },
+];
 
 export const AdminCategories: React.FC = () => {
   const { categories, addCategory, updateCategory, deleteCategory } = useData();
@@ -12,6 +19,8 @@ export const AdminCategories: React.FC = () => {
       nameUz: '',
       nameRu: '',
       slug: '',
+      iconName: 'Sun',
+      imageUrl: '',
       descriptionUz: '',
       descriptionRu: '',
       sortOrder: categories.length + 1,
@@ -130,6 +139,81 @@ export const AdminCategories: React.FC = () => {
                   onChange={(e) => setEditingCategory({ ...editingCategory, slug: e.target.value })}
                   className="w-full p-2.5 bg-black/60 border border-white/10 font-mono"
                   placeholder="quyosh-suv-isitgichlari"
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-[10px] font-bold uppercase text-zinc-400 mb-1">Tartib raqami</label>
+                  <input
+                    type="number"
+                    value={editingCategory.sortOrder ?? 0}
+                    onChange={(e) => setEditingCategory({ ...editingCategory, sortOrder: Number(e.target.value) })}
+                    className="w-full p-2.5 bg-black/60 border border-white/10"
+                  />
+                </div>
+                <div className="flex items-end pb-2.5">
+                  <label className="flex items-center gap-2 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={editingCategory.active ?? true}
+                      onChange={(e) => setEditingCategory({ ...editingCategory, active: e.target.checked })}
+                      className="accent-emerald-500 w-4 h-4"
+                    />
+                    <span>Aktiv (saytda ko‘rinadi)</span>
+                  </label>
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-[10px] font-bold uppercase text-zinc-400 mb-1">Ikonka</label>
+                <div className="flex flex-wrap gap-2">
+                  {ICON_OPTIONS.map(({ value, Icon }) => (
+                    <button
+                      key={value}
+                      type="button"
+                      onClick={() => setEditingCategory({ ...editingCategory, iconName: value })}
+                      title={value}
+                      className={`grid h-10 w-10 place-items-center border ${
+                        (editingCategory.iconName || 'Sun') === value
+                          ? 'border-[#064E3B] bg-[#064E3B]/40 text-emerald-400'
+                          : 'border-white/10 bg-black/60 text-zinc-400'
+                      }`}
+                    >
+                      <Icon className="w-4 h-4" />
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-[10px] font-bold uppercase text-zinc-400 mb-1">Rasm URL</label>
+                <input
+                  type="text"
+                  value={editingCategory.imageUrl || ''}
+                  onChange={(e) => setEditingCategory({ ...editingCategory, imageUrl: e.target.value })}
+                  className="w-full p-2.5 bg-black/60 border border-white/10 font-mono text-[11px]"
+                  placeholder="https://..."
+                />
+              </div>
+
+              <div>
+                <label className="block text-[10px] font-bold uppercase text-zinc-400 mb-1">Tavsif UZ</label>
+                <textarea
+                  rows={2}
+                  value={editingCategory.descriptionUz || ''}
+                  onChange={(e) => setEditingCategory({ ...editingCategory, descriptionUz: e.target.value })}
+                  className="w-full p-2.5 bg-black/60 border border-white/10"
+                />
+              </div>
+
+              <div>
+                <label className="block text-[10px] font-bold uppercase text-zinc-400 mb-1">Tavsif RU</label>
+                <textarea
+                  rows={2}
+                  value={editingCategory.descriptionRu || ''}
+                  onChange={(e) => setEditingCategory({ ...editingCategory, descriptionRu: e.target.value })}
+                  className="w-full p-2.5 bg-black/60 border border-white/10"
                 />
               </div>
             </div>
