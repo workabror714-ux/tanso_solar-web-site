@@ -935,8 +935,13 @@ async function startServer() {
     };
     await insertRow('notifications', newNotif);
 
-    // Trigger Telegram Notification asynchronously
-    sendTelegramNotification(newLead);
+    // Trigger Telegram Notification. Awaited deliberately: on Vercel's
+    // serverless runtime a fire-and-forget call here gets killed the
+    // moment the HTTP response is sent, so the notification would
+    // arrive late (only if the container happens to be reused for a
+    // later request) or never arrive at all. Awaiting costs one Telegram
+    // API round-trip (~200-400ms) but guarantees delivery.
+    await sendTelegramNotification(newLead);
 
     res.status(201).json({ success: true, lead: newLead });
   });

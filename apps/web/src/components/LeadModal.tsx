@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { X, Send, CheckCircle2, ShieldCheck, Phone, User, FileText, Hash } from 'lucide-react';
+import { X, Send, CheckCircle2, ShieldCheck, User, FileText, Hash } from 'lucide-react';
+import { PhoneInput } from './PhoneInput';
 import { useLanguage } from '../context/LanguageContext';
 import { useData } from '../context/DataContext';
 import { Product } from '../types';
@@ -38,8 +39,8 @@ export const LeadModal: React.FC<LeadModalProps> = ({ isOpen, onClose, product, 
       return;
     }
 
-    if (!phone.trim() || phone.trim().length < 7) {
-      setErrorMessage(language === 'ru' ? 'Введите корректный номер телефона' : 'To‘g‘ri telefon raqamingizni kiriting');
+    if (phone.length !== 9) {
+      setErrorMessage(language === 'ru' ? 'Введите корректный номер телефона (9 цифр)' : 'Telefon raqamini to‘liq kiriting (9 ta raqam)');
       return;
     }
 
@@ -58,7 +59,7 @@ export const LeadModal: React.FC<LeadModalProps> = ({ isOpen, onClose, product, 
     const result = await createLead({
       type: product ? 'product_request' : 'consultation',
       fullName,
-      phone,
+      phone: `+998${phone}`,
       productId: product?.id,
       productName,
       category: categoryName,
@@ -177,17 +178,7 @@ export const LeadModal: React.FC<LeadModalProps> = ({ isOpen, onClose, product, 
                 <label className="field-label !text-[var(--muted-dark)]">
                   {t('phoneNumber')} *
                 </label>
-                <div className="relative">
-                  <Phone className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--muted-dark)]" />
-                  <input
-                    type="tel"
-                    required
-                    value={phone}
-                    onChange={(e) => setPhone(e.target.value)}
-                    placeholder="+998 90 123 45 67"
-                    className="field-input-dark"
-                  />
-                </div>
+                <PhoneInput value={phone} onChange={setPhone} required />
               </div>
 
               {/* Quantity (if product selected) */}

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Send, Phone, User, CheckCircle2, ArrowUpRight } from 'lucide-react';
+import { PhoneInput } from './PhoneInput';
 import { useLanguage } from '../context/LanguageContext';
 import { useData } from '../context/DataContext';
 
@@ -15,12 +16,12 @@ export const ContactSection: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
-    if (!fullName.trim() || !phone.trim()) {
-      setError(language === 'ru' ? 'Заполните имя и номер телефона' : 'Ism va telefon raqamingizni kiriting');
+    if (!fullName.trim() || phone.length !== 9) {
+      setError(language === 'ru' ? 'Заполните имя и номер телефона (9 цифр)' : 'Ism va telefon raqamingizni to‘liq kiriting (9 ta raqam)');
       return;
     }
     setIsSubmitting(true);
-    const res = await createLead({ type: 'consultation', fullName, phone, source: window.location.pathname + '#consultation-form' });
+    const res = await createLead({ type: 'consultation', fullName, phone: `+998${phone}`, source: window.location.pathname + '#consultation-form' });
     setIsSubmitting(false);
     if (res.success) {
       setIsSuccess(true);
@@ -81,10 +82,7 @@ export const ContactSection: React.FC = () => {
 
                     <div>
                       <label className="field-label !text-[var(--muted-dark)]">{t('phoneNumber')} *</label>
-                      <div className="relative">
-                        <Phone className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--muted-dark)]" />
-                        <input type="tel" required value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="+998 90 123 45 67" className="field-input-dark" />
-                      </div>
+                      <PhoneInput value={phone} onChange={setPhone} required />
                     </div>
 
                     <button type="submit" disabled={isSubmitting} className="btn-primary w-full mt-2 disabled:opacity-50" id="btn-submit-contact-form">
