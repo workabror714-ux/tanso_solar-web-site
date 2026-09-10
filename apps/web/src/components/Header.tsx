@@ -173,7 +173,7 @@ export const Header: React.FC<HeaderProps> = ({ currentPath, onNavigate, onOpenC
             {phoneHref && (
               <a
                 href={phoneHref}
-                className="hidden 2xl:flex shrink-0 items-center gap-2.5 rounded-md border border-white/12 px-2.5 py-1.5 hover:border-[var(--teal)] transition-colors"
+                className="hidden xl:flex shrink-0 items-center gap-2.5 rounded-md border border-white/12 px-2.5 py-1.5 hover:border-[var(--teal)] transition-colors"
                 aria-label={`${language === 'ru' ? 'Позвонить' : 'Qo‘ng‘iroq'} ${settings.phone1}`}
               >
                 <Phone className="w-3.5 h-3.5 text-[var(--amber)]" />
