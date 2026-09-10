@@ -8,9 +8,11 @@ interface ProductCardProps {
   product: Product;
   onNavigate: (path: string) => void;
   onOpenLead: (product: Product) => void;
+  /** Show the two spec rows (e.g. "Tizim sig'imi", "Komponent") under the description. Defaults to true; the catalog grid passes false. */
+  showSpecs?: boolean;
 }
 
-export const ProductCard: React.FC<ProductCardProps> = ({ product, onNavigate, onOpenLead }) => {
+export const ProductCard: React.FC<ProductCardProps> = ({ product, onNavigate, onOpenLead, showSpecs = true }) => {
   const { language, getLoc } = useLanguage();
   const { categories } = useData();
 
@@ -78,7 +80,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onNavigate, o
             {getLoc(product, 'shortDesc')}
           </p>
 
-          {secondarySpecs.length > 0 && (
+          {showSpecs && secondarySpecs.length > 0 && (
             <div className="mt-4">
               {secondarySpecs.map((sp) => (
                 <div key={sp.id} className="spec-row !py-2">

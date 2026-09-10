@@ -186,6 +186,7 @@ export const CatalogPage: React.FC<CatalogPageProps> = ({ categorySlug, onNaviga
                 product={prod}
                 onNavigate={onNavigate}
                 onOpenLead={(p) => onOpenConsultation(p)}
+                showSpecs={false}
               />
             ))}
           </div>
