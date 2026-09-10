@@ -1,5 +1,5 @@
 import React from 'react';
-import { ArrowRight, Phone, Layers3, PackageCheck, Droplets } from 'lucide-react';
+import { ArrowRight, Phone } from 'lucide-react';
 import { motion } from 'motion/react';
 import { useLanguage } from '../context/LanguageContext';
 import { useData } from '../context/DataContext';
@@ -11,10 +11,8 @@ interface HeroProps {
 
 export const Hero: React.FC<HeroProps> = ({ onNavigate, onOpenConsultation }) => {
   const { language, t, getLoc } = useLanguage();
-  const { banners, products, categories } = useData();
+  const { banners } = useData();
   const banner = banners.find((b) => b.active) || banners[0];
-  const productCount = products.filter((p) => p.active !== false).length;
-  const categoryCount = categories.filter((c) => c.active).length;
 
   const title = getLoc(banner, 'title') || (language === 'ru'
     ? 'Горячая вода от солнца — каждый день'
@@ -81,35 +79,6 @@ export const Hero: React.FC<HeroProps> = ({ onNavigate, onOpenConsultation }) =>
                 <Phone className="w-4 h-4 text-[var(--amber)]" />
                 <span>{t('freeConsultation')}</span>
               </button>
-            </motion.div>
-
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: .8, delay: .36 }}
-              className="mt-6 grid grid-cols-3 gap-2 sm:gap-3 max-w-2xl"
-            >
-              <div className="card-dark px-3 sm:px-4 py-2.5">
-                <PackageCheck className="w-4 h-4 text-[var(--teal)] mb-1.5" />
-                <div className="text-lg sm:text-xl font-mono-num font-bold text-white">{productCount}</div>
-                <div className="mt-0.5 text-[9px] sm:text-[10px] uppercase tracking-wider text-[var(--muted-dark)]">
-                  {language === 'ru' ? 'моделей' : 'model'}
-                </div>
-              </div>
-              <div className="card-dark px-3 sm:px-4 py-2.5">
-                <Layers3 className="w-4 h-4 text-[var(--amber)] mb-1.5" />
-                <div className="text-lg sm:text-xl font-mono-num font-bold text-white">{categoryCount}</div>
-                <div className="mt-0.5 text-[9px] sm:text-[10px] uppercase tracking-wider text-[var(--muted-dark)]">
-                  {language === 'ru' ? 'категории' : 'kategoriya'}
-                </div>
-              </div>
-              <div className="card-dark px-3 sm:px-4 py-2.5">
-                <Droplets className="w-4 h-4 text-[var(--teal)] mb-1.5" />
-                <div className="text-xs sm:text-sm font-semibold text-white leading-tight">
-                  {language === 'ru' ? 'Напорные / безнапорные' : 'Bosimli / bosimsiz'}
-                </div>
-                <div className="mt-1 text-[9px] sm:text-[10px] uppercase tracking-wider text-[var(--muted-dark)]">TANSO</div>
-              </div>
             </motion.div>
           </div>
 

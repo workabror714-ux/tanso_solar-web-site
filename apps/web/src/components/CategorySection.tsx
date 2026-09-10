@@ -52,9 +52,6 @@ export const CategorySection: React.FC<CategorySectionProps> = ({ onNavigate }) 
                       <span className="grid h-11 w-11 shrink-0 place-items-center rounded-lg border border-[var(--border)] bg-[var(--teal-tint)] text-[var(--teal-dark)]">
                         <Icon className="h-[18px] w-[18px]" />
                       </span>
-                      <span className="badge badge-amber font-mono-num">
-                        0{idx + 1} · {count} {language === 'ru' ? 'тов.' : 'mahsulot'}
-                      </span>
                     </div>
 
                     <div className="mt-auto min-w-0 pt-8 sm:pt-10">
