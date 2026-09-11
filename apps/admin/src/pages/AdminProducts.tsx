@@ -291,12 +291,15 @@ export const AdminProducts: React.FC = () => {
               <div>
                 <label className="block text-[11px] font-bold text-zinc-400 uppercase mb-1">Narx (USD)</label>
                 <input
-                  type="number"
-                  // Empty stays empty instead of snapping back to a forced "0" — you can clear
-                  // the field and type any number freely.
+                  type="text"
+                  inputMode="decimal"
+                  // text type (not "number") so there's no up/down spinner and no snap-back to
+                  // a forced "0" — the field behaves like plain text and holds exactly what's typed.
                   value={editingProduct.priceUSD ?? ''}
+                  onFocus={(e) => e.target.select()}
                   onChange={(e) => {
                     const val = e.target.value;
+                    if (val !== '' && !/^\d*\.?\d*$/.test(val)) return;
                     setEditingProduct({ ...editingProduct, priceUSD: val === '' ? undefined : Number(val) });
                   }}
                   className="w-full p-2.5 bg-black/60 border border-white/10"
@@ -306,10 +309,13 @@ export const AdminProducts: React.FC = () => {
               <div>
                 <label className="block text-[11px] font-bold text-zinc-400 uppercase mb-1">Narx (UZS)</label>
                 <input
-                  type="number"
+                  type="text"
+                  inputMode="numeric"
                   value={editingProduct.priceUZS ?? ''}
+                  onFocus={(e) => e.target.select()}
                   onChange={(e) => {
                     const val = e.target.value;
+                    if (val !== '' && !/^\d*$/.test(val)) return;
                     setEditingProduct({ ...editingProduct, priceUZS: val === '' ? undefined : Number(val) });
                   }}
                   className="w-full p-2.5 bg-black/60 border border-white/10"
