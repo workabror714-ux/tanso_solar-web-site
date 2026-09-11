@@ -203,10 +203,12 @@ export const LeadModal: React.FC<LeadModalProps> = ({ isOpen, onClose, product, 
                   <div className="relative">
                     <Hash className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--muted-dark)]" />
                     <input
-                      type="number"
-                      min={0}
-                      max={100}
+                      type="text"
+                      inputMode="numeric"
+                      // text type (not "number") so there's no up/down spinner — the field
+                      // behaves like plain text and holds exactly what's typed.
                       value={quantity}
+                      onFocus={(e) => e.target.select()}
                       onChange={(e) => {
                         const val = e.target.value;
                         // Allow the field to be cleared or hold any digit string (including "0")
