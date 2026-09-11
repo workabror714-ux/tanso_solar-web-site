@@ -2,6 +2,7 @@ import React from 'react';
 import { Droplets, Layers3, Headphones } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 import { AboutSection } from '../components/AboutSection';
+import { CertificatesSection } from '../components/CertificatesSection';
 import { WhyTanso } from '../components/WhyTanso';
 
 interface AboutPageProps {
@@ -51,6 +52,8 @@ export const AboutPage: React.FC<AboutPageProps> = ({ onNavigate }) => {
       </section>
 
       <AboutSection onNavigate={onNavigate} />
+
+      <CertificatesSection />
 
       <section className="py-20 bg-[var(--paper)]">
         <div className="tanso-container">
