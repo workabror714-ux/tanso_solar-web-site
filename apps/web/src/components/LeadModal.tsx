@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { X, Send, CheckCircle2, ShieldCheck, User, FileText, Hash } from 'lucide-react';
 import { PhoneInput } from './PhoneInput';
 import { useLanguage } from '../context/LanguageContext';
@@ -23,6 +23,16 @@ export const LeadModal: React.FC<LeadModalProps> = ({ isOpen, onClose, product, 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
+
+  // Lock background page scroll while the modal is open, and restore it on close/unmount.
+  useEffect(() => {
+    if (!isOpen) return;
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.body.style.overflow = previousOverflow;
+    };
+  }, [isOpen]);
 
   if (!isOpen) return null;
 
@@ -87,9 +97,10 @@ export const LeadModal: React.FC<LeadModalProps> = ({ isOpen, onClose, product, 
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm animate-fade-in">
+    <div className="fixed inset-0 z-50 overflow-y-auto bg-black/70 backdrop-blur-sm animate-fade-in">
+      <div className="flex min-h-full items-center justify-center p-4 py-8">
       <div
-        className="relative w-full max-w-lg bg-[var(--ink)] rounded-[14px] shadow-2xl border border-white/10 overflow-hidden text-white"
+        className="relative w-full max-w-lg max-h-[90vh] overflow-y-auto bg-[var(--ink)] rounded-[14px] shadow-2xl border border-white/10 text-white"
         id="lead-modal-container"
       >
         {/* Header */}
@@ -247,6 +258,7 @@ export const LeadModal: React.FC<LeadModalProps> = ({ isOpen, onClose, product, 
             </form>
           )}
         </div>
+      </div>
       </div>
     </div>
   );
