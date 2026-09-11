@@ -292,8 +292,13 @@ export const AdminProducts: React.FC = () => {
                 <label className="block text-[11px] font-bold text-zinc-400 uppercase mb-1">Narx (USD)</label>
                 <input
                   type="number"
-                  value={editingProduct.priceUSD || 0}
-                  onChange={(e) => setEditingProduct({ ...editingProduct, priceUSD: Number(e.target.value) })}
+                  // Empty stays empty instead of snapping back to a forced "0" — you can clear
+                  // the field and type any number freely.
+                  value={editingProduct.priceUSD ?? ''}
+                  onChange={(e) => {
+                    const val = e.target.value;
+                    setEditingProduct({ ...editingProduct, priceUSD: val === '' ? undefined : Number(val) });
+                  }}
                   className="w-full p-2.5 bg-black/60 border border-white/10"
                 />
               </div>
@@ -302,8 +307,11 @@ export const AdminProducts: React.FC = () => {
                 <label className="block text-[11px] font-bold text-zinc-400 uppercase mb-1">Narx (UZS)</label>
                 <input
                   type="number"
-                  value={editingProduct.priceUZS || 0}
-                  onChange={(e) => setEditingProduct({ ...editingProduct, priceUZS: Number(e.target.value) })}
+                  value={editingProduct.priceUZS ?? ''}
+                  onChange={(e) => {
+                    const val = e.target.value;
+                    setEditingProduct({ ...editingProduct, priceUZS: val === '' ? undefined : Number(val) });
+                  }}
                   className="w-full p-2.5 bg-black/60 border border-white/10"
                 />
               </div>
