@@ -24,7 +24,7 @@ export const AdminLogin: React.FC<AdminLoginProps> = ({ onNavigate }) => {
     if (res.success) {
       onNavigate('/admin');
     } else {
-      setError(res.error || 'Login xatosi');
+      setError(res.error || 'Ошибка входа');
     }
   };
 
@@ -41,7 +41,7 @@ export const AdminLogin: React.FC<AdminLoginProps> = ({ onNavigate }) => {
             TANSO <span className="text-[#F59E0B] not-italic">SOLAR</span>
           </h1>
           <p className="text-xs text-zinc-400">
-            Administrator boshqaruv paneli
+            Панель управления администратора
           </p>
         </div>
 
@@ -71,7 +71,7 @@ export const AdminLogin: React.FC<AdminLoginProps> = ({ onNavigate }) => {
 
           <div>
             <label className="block text-xs font-semibold uppercase text-zinc-400 mb-1.5">
-              Parol
+              Пароль
             </label>
             <div className="relative">
               <KeyRound className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-500" />
@@ -88,7 +88,7 @@ export const AdminLogin: React.FC<AdminLoginProps> = ({ onNavigate }) => {
 
           <div className="p-3 bg-black/60 border border-white/10 text-[11px] text-zinc-400 flex items-center gap-2">
             <ShieldCheck className="w-4 h-4 text-emerald-400 flex-shrink-0" />
-            <span>Demo kirish: <b>admin@tanso.uz</b> / <b>admin123</b></span>
+            <span>Демо-вход: <b>admin@tanso.uz</b> / <b>admin123</b></span>
           </div>
 
           <button
@@ -102,7 +102,7 @@ export const AdminLogin: React.FC<AdminLoginProps> = ({ onNavigate }) => {
             ) : (
               <>
                 <Lock className="w-4 h-4" />
-                <span>Tizimga kirish</span>
+                <span>Войти в систему</span>
               </>
             )}
           </button>
@@ -113,7 +113,7 @@ export const AdminLogin: React.FC<AdminLoginProps> = ({ onNavigate }) => {
             onClick={() => window.location.assign('/')}
             className="text-xs text-zinc-500 hover:text-zinc-300 transition-colors uppercase tracking-wider"
           >
-            ← Bosh sahifaga qaytish
+            ← Вернуться на главную
           </button>
         </div>
 

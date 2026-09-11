@@ -14,7 +14,7 @@ export const AdminProjects: React.FC = () => {
       titleRu: '',
       locationUz: 'Toshkent shahri',
       locationRu: 'г. Ташкент',
-      capacity: '500 Litr',
+      capacity: '500 литров',
       year: String(new Date().getFullYear()),
       imageUrl: 'https://images.unsplash.com/photo-1508514177221-188b1cf16e9d?auto=format&fit=crop&q=80&w=800',
       featured: false,
@@ -36,8 +36,8 @@ export const AdminProjects: React.FC = () => {
     <div className="space-y-6 text-xs text-white">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-editorial font-light text-white italic">Bajarilgan Loyihalar Portfolio</h1>
-          <p className="text-zinc-400 mt-1">O‘rnatilgan quyosh stantsiyalari va geliotizimlar gallereyasi.</p>
+          <h1 className="text-2xl font-editorial font-light text-white italic">Портфолио выполненных проектов</h1>
+          <p className="text-zinc-400 mt-1">Галерея установленных солнечных станций и гелиосистем.</p>
         </div>
 
         <button
@@ -45,7 +45,7 @@ export const AdminProjects: React.FC = () => {
           className="px-4 py-2.5 bg-[#064E3B] hover:bg-[#064E3B]/80 font-bold text-white uppercase tracking-wider flex items-center gap-2"
         >
           <Plus className="w-4 h-4" />
-          <span>Loyiha qo‘shish</span>
+          <span>Добавить проект</span>
         </button>
       </div>
 
@@ -78,13 +78,13 @@ export const AdminProjects: React.FC = () => {
         <div className="fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-4">
           <div className="bg-[#1A1A1A] border border-white/10 w-full max-w-lg p-6 space-y-4">
             <div className="flex items-center justify-between border-b border-white/10 pb-3">
-              <h3 className="font-bold text-sm">Loyiha ma’lumotlari</h3>
+              <h3 className="font-bold text-sm">Данные проекта</h3>
               <button onClick={() => setEditingProject(null)}><X className="w-5 h-5" /></button>
             </div>
 
             <div className="space-y-3">
               <div>
-                <label className="block text-[10px] font-bold uppercase text-zinc-400 mb-1">Sarlavha UZ *</label>
+                <label className="block text-[10px] font-bold uppercase text-zinc-400 mb-1">Заголовок UZ *</label>
                 <input
                   type="text"
                   value={editingProject.titleUz || ''}
@@ -94,7 +94,7 @@ export const AdminProjects: React.FC = () => {
               </div>
 
               <div>
-                <label className="block text-[10px] font-bold uppercase text-zinc-400 mb-1">Sarlavha RU *</label>
+                <label className="block text-[10px] font-bold uppercase text-zinc-400 mb-1">Заголовок RU *</label>
                 <input
                   type="text"
                   value={editingProject.titleRu || ''}
@@ -105,7 +105,7 @@ export const AdminProjects: React.FC = () => {
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-[10px] font-bold uppercase text-zinc-400 mb-1">Joylashuv UZ</label>
+                  <label className="block text-[10px] font-bold uppercase text-zinc-400 mb-1">Местоположение UZ</label>
                   <input
                     type="text"
                     value={editingProject.locationUz || ''}
@@ -114,7 +114,7 @@ export const AdminProjects: React.FC = () => {
                   />
                 </div>
                 <div>
-                  <label className="block text-[10px] font-bold uppercase text-zinc-400 mb-1">Joylashuv RU</label>
+                  <label className="block text-[10px] font-bold uppercase text-zinc-400 mb-1">Местоположение RU</label>
                   <input
                     type="text"
                     value={editingProject.locationRu || ''}
@@ -126,7 +126,7 @@ export const AdminProjects: React.FC = () => {
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-[10px] font-bold uppercase text-zinc-400 mb-1">Quvvati / Hajmi</label>
+                  <label className="block text-[10px] font-bold uppercase text-zinc-400 mb-1">Мощность / Объём</label>
                   <input
                     type="text"
                     value={editingProject.capacity || ''}
@@ -135,7 +135,7 @@ export const AdminProjects: React.FC = () => {
                   />
                 </div>
                 <div>
-                  <label className="block text-[10px] font-bold uppercase text-zinc-400 mb-1">Yil *</label>
+                  <label className="block text-[10px] font-bold uppercase text-zinc-400 mb-1">Год *</label>
                   <input
                     type="text"
                     value={editingProject.year || ''}
@@ -147,7 +147,7 @@ export const AdminProjects: React.FC = () => {
               </div>
 
               <ImageUploader
-                label="Rasm"
+                label="Изображение"
                 value={editingProject.imageUrl || ''}
                 onChange={(url) => setEditingProject({ ...editingProject, imageUrl: url })}
               />
@@ -159,16 +159,16 @@ export const AdminProjects: React.FC = () => {
                   onChange={(e) => setEditingProject({ ...editingProject, featured: e.target.checked })}
                   className="accent-emerald-500 w-4 h-4"
                 />
-                <span>TOP (Featured)</span>
+                <span>ТОП (Featured)</span>
               </label>
             </div>
 
             <div className="pt-3 border-t border-white/10 flex justify-end gap-2">
               <button onClick={() => setEditingProject(null)} className="px-4 py-2 bg-black/60 border border-white/10">
-                Bekor qilish
+                Отмена
               </button>
               <button onClick={handleSave} className="px-5 py-2 bg-[#064E3B] hover:bg-[#064E3B]/80 font-bold text-white uppercase tracking-wider">
-                Saqlash
+                Сохранить
               </button>
             </div>
           </div>

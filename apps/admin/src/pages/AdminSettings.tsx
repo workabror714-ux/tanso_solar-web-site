@@ -17,14 +17,14 @@ export const AdminSettings: React.FC = () => {
   return (
     <div className="space-y-6 text-xs text-white max-w-4xl">
       <div>
-        <h1 className="text-2xl font-editorial font-light text-white italic">Sayt Tizim Sozlamalari</h1>
-        <p className="text-zinc-400 mt-1">Aloqa ma’lumotlari, Telegram bot sozlamalari hamda manzillar.</p>
+        <h1 className="text-2xl font-editorial font-light text-white italic">Системные настройки сайта</h1>
+        <p className="text-zinc-400 mt-1">Контактные данные, настройки Telegram-бота и адреса.</p>
       </div>
 
       {savedSuccess && (
         <div className="p-4 bg-[#064E3B]/40 border border-[#064E3B] text-emerald-300 flex items-center gap-2">
           <CheckCircle2 className="w-5 h-5 text-emerald-400" />
-          <span className="font-bold">Sozlamalar muvaffaqiyatli saqlandi!</span>
+          <span className="font-bold">Настройки успешно сохранены!</span>
         </div>
       )}
 
@@ -34,12 +34,12 @@ export const AdminSettings: React.FC = () => {
         <div className="bg-black/40 border border-white/10 p-6 space-y-4">
           <h3 className="font-bold text-sm text-white flex items-center gap-2 border-b border-white/10 pb-3 uppercase tracking-wider">
             <Phone className="w-4 h-4 text-emerald-400" />
-            <span>Aloqa telefonlari va Telegram</span>
+            <span>Контактные телефоны и Telegram</span>
           </h3>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="block text-[10px] font-bold uppercase text-zinc-400 mb-1">Asosiy Telefon 1 *</label>
+              <label className="block text-[10px] font-bold uppercase text-zinc-400 mb-1">Основной телефон 1 *</label>
               <input
                 type="text"
                 required
@@ -50,7 +50,7 @@ export const AdminSettings: React.FC = () => {
             </div>
 
             <div>
-              <label className="block text-[10px] font-bold uppercase text-zinc-400 mb-1">Qo‘shimcha Telefon 2</label>
+              <label className="block text-[10px] font-bold uppercase text-zinc-400 mb-1">Дополнительный телефон 2</label>
               <input
                 type="text"
                 value={formData.phone2}
@@ -60,7 +60,7 @@ export const AdminSettings: React.FC = () => {
             </div>
 
             <div>
-              <label className="block text-[10px] font-bold uppercase text-zinc-400 mb-1">Telegram Linki</label>
+              <label className="block text-[10px] font-bold uppercase text-zinc-400 mb-1">Ссылка на Telegram</label>
               <input
                 type="text"
                 value={formData.telegram}
@@ -70,7 +70,7 @@ export const AdminSettings: React.FC = () => {
             </div>
 
             <div>
-              <label className="block text-[10px] font-bold uppercase text-zinc-400 mb-1">Instagram Linki</label>
+              <label className="block text-[10px] font-bold uppercase text-zinc-400 mb-1">Ссылка на Instagram</label>
               <input
                 type="text"
                 value={formData.instagram}
@@ -86,7 +86,7 @@ export const AdminSettings: React.FC = () => {
           <div className="flex items-center justify-between border-b border-white/10 pb-3">
             <h3 className="font-bold text-sm text-white flex items-center gap-2 uppercase tracking-wider">
               <Send className="w-4 h-4 text-blue-400" />
-              <span>Telegram Bot CRM Bildirishnomasi</span>
+              <span>Уведомления Telegram-бота CRM</span>
             </h3>
             <span className="px-2 py-0.5 bg-blue-950/80 border border-blue-800 text-blue-400 text-[10px] font-bold uppercase">
               Server-side API
@@ -94,7 +94,7 @@ export const AdminSettings: React.FC = () => {
           </div>
 
           <p className="text-[11px] text-zinc-400 leading-relaxed">
-            Mijoz so‘rov qoldirganda administrator guruhiga avtomatik Telegram bildirishnomasi borishi uchun Telegram Bot Token va Chat ID kiriting:
+            Введите Telegram Bot Token и Chat ID, чтобы при оставлении заявки клиентом администраторская группа автоматически получала уведомление в Telegram:
           </p>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -110,7 +110,7 @@ export const AdminSettings: React.FC = () => {
             </div>
 
             <div>
-              <label className="block text-[10px] font-bold uppercase text-zinc-400 mb-1">Telegram Chat / Group ID</label>
+              <label className="block text-[10px] font-bold uppercase text-zinc-400 mb-1">Telegram Chat / ID группы</label>
               <input
                 type="text"
                 value={formData.telegramChatId}
@@ -126,12 +126,12 @@ export const AdminSettings: React.FC = () => {
         <div className="bg-black/40 border border-white/10 p-6 space-y-4">
           <h3 className="font-bold text-sm text-white flex items-center gap-2 border-b border-white/10 pb-3 uppercase tracking-wider">
             <MapPin className="w-4 h-4 text-[#F59E0B]" />
-            <span>Manzil va Ish Vaqti</span>
+            <span>Адрес и часы работы</span>
           </h3>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="block text-[10px] font-bold uppercase text-zinc-400 mb-1">Manzil UZ</label>
+              <label className="block text-[10px] font-bold uppercase text-zinc-400 mb-1">Адрес UZ</label>
               <input
                 type="text"
                 value={formData.addressUz}
@@ -141,7 +141,7 @@ export const AdminSettings: React.FC = () => {
             </div>
 
             <div>
-              <label className="block text-[10px] font-bold uppercase text-zinc-400 mb-1">Manzil RU</label>
+              <label className="block text-[10px] font-bold uppercase text-zinc-400 mb-1">Адрес RU</label>
               <input
                 type="text"
                 value={formData.addressRu}
@@ -151,7 +151,7 @@ export const AdminSettings: React.FC = () => {
             </div>
 
             <div>
-              <label className="block text-[10px] font-bold uppercase text-zinc-400 mb-1">Ish Vaqti UZ</label>
+              <label className="block text-[10px] font-bold uppercase text-zinc-400 mb-1">Часы работы UZ</label>
               <input
                 type="text"
                 value={formData.workingHoursUz}
@@ -161,7 +161,7 @@ export const AdminSettings: React.FC = () => {
             </div>
 
             <div>
-              <label className="block text-[10px] font-bold uppercase text-zinc-400 mb-1">Ish Vaqti RU</label>
+              <label className="block text-[10px] font-bold uppercase text-zinc-400 mb-1">Часы работы RU</label>
               <input
                 type="text"
                 value={formData.workingHoursRu}
@@ -177,7 +177,7 @@ export const AdminSettings: React.FC = () => {
           className="px-8 py-3.5 bg-[#064E3B] hover:bg-[#064E3B]/80 font-bold text-white text-xs uppercase tracking-wider flex items-center gap-2 transition-colors"
         >
           <Save className="w-4 h-4" />
-          <span>Sozlamalarni saqlash</span>
+          <span>Сохранить настройки</span>
         </button>
 
       </form>

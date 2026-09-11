@@ -1,10 +1,10 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { 
-  Category, Product, HeroBanner, Service, Project, Partner, SiteSettings, Lead, AdminNotification, LeadStatus 
+import {
+  Category, Product, HeroBanner, Service, Project, Partner, Certificate, SiteSettings, Lead, AdminNotification, LeadStatus
 } from '@tanso/shared/types';
-import { 
-  initialCategories, initialProducts, initialHeroBanners, initialServices, 
-  initialProjects, initialPartners, initialSiteSettings, initialLeads 
+import {
+  initialCategories, initialProducts, initialHeroBanners, initialServices,
+  initialProjects, initialPartners, initialCertificates, initialSiteSettings, initialLeads
 } from '@tanso/shared/data/initialData';
 
 interface DataContextType {
@@ -14,6 +14,7 @@ interface DataContextType {
   services: Service[];
   projects: Project[];
   partners: Partner[];
+  certificates: Certificate[];
   settings: SiteSettings;
   leads: Lead[];
   notifications: AdminNotification[];
@@ -59,6 +60,7 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [services, setServices] = useState<Service[]>(initialServices);
   const [projects, setProjects] = useState<Project[]>(initialProjects);
   const [partners, setPartners] = useState<Partner[]>(initialPartners);
+  const [certificates, setCertificates] = useState<Certificate[]>(initialCertificates);
   const [settings, setSettings] = useState<SiteSettings>(initialSiteSettings);
   const [leads, setLeads] = useState<Lead[]>(initialLeads);
   const [notifications, setNotifications] = useState<AdminNotification[]>([]);
@@ -68,7 +70,7 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
     try {
       setIsLoading(true);
       const [
-        resCats, resProds, resBanners, resServs, resProjs, resParts, resSetts, resLeads, resNotifs
+        resCats, resProds, resBanners, resServs, resProjs, resParts, resCerts, resSetts, resLeads, resNotifs
       ] = await Promise.all([
         fetch('/api/categories').then(r => r.ok ? r.json() : null),
         fetch('/api/products').then(r => r.ok ? r.json() : null),
@@ -76,6 +78,7 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
         fetch('/api/services').then(r => r.ok ? r.json() : null),
         fetch('/api/projects').then(r => r.ok ? r.json() : null),
         fetch('/api/partners').then(r => r.ok ? r.json() : null),
+        fetch('/api/certificates').then(r => r.ok ? r.json() : null),
         fetch('/api/settings').then(r => r.ok ? r.json() : null),
         fetch('/api/leads').then(r => r.ok ? r.json() : null),
         fetch('/api/notifications').then(r => r.ok ? r.json() : null),
@@ -87,6 +90,7 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
       if (resServs) setServices(resServs);
       if (resProjs) setProjects(resProjs);
       if (resParts) setPartners(resParts);
+      if (resCerts) setCertificates(resCerts);
       if (resSetts) setSettings(resSetts);
       if (resLeads) setLeads(resLeads);
       if (resNotifs) setNotifications(resNotifs);
@@ -362,7 +366,7 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   return (
     <DataContext.Provider value={{
-      categories, products, banners, services, projects, partners, settings, leads, notifications, isLoading,
+      categories, products, banners, services, projects, partners, certificates, settings, leads, notifications, isLoading,
       createLead, updateLeadStatus, markLeadRead, deleteLead,
       addProduct, updateProduct, deleteProduct,
       addCategory, updateCategory, deleteCategory,

@@ -16,7 +16,7 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({ value, onChange, l
   const handleFile = async (file: File) => {
     setError(null);
     if (!file.type.startsWith('image/')) {
-      setError('Faqat rasm fayllari qabul qilinadi.');
+      setError('Принимаются только файлы изображений.');
       return;
     }
     setUploading(true);
@@ -25,10 +25,10 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({ value, onChange, l
       formData.append('file', file);
       const res = await fetch('/api/upload', { method: 'POST', body: formData });
       const data = await res.json().catch(() => ({}));
-      if (!res.ok) throw new Error(data.error || 'Yuklashda xatolik yuz berdi.');
+      if (!res.ok) throw new Error(data.error || 'Ошибка при загрузке.');
       onChange(data.url);
     } catch (e: any) {
-      setError(e.message || 'Yuklashda xatolik yuz berdi.');
+      setError(e.message || 'Ошибка при загрузке.');
     } finally {
       setUploading(false);
       if (inputRef.current) inputRef.current.value = '';
@@ -67,7 +67,7 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({ value, onChange, l
               className="flex items-center gap-1.5 px-3 py-2 bg-[#064E3B] hover:bg-[#064E3B]/80 disabled:opacity-50 font-bold text-white uppercase tracking-wider text-[10px]"
             >
               {uploading ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Upload className="w-3.5 h-3.5" />}
-              <span>{uploading ? 'Yuklanmoqda...' : 'Kompyuterdan yuklash'}</span>
+              <span>{uploading ? 'Загрузка...' : 'Загрузить с компьютера'}</span>
             </button>
             {value && (
               <button
@@ -76,7 +76,7 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({ value, onChange, l
                 className="flex items-center gap-1 px-2.5 py-2 bg-black/60 border border-white/10 hover:border-rose-800 text-rose-400 text-[10px] uppercase tracking-wider font-bold"
               >
                 <X className="w-3.5 h-3.5" />
-                <span>Tozalash</span>
+                <span>Очистить</span>
               </button>
             )}
           </div>
@@ -94,7 +94,7 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({ value, onChange, l
             type="text"
             value={value}
             onChange={(e) => onChange(e.target.value)}
-            placeholder="yoki tashqi rasm URL manzilini qo‘lda kiriting..."
+            placeholder="или укажите URL изображения вручную..."
             className="w-full p-2 bg-black/60 border border-white/10 font-mono text-[10px]"
           />
           {error && <p className="text-[10px] text-rose-400">{error}</p>}

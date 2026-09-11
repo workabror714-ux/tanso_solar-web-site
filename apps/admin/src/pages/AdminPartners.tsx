@@ -30,8 +30,8 @@ export const AdminPartners: React.FC = () => {
     <div className="space-y-6 text-xs text-white">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-editorial font-light text-white italic">Hamkorlar va Zavodlar</h1>
-          <p className="text-zinc-400 mt-1">Rasmiy ishlab chiqaruvchilar hamkorlik brendlari.</p>
+          <h1 className="text-2xl font-editorial font-light text-white italic">Партнёры и заводы</h1>
+          <p className="text-zinc-400 mt-1">Бренды официальных заводов-производителей и партнёров.</p>
         </div>
 
         <button
@@ -39,7 +39,7 @@ export const AdminPartners: React.FC = () => {
           className="px-4 py-2.5 bg-[#064E3B] hover:bg-[#064E3B]/80 font-bold text-white uppercase tracking-wider flex items-center gap-2"
         >
           <Plus className="w-4 h-4" />
-          <span>Hamkor qo‘shish</span>
+          <span>Добавить партнёра</span>
         </button>
       </div>
 
@@ -63,13 +63,13 @@ export const AdminPartners: React.FC = () => {
         <div className="fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-4">
           <div className="bg-[#1A1A1A] border border-white/10 w-full max-w-sm p-6 space-y-4">
             <div className="flex items-center justify-between border-b border-white/10 pb-3">
-              <h3 className="font-bold text-sm">Hamkor ma’lumotlari</h3>
+              <h3 className="font-bold text-sm">Данные партнёра</h3>
               <button onClick={() => setEditingPartner(null)}><X className="w-5 h-5" /></button>
             </div>
 
             <div className="space-y-3">
               <div>
-                <label className="block text-[10px] font-bold uppercase text-zinc-400 mb-1">Brend Nomi *</label>
+                <label className="block text-[10px] font-bold uppercase text-zinc-400 mb-1">Название бренда *</label>
                 <input
                   type="text"
                   value={editingPartner.name || ''}
@@ -79,7 +79,7 @@ export const AdminPartners: React.FC = () => {
               </div>
 
               <ImageUploader
-                label="Logo"
+                label="Логотип"
                 value={editingPartner.logoUrl || ''}
                 onChange={(url) => setEditingPartner({ ...editingPartner, logoUrl: url })}
               />
@@ -87,10 +87,10 @@ export const AdminPartners: React.FC = () => {
 
             <div className="pt-3 border-t border-white/10 flex justify-end gap-2">
               <button onClick={() => setEditingPartner(null)} className="px-4 py-2 bg-black/60 border border-white/10">
-                Bekor qilish
+                Отмена
               </button>
               <button onClick={handleSave} className="px-5 py-2 bg-[#064E3B] hover:bg-[#064E3B]/80 font-bold text-white uppercase tracking-wider">
-                Saqlash
+                Сохранить
               </button>
             </div>
           </div>

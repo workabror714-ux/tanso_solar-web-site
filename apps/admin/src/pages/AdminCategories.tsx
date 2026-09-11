@@ -43,8 +43,8 @@ export const AdminCategories: React.FC = () => {
     <div className="space-y-6 text-xs text-white">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-editorial font-light text-white italic">Kategoriyalar boshqaruvi</h1>
-          <p className="text-zinc-400 mt-1">Mahsulot guruhlari va navbat tartibi.</p>
+          <h1 className="text-2xl font-editorial font-light text-white italic">Управление категориями</h1>
+          <p className="text-zinc-400 mt-1">Группы товаров и порядок очередности.</p>
         </div>
 
         <button
@@ -52,7 +52,7 @@ export const AdminCategories: React.FC = () => {
           className="px-4 py-2.5 bg-[#064E3B] hover:bg-[#064E3B]/80 font-bold text-white uppercase tracking-wider flex items-center gap-2"
         >
           <Plus className="w-4 h-4" />
-          <span>Kategoriya qo‘shish</span>
+          <span>Добавить категорию</span>
         </button>
       </div>
 
@@ -60,12 +60,12 @@ export const AdminCategories: React.FC = () => {
         <table className="w-full text-left">
           <thead className="bg-black/80 text-zinc-400 uppercase text-[10px] tracking-wider border-b border-white/10">
             <tr>
-              <th className="p-3.5">Tartib</th>
-              <th className="p-3.5">Nomi UZ</th>
-              <th className="p-3.5">Nomi RU</th>
+              <th className="p-3.5">Порядок</th>
+              <th className="p-3.5">Название UZ</th>
+              <th className="p-3.5">Название RU</th>
               <th className="p-3.5">Slug</th>
-              <th className="p-3.5">Aktiv</th>
-              <th className="p-3.5 text-right">Amallar</th>
+              <th className="p-3.5">Активна</th>
+              <th className="p-3.5 text-right">Действия</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-white/10">
@@ -77,9 +77,9 @@ export const AdminCategories: React.FC = () => {
                 <td className="p-3.5 font-mono text-emerald-400">{c.slug}</td>
                 <td className="p-3.5">
                   {c.active ? (
-                    <span className="px-2 py-0.5 bg-[#064E3B]/40 text-emerald-400 border border-[#064E3B]">Aktiv</span>
+                    <span className="px-2 py-0.5 bg-[#064E3B]/40 text-emerald-400 border border-[#064E3B]">Активна</span>
                   ) : (
-                    <span className="px-2 py-0.5 bg-black/60 text-zinc-500 border border-white/10">Noaktiv</span>
+                    <span className="px-2 py-0.5 bg-black/60 text-zinc-500 border border-white/10">Неактивна</span>
                   )}
                 </td>
                 <td className="p-3.5 text-right space-x-2">
@@ -88,7 +88,7 @@ export const AdminCategories: React.FC = () => {
                   </button>
                   <button 
                     onClick={() => {
-                      if (confirm('Kategoriyani o‘chirishni tasdiqlaysizmi?')) {
+                      if (confirm('Вы подтверждаете удаление категории?')) {
                         deleteCategory(c.id);
                       }
                     }} 
@@ -107,13 +107,13 @@ export const AdminCategories: React.FC = () => {
         <div className="fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-4">
           <div className="bg-[#1A1A1A] border border-white/10 w-full max-w-lg p-6 space-y-4">
             <div className="flex items-center justify-between border-b border-white/10 pb-3">
-              <h3 className="font-bold text-sm">Kategoriya ma’lumotlari</h3>
+              <h3 className="font-bold text-sm">Данные категории</h3>
               <button onClick={() => setEditingCategory(null)}><X className="w-5 h-5" /></button>
             </div>
 
             <div className="space-y-3">
               <div>
-                <label className="block text-[10px] font-bold uppercase text-zinc-400 mb-1">Nomi UZ *</label>
+                <label className="block text-[10px] font-bold uppercase text-zinc-400 mb-1">Название UZ *</label>
                 <input
                   type="text"
                   value={editingCategory.nameUz || ''}
@@ -123,7 +123,7 @@ export const AdminCategories: React.FC = () => {
               </div>
 
               <div>
-                <label className="block text-[10px] font-bold uppercase text-zinc-400 mb-1">Nomi RU *</label>
+                <label className="block text-[10px] font-bold uppercase text-zinc-400 mb-1">Название RU *</label>
                 <input
                   type="text"
                   value={editingCategory.nameRu || ''}
@@ -145,7 +145,7 @@ export const AdminCategories: React.FC = () => {
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-[10px] font-bold uppercase text-zinc-400 mb-1">Tartib raqami</label>
+                  <label className="block text-[10px] font-bold uppercase text-zinc-400 mb-1">Порядковый номер</label>
                   <input
                     type="number"
                     value={editingCategory.sortOrder ?? 0}
@@ -161,13 +161,13 @@ export const AdminCategories: React.FC = () => {
                       onChange={(e) => setEditingCategory({ ...editingCategory, active: e.target.checked })}
                       className="accent-emerald-500 w-4 h-4"
                     />
-                    <span>Aktiv (saytda ko‘rinadi)</span>
+                    <span>Активна (отображается на сайте)</span>
                   </label>
                 </div>
               </div>
 
               <div>
-                <label className="block text-[10px] font-bold uppercase text-zinc-400 mb-1">Ikonka</label>
+                <label className="block text-[10px] font-bold uppercase text-zinc-400 mb-1">Иконка</label>
                 <div className="flex flex-wrap gap-2">
                   {ICON_OPTIONS.map(({ value, Icon }) => (
                     <button
@@ -188,13 +188,13 @@ export const AdminCategories: React.FC = () => {
               </div>
 
               <ImageUploader
-                label="Rasm"
+                label="Изображение"
                 value={editingCategory.imageUrl || ''}
                 onChange={(url) => setEditingCategory({ ...editingCategory, imageUrl: url })}
               />
 
               <div>
-                <label className="block text-[10px] font-bold uppercase text-zinc-400 mb-1">Tavsif UZ</label>
+                <label className="block text-[10px] font-bold uppercase text-zinc-400 mb-1">Описание UZ</label>
                 <textarea
                   rows={2}
                   value={editingCategory.descriptionUz || ''}
@@ -204,7 +204,7 @@ export const AdminCategories: React.FC = () => {
               </div>
 
               <div>
-                <label className="block text-[10px] font-bold uppercase text-zinc-400 mb-1">Tavsif RU</label>
+                <label className="block text-[10px] font-bold uppercase text-zinc-400 mb-1">Описание RU</label>
                 <textarea
                   rows={2}
                   value={editingCategory.descriptionRu || ''}
@@ -216,10 +216,10 @@ export const AdminCategories: React.FC = () => {
 
             <div className="pt-3 border-t border-white/10 flex justify-end gap-2">
               <button onClick={() => setEditingCategory(null)} className="px-4 py-2 bg-black/60 border border-white/10">
-                Bekor qilish
+                Отмена
               </button>
               <button onClick={handleSave} className="px-5 py-2 bg-[#064E3B] hover:bg-[#064E3B]/80 font-bold text-white uppercase tracking-wider">
-                Saqlash
+                Сохранить
               </button>
             </div>
           </div>

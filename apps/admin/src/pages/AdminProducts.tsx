@@ -105,9 +105,9 @@ export const AdminProducts: React.FC = () => {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-editorial font-light text-white italic">Mahsulotlar katalogi</h1>
+          <h1 className="text-2xl font-editorial font-light text-white italic">Каталог продукции</h1>
           <p className="text-xs text-zinc-400 mt-1">
-            Quyosh suv isitgichlari, panellar, inverterlar va akkumulyatorlar.
+            Солнечные водонагреватели, панели, инверторы и аккумуляторы.
           </p>
         </div>
 
@@ -117,7 +117,7 @@ export const AdminProducts: React.FC = () => {
           id="btn-add-product"
         >
           <Plus className="w-4 h-4" />
-          <span>Yangi mahsulot qo‘shish</span>
+          <span>Добавить новый товар</span>
         </button>
       </div>
 
@@ -129,7 +129,7 @@ export const AdminProducts: React.FC = () => {
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Nomi bo‘yicha qidiruv..."
+            placeholder="Поиск по названию..."
             className="w-full pl-10 pr-4 py-2 text-xs bg-black/60 border border-white/10 text-white focus:outline-none focus:border-[#064E3B]"
           />
         </div>
@@ -139,7 +139,7 @@ export const AdminProducts: React.FC = () => {
           onChange={(e) => setSelectedCat(e.target.value)}
           className="px-3 py-2 text-xs bg-black/60 border border-white/10 text-zinc-200 focus:outline-none focus:border-[#064E3B]"
         >
-          <option value="ALL">Barcha kategoriyalar</option>
+          <option value="ALL">Все категории</option>
           {categories.map(c => (
             <option key={c.id} value={c.id}>{c.nameUz}</option>
           ))}
@@ -152,12 +152,12 @@ export const AdminProducts: React.FC = () => {
           <table className="w-full text-left text-xs text-zinc-300">
             <thead className="bg-black/80 text-zinc-400 uppercase text-[10px] tracking-wider border-b border-white/10">
               <tr>
-                <th className="p-3.5">Rasm</th>
-                <th className="p-3.5">Nomi (UZ)</th>
-                <th className="p-3.5">Kategoriya</th>
-                <th className="p-3.5">Narxi (USD / UZS)</th>
-                <th className="p-3.5">Mavjud</th>
-                <th className="p-3.5 text-right">Amallar</th>
+                <th className="p-3.5">Фото</th>
+                <th className="p-3.5">Название (UZ)</th>
+                <th className="p-3.5">Категория</th>
+                <th className="p-3.5">Цена (USD / UZS)</th>
+                <th className="p-3.5">В наличии</th>
+                <th className="p-3.5 text-right">Действия</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-white/10">
@@ -184,27 +184,27 @@ export const AdminProducts: React.FC = () => {
                     </td>
                     <td className="p-3.5">
                       {p.inStock ? (
-                        <span className="px-2 py-0.5 bg-[#064E3B]/40 text-emerald-400 border border-[#064E3B] text-[10px]">Mavjud</span>
+                        <span className="px-2 py-0.5 bg-[#064E3B]/40 text-emerald-400 border border-[#064E3B] text-[10px]">В наличии</span>
                       ) : (
-                        <span className="px-2 py-0.5 bg-black/60 text-zinc-500 border border-white/10 text-[10px]">Yo'q</span>
+                        <span className="px-2 py-0.5 bg-black/60 text-zinc-500 border border-white/10 text-[10px]">Нет</span>
                       )}
                     </td>
                     <td className="p-3.5 text-right space-x-2">
                       <button
                         onClick={() => setEditingProduct(p)}
                         className="p-1.5 bg-black/60 border border-white/10 hover:border-[#064E3B] text-zinc-300"
-                        title="Tahrirlash"
+                        title="Редактировать"
                       >
                         <Edit className="w-3.5 h-3.5" />
                       </button>
                       <button
                         onClick={() => {
-                          if (confirm('O‘chirishni tasdiqlaysizmi?')) {
+                          if (confirm('Подтвердите удаление?')) {
                             deleteProduct(p.id);
                           }
                         }}
                         className="p-1.5 bg-black/60 border border-white/10 hover:border-rose-800 text-rose-400"
-                        title="O‘chirish"
+                        title="Удалить"
                       >
                         <Trash2 className="w-3.5 h-3.5" />
                       </button>
@@ -224,7 +224,7 @@ export const AdminProducts: React.FC = () => {
             
             <div className="flex items-center justify-between border-b border-white/10 pb-4">
               <h3 className="text-base font-bold">
-                {editingProduct.id ? 'Mahsulotni tahrirlash' : 'Yangi mahsulot yaratish'}
+                {editingProduct.id ? 'Редактирование товара' : 'Создание нового товара'}
               </h3>
               <button onClick={() => setEditingProduct(null)} className="p-1 text-zinc-400 hover:text-white">
                 <X className="w-5 h-5" />
@@ -233,7 +233,7 @@ export const AdminProducts: React.FC = () => {
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label className="block text-[11px] font-bold text-zinc-400 uppercase mb-1">Nomi (UZ) *</label>
+                <label className="block text-[11px] font-bold text-zinc-400 uppercase mb-1">Название (UZ) *</label>
                 <input
                   type="text"
                   value={editingProduct.titleUz || ''}
@@ -253,7 +253,7 @@ export const AdminProducts: React.FC = () => {
               </div>
 
               <div>
-                <label className="block text-[11px] font-bold text-zinc-400 uppercase mb-1">Nomi (RU) *</label>
+                <label className="block text-[11px] font-bold text-zinc-400 uppercase mb-1">Название (RU) *</label>
                 <input
                   type="text"
                   value={editingProduct.titleRu || ''}
@@ -272,11 +272,11 @@ export const AdminProducts: React.FC = () => {
                   className="w-full p-2.5 bg-black/60 border border-white/10 font-mono text-[11px]"
                   placeholder="tanso-solar-200l"
                 />
-                <p className="mt-1 text-[10px] text-zinc-500">Mahsulot sahifasi manzili: /product/{editingProduct.slug || '...'}</p>
+                <p className="mt-1 text-[10px] text-zinc-500">Адрес страницы товара: /product/{editingProduct.slug || '...'}</p>
               </div>
 
               <div>
-                <label className="block text-[11px] font-bold text-zinc-400 uppercase mb-1">Kategoriya</label>
+                <label className="block text-[11px] font-bold text-zinc-400 uppercase mb-1">Категория</label>
                 <select
                   value={editingProduct.categoryId}
                   onChange={(e) => setEditingProduct({ ...editingProduct, categoryId: e.target.value })}
@@ -289,7 +289,7 @@ export const AdminProducts: React.FC = () => {
               </div>
 
               <div>
-                <label className="block text-[11px] font-bold text-zinc-400 uppercase mb-1">Narx (USD)</label>
+                <label className="block text-[11px] font-bold text-zinc-400 uppercase mb-1">Цена (USD)</label>
                 <input
                   type="text"
                   inputMode="decimal"
@@ -307,7 +307,7 @@ export const AdminProducts: React.FC = () => {
               </div>
 
               <div>
-                <label className="block text-[11px] font-bold text-zinc-400 uppercase mb-1">Narx (UZS)</label>
+                <label className="block text-[11px] font-bold text-zinc-400 uppercase mb-1">Цена (UZS)</label>
                 <input
                   type="text"
                   inputMode="numeric"
@@ -330,7 +330,7 @@ export const AdminProducts: React.FC = () => {
                     onChange={(e) => setEditingProduct({ ...editingProduct, inStock: e.target.checked })}
                     className="accent-emerald-500 w-4 h-4"
                   />
-                  <span>Mavjud (In Stock)</span>
+                  <span>В наличии (In Stock)</span>
                 </label>
 
                 <label className="flex items-center gap-2 cursor-pointer">
@@ -340,14 +340,14 @@ export const AdminProducts: React.FC = () => {
                     onChange={(e) => setEditingProduct({ ...editingProduct, featured: e.target.checked })}
                     className="accent-emerald-500 w-4 h-4"
                   />
-                  <span>TOP (Featured)</span>
+                  <span>ТОП (Featured)</span>
                 </label>
               </div>
             </div>
 
             {/* Image */}
             <ImageUploader
-              label="Mahsulot rasmi"
+              label="Фото товара"
               value={editingProduct.images?.[0] || ''}
               onChange={(url) => setEditingProduct({ ...editingProduct, images: [url] })}
             />
@@ -355,17 +355,17 @@ export const AdminProducts: React.FC = () => {
             {/* Descriptions */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2 border-t border-white/10">
               <div>
-                <label className="block text-[11px] font-bold text-zinc-400 uppercase mb-1">Qisqa tavsif UZ</label>
+                <label className="block text-[11px] font-bold text-zinc-400 uppercase mb-1">Краткое описание UZ</label>
                 <textarea
                   rows={2}
                   value={editingProduct.shortDescUz || ''}
                   onChange={(e) => setEditingProduct({ ...editingProduct, shortDescUz: e.target.value })}
                   className="w-full p-2.5 bg-black/60 border border-white/10"
-                  placeholder="Katalog kartochkasida ko‘rinadigan qisqa tavsif"
+                  placeholder="Краткое описание, отображаемое в карточке каталога"
                 />
               </div>
               <div>
-                <label className="block text-[11px] font-bold text-zinc-400 uppercase mb-1">Qisqa tavsif RU</label>
+                <label className="block text-[11px] font-bold text-zinc-400 uppercase mb-1">Краткое описание RU</label>
                 <textarea
                   rows={2}
                   value={editingProduct.shortDescRu || ''}
@@ -374,17 +374,17 @@ export const AdminProducts: React.FC = () => {
                 />
               </div>
               <div>
-                <label className="block text-[11px] font-bold text-zinc-400 uppercase mb-1">To‘liq tavsif UZ</label>
+                <label className="block text-[11px] font-bold text-zinc-400 uppercase mb-1">Полное описание UZ</label>
                 <textarea
                   rows={4}
                   value={editingProduct.fullDescUz || ''}
                   onChange={(e) => setEditingProduct({ ...editingProduct, fullDescUz: e.target.value })}
                   className="w-full p-2.5 bg-black/60 border border-white/10"
-                  placeholder="Mahsulot sahifasida ko‘rinadigan to‘liq tavsif"
+                  placeholder="Полное описание, отображаемое на странице товара"
                 />
               </div>
               <div>
-                <label className="block text-[11px] font-bold text-zinc-400 uppercase mb-1">To‘liq tavsif RU</label>
+                <label className="block text-[11px] font-bold text-zinc-400 uppercase mb-1">Полное описание RU</label>
                 <textarea
                   rows={4}
                   value={editingProduct.fullDescRu || ''}
@@ -397,12 +397,12 @@ export const AdminProducts: React.FC = () => {
             {/* Specifications builder */}
             <div className="space-y-3 pt-2 border-t border-white/10">
               <div className="flex items-center justify-between">
-                <span className="font-bold text-zinc-300 uppercase text-[11px]">Texnik xususiyatlar (Specifications)</span>
+                <span className="font-bold text-zinc-300 uppercase text-[11px]">Технические характеристики (Specifications)</span>
                 <button
                   onClick={handleAddSpec}
                   className="px-2.5 py-1 bg-black/60 border border-white/10 text-white text-[10px] font-bold uppercase tracking-wider"
                 >
-                  + Qator qo‘shish
+                  + Добавить строку
                 </button>
               </div>
 
@@ -411,21 +411,21 @@ export const AdminProducts: React.FC = () => {
                   <div key={idx} className="grid grid-cols-4 gap-2 items-center">
                     <input
                       type="text"
-                      placeholder="Parametr UZ"
+                      placeholder="Параметр UZ"
                       value={sp.keyUz}
                       onChange={(e) => handleUpdateSpec(idx, 'keyUz', e.target.value)}
                       className="p-2 bg-black/60 border border-white/10 text-[10px]"
                     />
                     <input
                       type="text"
-                      placeholder="Parametr RU"
+                      placeholder="Параметр RU"
                       value={sp.keyRu}
                       onChange={(e) => handleUpdateSpec(idx, 'keyRu', e.target.value)}
                       className="p-2 bg-black/60 border border-white/10 text-[10px]"
                     />
                     <input
                       type="text"
-                      placeholder="Qiymat UZ"
+                      placeholder="Значение UZ"
                       value={sp.valueUz}
                       onChange={(e) => handleUpdateSpec(idx, 'valueUz', e.target.value)}
                       className="p-2 bg-black/60 border border-white/10 text-[10px]"
@@ -433,7 +433,7 @@ export const AdminProducts: React.FC = () => {
                     <div className="flex gap-1">
                       <input
                         type="text"
-                        placeholder="Qiymat RU"
+                        placeholder="Значение RU"
                         value={sp.valueRu}
                         onChange={(e) => handleUpdateSpec(idx, 'valueRu', e.target.value)}
                         className="p-2 bg-black/60 border border-white/10 text-[10px] flex-1"
@@ -452,13 +452,13 @@ export const AdminProducts: React.FC = () => {
                 onClick={() => setEditingProduct(null)}
                 className="px-4 py-2 bg-black/60 border border-white/10 text-zinc-400"
               >
-                Bekor qilish
+                Отмена
               </button>
               <button
                 onClick={handleSave}
                 className="px-6 py-2 bg-[#064E3B] hover:bg-[#064E3B]/80 font-bold text-white uppercase tracking-wider"
               >
-                Saqlash
+                Сохранить
               </button>
             </div>
 

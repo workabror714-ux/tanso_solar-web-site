@@ -186,11 +186,25 @@ export const Header: React.FC<HeaderProps> = ({ currentPath, onNavigate, onOpenC
             </button>
           </div>
 
-          <div className="flex xl:hidden items-center gap-2">
-            <div className="flex items-center rounded-md border border-white/12 p-0.5 text-[10px] font-bold">
+          <div className="flex xl:hidden items-center gap-1.5 sm:gap-2 min-w-0">
+            <div className="flex items-center rounded-md border border-white/12 p-0.5 text-[10px] font-bold shrink-0">
               <button onClick={() => setLanguage('uz')} className={`px-2 py-1.5 rounded ${language === 'uz' ? 'bg-[var(--teal)] text-white' : 'text-[var(--muted-dark)]'}`}>UZ</button>
               <button onClick={() => setLanguage('ru')} className={`px-2 py-1.5 rounded ${language === 'ru' ? 'bg-[var(--teal)] text-white' : 'text-[var(--muted-dark)]'}`}>RU</button>
             </div>
+
+            {phoneHref && (
+              <a
+                href={phoneHref}
+                className="flex shrink-0 min-w-0 items-center gap-1.5 rounded-md border border-white/12 px-2 py-2 h-[42px] hover:border-[var(--teal)] transition-colors"
+                aria-label={`${language === 'ru' ? 'Позвонить' : 'Qo‘ng‘iroq'} ${settings.phone1}`}
+              >
+                <Phone className="w-3.5 h-3.5 shrink-0 text-[var(--amber)]" />
+                <span className="hidden min-[380px]:inline text-[10px] font-mono-num font-semibold text-white whitespace-nowrap">
+                  {settings.phone1}
+                </span>
+              </a>
+            )}
+
             <button
               onClick={() => setMobileMenuOpen((v) => !v)}
               className="grid place-items-center w-11 h-11 rounded-md border border-white/12 text-white"

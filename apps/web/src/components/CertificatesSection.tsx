@@ -1,81 +1,19 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { ShieldCheck, X, ChevronLeft, ChevronRight, ZoomIn } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
-
-interface Certificate {
-  id: string;
-  image: string;
-  titleUz: string;
-  titleRu: string;
-  subtitleUz: string;
-  subtitleRu: string;
-}
-
-const CERTIFICATES: Certificate[] = [
-  {
-    id: 'business-license',
-    image: '/images/certificates/business-license.jpg',
-    titleUz: 'Biznes ro‘yxatga olish guvohnomasi',
-    titleRu: 'Свидетельство о регистрации компании',
-    subtitleUz: 'Ishlab chiqaruvchi — rasmiy ro‘yxatga olingan korxona',
-    subtitleRu: 'Производитель — официально зарегистрированная компания',
-  },
-  {
-    id: 'iso-9001',
-    image: '/images/certificates/iso-9001-quality.jpg',
-    titleUz: 'ISO 9001:2015',
-    titleRu: 'ISO 9001:2015',
-    subtitleUz: 'Sifat menejmenti tizimi sertifikati',
-    subtitleRu: 'Сертификат системы менеджмента качества',
-  },
-  {
-    id: 'iso-14001',
-    image: '/images/certificates/iso-14001-environmental.jpg',
-    titleUz: 'ISO 14001:2015',
-    titleRu: 'ISO 14001:2015',
-    subtitleUz: 'Ekologik menejment tizimi sertifikati',
-    subtitleRu: 'Сертификат системы экологического менеджмента',
-  },
-  {
-    id: 'iso-45001',
-    image: '/images/certificates/iso-45001-occupational.jpg',
-    titleUz: 'ISO 45001:2018',
-    titleRu: 'ISO 45001:2018',
-    subtitleUz: 'Mehnat muhofazasi va xavfsizlik tizimi sertifikati',
-    subtitleRu: 'Сертификат системы охраны труда и безопасности',
-  },
-  {
-    id: '3c-certificate',
-    image: '/images/certificates/3c-certificate.jpg',
-    titleUz: 'CCC (3C) sertifikati',
-    titleRu: 'Сертификат CCC (3C)',
-    subtitleUz: 'Xitoy milliy majburiy mahsulot sertifikati',
-    subtitleRu: 'Национальный обязательный сертификат продукции Китая',
-  },
-  {
-    id: 'eco-product',
-    image: '/images/certificates/eco-product-certificate.jpg',
-    titleUz: 'Ekologik mahsulot sertifikati',
-    titleRu: 'Сертификат экологической продукции',
-    subtitleUz: 'Xitoy ekologik mahsulot tasdiqnomasi',
-    subtitleRu: 'Китайская сертификация экологической продукции',
-  },
-  {
-    id: 'energy-saving',
-    image: '/images/certificates/energy-saving-certificate.jpg',
-    titleUz: 'Energiya tejamkorligi sertifikati',
-    titleRu: 'Сертификат энергоэффективности',
-    subtitleUz: 'Xitoy energiya tejamkor mahsulot tasdiqnomasi',
-    subtitleRu: 'Китайская сертификация энергоэффективной продукции',
-  },
-];
-
-// Duplicated once for a seamless infinite marquee loop (track scrolls exactly -50%).
-const LOOP_ITEMS = [...CERTIFICATES, ...CERTIFICATES];
+import { useData } from '../context/DataContext';
 
 export const CertificatesSection: React.FC = () => {
   const { language } = useLanguage();
+  const { certificates } = useData();
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
+
+  // Admin-managed list (Sertifikatlar bo'limi), inactive entries hidden, already
+  // sorted by sortOrder from the API. Falls back to an empty marquee gracefully.
+  const CERTIFICATES = useMemo(() => certificates.filter((c) => c.active !== false), [certificates]);
+
+  // Duplicated once for a seamless infinite marquee loop (track scrolls exactly -50%).
+  const LOOP_ITEMS = useMemo(() => [...CERTIFICATES, ...CERTIFICATES], [CERTIFICATES]);
 
   const openAt = (id: string) => {
     const idx = CERTIFICATES.findIndex((c) => c.id === id);
@@ -86,6 +24,8 @@ export const CertificatesSection: React.FC = () => {
   const next = () => setActiveIndex((i) => (i === null ? null : (i + 1) % CERTIFICATES.length));
 
   const active = activeIndex !== null ? CERTIFICATES[activeIndex] : null;
+
+  if (CERTIFICATES.length === 0) return null;
 
   return (
     <section className="py-20 sm:py-24 bg-[var(--ink)] text-white overflow-hidden">
@@ -108,8 +48,25 @@ export const CertificatesSection: React.FC = () => {
       </div>
 
       {/* Auto-sliding certificate marquee — full-bleed, edges faded with a gradient mask */}
+      {/*
+        Scoped here (rather than in index.css's @layer utilities) because Tailwind v4's
+        build pipeline was silently stripping this custom keyframe/utility pair from the
+        compiled CSS bundle on this project. Keeping it local guarantees it always ships.
+      */}
+      <style>{`
+        .tanso-cert-track { animation: tansoCertScroll 42s linear infinite; }
+        .tanso-cert-track:hover,
+        .tanso-cert-track.is-paused { animation-play-state: paused; }
+        @keyframes tansoCertScroll {
+          from { transform: translateX(0); }
+          to { transform: translateX(-50%); }
+        }
+        @media (prefers-reduced-motion: reduce) {
+          .tanso-cert-track { animation-duration: .001ms; animation-iteration-count: 1; }
+        }
+      `}</style>
       <div className="relative mt-12 sm:mt-14 [mask-image:linear-gradient(90deg,transparent,black_6%,black_94%,transparent)]">
-        <div className="flex w-max gap-5 animate-cert-scroll">
+        <div className="flex w-max gap-5 tanso-cert-track">
           {LOOP_ITEMS.map((cert, i) => (
             <button
               key={`${cert.id}-${i}`}

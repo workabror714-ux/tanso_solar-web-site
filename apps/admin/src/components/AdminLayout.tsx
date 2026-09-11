@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { 
-  LayoutDashboard, Users, ShoppingBag, FolderTree, Image as ImageIcon, 
-  Wrench, Building2, Handshake, Settings, Bell, LogOut, Globe, Menu, X, 
+import {
+  LayoutDashboard, Users, ShoppingBag, FolderTree, Image as ImageIcon,
+  Wrench, Building2, Handshake, Award, Settings, Bell, LogOut, Globe, Menu, X,
   CheckCheck, Sun
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
@@ -24,16 +24,17 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({ currentPath, onNavigat
   const unreadNotifsCount = notifications.filter(n => !n.isRead).length;
 
   const navItems = [
-    { label: 'Boshqaruv', path: '/admin', icon: LayoutDashboard },
-    { label: 'So‘rovlar CRM', path: '/admin/leads', icon: Users, badge: unreadLeadsCount },
-    { label: 'Mahsulotlar', path: '/admin/products', icon: ShoppingBag },
-    { label: 'Kategoriyalar', path: '/admin/categories', icon: FolderTree },
-    { label: 'Hero Bosh Banner', path: '/admin/banners', icon: ImageIcon },
-    { label: 'Xizmatlar', path: '/admin/services', icon: Wrench },
-    { label: 'Loyihalar', path: '/admin/projects', icon: Building2 },
-    { label: 'Hamkorlar', path: '/admin/partners', icon: Handshake },
-    { label: 'Media Fayllar', path: '/admin/media', icon: ImageIcon },
-    { label: 'Sayt Sozlamalari', path: '/admin/settings', icon: Settings },
+    { label: 'Панель управления', path: '/admin', icon: LayoutDashboard },
+    { label: 'Заявки CRM', path: '/admin/leads', icon: Users, badge: unreadLeadsCount },
+    { label: 'Товары', path: '/admin/products', icon: ShoppingBag },
+    { label: 'Категории', path: '/admin/categories', icon: FolderTree },
+    { label: 'Главный баннер', path: '/admin/banners', icon: ImageIcon },
+    { label: 'Услуги', path: '/admin/services', icon: Wrench },
+    { label: 'Проекты', path: '/admin/projects', icon: Building2 },
+    { label: 'Партнёры', path: '/admin/partners', icon: Handshake },
+    { label: 'Сертификаты', path: '/admin/certificates', icon: Award },
+    { label: 'Медиафайлы', path: '/admin/media', icon: ImageIcon },
+    { label: 'Настройки сайта', path: '/admin/settings', icon: Settings },
   ];
 
   const handleNavClick = (path: string) => {
@@ -110,7 +111,7 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({ currentPath, onNavigat
             className="w-full py-2 px-3 bg-[#1A1A1A] border border-white/10 hover:border-rose-800 text-rose-400 text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-2 transition-colors"
           >
             <LogOut className="w-3.5 h-3.5" />
-            <span>Chiqish</span>
+            <span>Выйти</span>
           </button>
         </div>
 
@@ -147,7 +148,7 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({ currentPath, onNavigat
               className="px-3.5 py-1.5 bg-[#1A1A1A] border border-white/10 hover:border-[#064E3B] text-zinc-300 hover:text-white text-[10px] font-bold uppercase tracking-widest transition-colors flex items-center gap-1.5"
             >
               <Globe className="w-3.5 h-3.5" />
-              <span className="hidden sm:inline">Veb-saytga o‘tish</span>
+              <span className="hidden sm:inline">Перейти на сайт</span>
             </a>
 
             {/* Notification Bell Dropdown */}
@@ -167,19 +168,19 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({ currentPath, onNavigat
               {notifDropdownOpen && (
                 <div className="absolute right-0 mt-2 w-80 bg-[#1A1A1A] border border-white/10 shadow-2xl z-50 p-4 space-y-3">
                   <div className="flex items-center justify-between border-b border-white/10 pb-2">
-                    <span className="text-[10px] font-bold text-white uppercase tracking-wider">Xabarnomalar</span>
+                    <span className="text-[10px] font-bold text-white uppercase tracking-wider">Уведомления</span>
                     <button
                       onClick={markAllNotificationsRead}
                       className="text-[10px] text-emerald-400 hover:underline flex items-center gap-1 font-bold uppercase"
                     >
                       <CheckCheck className="w-3 h-3" />
-                      <span>O‘qilgan belgilash</span>
+                      <span>Отметить прочитанным</span>
                     </button>
                   </div>
 
                   <div className="max-h-60 overflow-y-auto space-y-2">
                     {notifications.length === 0 ? (
-                      <p className="text-xs text-zinc-500 text-center py-4 font-light">Xabarlar yo‘q</p>
+                      <p className="text-xs text-zinc-500 text-center py-4 font-light">Нет сообщений</p>
                     ) : (
                       notifications.slice(0, 5).map((n) => (
                         <div 
@@ -252,7 +253,7 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({ currentPath, onNavigat
                 className="py-2.5 px-4 bg-rose-950/60 text-rose-400 text-xs font-bold uppercase tracking-wider border border-rose-800 flex items-center justify-center gap-2"
               >
                 <LogOut className="w-4 h-4" />
-                <span>Chiqish</span>
+                <span>Выйти</span>
               </button>
             </div>
           </div>

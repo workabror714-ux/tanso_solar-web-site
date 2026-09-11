@@ -128,6 +128,17 @@ export interface Partner {
 }
 export type PartnerItem = Partner;
 
+export interface Certificate {
+  id: string;
+  image: string;
+  titleUz: string;
+  titleRu: string;
+  subtitleUz: string;
+  subtitleRu: string;
+  active: boolean;
+  sortOrder: number;
+}
+
 export interface SiteSettings {
   companyName: string;
   phone1: string;

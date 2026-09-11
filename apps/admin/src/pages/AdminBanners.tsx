@@ -44,8 +44,8 @@ export const AdminBanners: React.FC = () => {
     <div className="space-y-6 text-xs text-white">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-editorial font-light text-white italic">Hero Bosh Bannerlar Boshqaruvi</h1>
-          <p className="text-zinc-400 mt-1">Homepage bosh parda rasmlari va sarlavhalar slideri.</p>
+          <h1 className="text-2xl font-editorial font-light text-white italic">Управление главными баннерами</h1>
+          <p className="text-zinc-400 mt-1">Изображения и слайдер заголовков на главной странице.</p>
         </div>
 
         <button
@@ -53,7 +53,7 @@ export const AdminBanners: React.FC = () => {
           className="px-4 py-2.5 bg-[#064E3B] hover:bg-[#064E3B]/80 font-bold text-white uppercase tracking-wider flex items-center gap-2"
         >
           <Plus className="w-4 h-4" />
-          <span>Yangi Banner qo‘shish</span>
+          <span>Добавить баннер</span>
         </button>
       </div>
 
@@ -69,13 +69,13 @@ export const AdminBanners: React.FC = () => {
             </div>
 
             <div className="flex items-center justify-between pt-2 border-t border-white/10">
-              <span className="text-[11px] text-zinc-400">Tartib: <b>#{b.sortOrder}</b></span>
+              <span className="text-[11px] text-zinc-400">Порядок: <b>#{b.sortOrder}</b></span>
               <div className="space-x-2">
                 <button onClick={() => setEditingBanner(b)} className="px-3 py-1.5 bg-black/60 border border-white/10 hover:border-[#064E3B] font-bold uppercase tracking-wider">
-                  Tahrirlash
+                  Редактировать
                 </button>
                 <button onClick={() => handleDelete(b.id)} className="px-3 py-1.5 bg-black/60 border border-white/10 text-rose-400 font-bold uppercase tracking-wider">
-                  O‘chirish
+                  Удалить
                 </button>
               </div>
             </div>
@@ -87,13 +87,13 @@ export const AdminBanners: React.FC = () => {
         <div className="fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-4">
           <div className="bg-[#1A1A1A] border border-white/10 w-full max-w-xl p-6 space-y-4">
             <div className="flex items-center justify-between border-b border-white/10 pb-3">
-              <h3 className="font-bold text-sm">Banner sozlamalari</h3>
+              <h3 className="font-bold text-sm">Настройки баннера</h3>
               <button onClick={() => setEditingBanner(null)}><X className="w-5 h-5" /></button>
             </div>
 
             <div className="space-y-3">
               <div>
-                <label className="block text-[10px] font-bold uppercase text-zinc-400 mb-1">Sarlavha UZ *</label>
+                <label className="block text-[10px] font-bold uppercase text-zinc-400 mb-1">Заголовок UZ *</label>
                 <input
                   type="text"
                   value={editingBanner.titleUz || ''}
@@ -103,7 +103,7 @@ export const AdminBanners: React.FC = () => {
               </div>
 
               <div>
-                <label className="block text-[10px] font-bold uppercase text-zinc-400 mb-1">Sarlavha RU *</label>
+                <label className="block text-[10px] font-bold uppercase text-zinc-400 mb-1">Заголовок RU *</label>
                 <input
                   type="text"
                   value={editingBanner.titleRu || ''}
@@ -113,7 +113,7 @@ export const AdminBanners: React.FC = () => {
               </div>
 
               <div>
-                <label className="block text-[10px] font-bold uppercase text-zinc-400 mb-1">Kichik Sarlavha UZ</label>
+                <label className="block text-[10px] font-bold uppercase text-zinc-400 mb-1">Подзаголовок UZ</label>
                 <input
                   type="text"
                   value={editingBanner.subtitleUz || ''}
@@ -123,7 +123,7 @@ export const AdminBanners: React.FC = () => {
               </div>
 
               <div>
-                <label className="block text-[10px] font-bold uppercase text-zinc-400 mb-1">Kichik Sarlavha RU</label>
+                <label className="block text-[10px] font-bold uppercase text-zinc-400 mb-1">Подзаголовок RU</label>
                 <input
                   type="text"
                   value={editingBanner.subtitleRu || ''}
@@ -133,7 +133,7 @@ export const AdminBanners: React.FC = () => {
               </div>
 
               <ImageUploader
-                label="Fon rasmi"
+                label="Фоновое изображение"
                 value={editingBanner.bgImageUrl || ''}
                 onChange={(url) => setEditingBanner({ ...editingBanner, bgImageUrl: url })}
               />
@@ -141,10 +141,10 @@ export const AdminBanners: React.FC = () => {
 
             <div className="pt-3 border-t border-white/10 flex justify-end gap-2">
               <button onClick={() => setEditingBanner(null)} className="px-4 py-2 bg-black/60 border border-white/10">
-                Bekor qilish
+                Отмена
               </button>
               <button onClick={handleSave} className="px-5 py-2 bg-[#064E3B] hover:bg-[#064E3B]/80 font-bold text-white uppercase tracking-wider">
-                Saqlash
+                Сохранить
               </button>
             </div>
           </div>

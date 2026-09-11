@@ -44,8 +44,8 @@ export const AdminServices: React.FC = () => {
     <div className="space-y-6 text-xs text-white">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-editorial font-light text-white italic">Xizmatlar Boshqaruvi</h1>
-          <p className="text-zinc-400 mt-1">Konsultatsiya, audit, montaj va servis xizmatlari turlari.</p>
+          <h1 className="text-2xl font-editorial font-light text-white italic">Управление услугами</h1>
+          <p className="text-zinc-400 mt-1">Виды услуг: консультации, аудит, монтаж и сервисное обслуживание.</p>
         </div>
 
         <button
@@ -53,7 +53,7 @@ export const AdminServices: React.FC = () => {
           className="px-4 py-2.5 bg-[#064E3B] hover:bg-[#064E3B]/80 font-bold text-white uppercase tracking-wider flex items-center gap-2"
         >
           <Plus className="w-4 h-4" />
-          <span>Xizmat qo‘shish</span>
+          <span>Добавить услугу</span>
         </button>
       </div>
 
@@ -88,13 +88,13 @@ export const AdminServices: React.FC = () => {
         <div className="fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-4">
           <div className="bg-[#1A1A1A] border border-white/10 w-full max-w-md p-6 space-y-4">
             <div className="flex items-center justify-between border-b border-white/10 pb-3">
-              <h3 className="font-bold text-sm">Xizmat ma’lumotlari</h3>
+              <h3 className="font-bold text-sm">Данные услуги</h3>
               <button onClick={() => setEditingService(null)}><X className="w-5 h-5" /></button>
             </div>
 
             <div className="space-y-3">
               <div>
-                <label className="block text-[10px] font-bold uppercase text-zinc-400 mb-1">Nomi UZ *</label>
+                <label className="block text-[10px] font-bold uppercase text-zinc-400 mb-1">Название UZ *</label>
                 <input
                   type="text"
                   value={editingService.titleUz || ''}
@@ -104,7 +104,7 @@ export const AdminServices: React.FC = () => {
               </div>
 
               <div>
-                <label className="block text-[10px] font-bold uppercase text-zinc-400 mb-1">Nomi RU *</label>
+                <label className="block text-[10px] font-bold uppercase text-zinc-400 mb-1">Название RU *</label>
                 <input
                   type="text"
                   value={editingService.titleRu || ''}
@@ -114,7 +114,7 @@ export const AdminServices: React.FC = () => {
               </div>
 
               <div>
-                <label className="block text-[10px] font-bold uppercase text-zinc-400 mb-1">Tavsif UZ</label>
+                <label className="block text-[10px] font-bold uppercase text-zinc-400 mb-1">Описание UZ</label>
                 <textarea
                   rows={3}
                   value={editingService.descUz || ''}
@@ -124,7 +124,7 @@ export const AdminServices: React.FC = () => {
               </div>
 
               <div>
-                <label className="block text-[10px] font-bold uppercase text-zinc-400 mb-1">Tavsif RU</label>
+                <label className="block text-[10px] font-bold uppercase text-zinc-400 mb-1">Описание RU</label>
                 <textarea
                   rows={3}
                   value={editingService.descRu || ''}
@@ -134,7 +134,7 @@ export const AdminServices: React.FC = () => {
               </div>
 
               <div>
-                <label className="block text-[10px] font-bold uppercase text-zinc-400 mb-1">Ikonka</label>
+                <label className="block text-[10px] font-bold uppercase text-zinc-400 mb-1">Иконка</label>
                 <div className="flex flex-wrap gap-2">
                   {ICON_OPTIONS.map(({ value, Icon }) => (
                     <button
@@ -155,7 +155,7 @@ export const AdminServices: React.FC = () => {
               </div>
 
               <ImageUploader
-                label="Rasm (ixtiyoriy)"
+                label="Изображение (необязательно)"
                 value={editingService.imageUrl || ''}
                 onChange={(url) => setEditingService({ ...editingService, imageUrl: url })}
               />
@@ -163,10 +163,10 @@ export const AdminServices: React.FC = () => {
 
             <div className="pt-3 border-t border-white/10 flex justify-end gap-2">
               <button onClick={() => setEditingService(null)} className="px-4 py-2 bg-black/60 border border-white/10">
-                Bekor qilish
+                Отмена
               </button>
               <button onClick={handleSave} className="px-5 py-2 bg-[#064E3B] hover:bg-[#064E3B]/80 font-bold text-white uppercase tracking-wider">
-                Saqlash
+                Сохранить
               </button>
             </div>
           </div>

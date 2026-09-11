@@ -23,8 +23,10 @@ const LanguageContext = createContext<LanguageContextType | undefined>(undefined
 
 export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [language, setLanguageState] = useState<Language>(() => {
+    // Admin panel defaults to Russian (no in-UI toggle is exposed here) so any
+    // bilingual content fields (via getLoc) preferentially display in Russian too.
     const saved = localStorage.getItem('tanso_lang');
-    return (saved === 'ru' ? 'ru' : 'uz') as Language;
+    return (saved === 'uz' ? 'uz' : 'ru') as Language;
   });
 
   const setLanguage = (lang: Language) => {

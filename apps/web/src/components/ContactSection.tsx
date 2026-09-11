@@ -52,10 +52,10 @@ export const ContactSection: React.FC = () => {
               </p>
 
               {settings.phone1 && (
-                <a href={`tel:${settings.phone1.replace(/\s+/g, '')}`} className="mt-7 inline-flex items-center gap-3 text-sm font-bold text-white hover:text-[#7FD8C7] transition-colors w-fit">
-                  <span className="grid place-items-center w-10 h-10 rounded-md border border-white/12"><Phone className="w-4 h-4 text-[var(--teal)]" /></span>
-                  <span className="font-mono-num">{settings.phone1}</span>
-                  <ArrowUpRight className="w-4 h-4 text-[var(--amber)]" />
+                <a href={`tel:${settings.phone1.replace(/\s+/g, '')}`} className="mt-7 inline-flex items-center gap-4 font-bold text-white hover:text-[#7FD8C7] transition-colors w-fit">
+                  <span className="grid place-items-center w-14 h-14 shrink-0 rounded-md border border-white/12"><Phone className="w-6 h-6 text-[var(--teal)]" /></span>
+                  <span className="font-mono-num leading-none" style={{ fontSize: 'clamp(1.5rem, 5.2vw, 2.625rem)' }}>{settings.phone1}</span>
+                  <ArrowUpRight className="w-6 h-6 text-[var(--amber)]" />
                 </a>
               )}
             </div>

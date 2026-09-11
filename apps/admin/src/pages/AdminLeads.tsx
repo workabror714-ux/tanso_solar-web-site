@@ -69,9 +69,9 @@ export const AdminLeads: React.FC = () => {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-editorial font-light text-white italic">So‘rovlar CRM (Leads)</h1>
+          <h1 className="text-2xl font-editorial font-light text-white italic">CRM Заявок (Leads)</h1>
           <p className="text-xs text-zinc-400 mt-1">
-            Mijozlardan kelib tushgan barcha buyurtmalar va konsultatsiya so‘rovlari.
+            Все заказы и заявки на консультацию, поступившие от клиентов.
           </p>
         </div>
       </div>
@@ -86,7 +86,7 @@ export const AdminLeads: React.FC = () => {
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Mijoz ismi, telefon raqami yoki mahsulot nomi bo‘yicha..."
+              placeholder="По имени клиента, номеру телефона или названию товара..."
               className="w-full pl-10 pr-4 py-2 text-xs bg-black/60 border border-white/10 text-white focus:outline-none focus:border-[#064E3B]"
             />
           </div>
@@ -102,7 +102,7 @@ export const AdminLeads: React.FC = () => {
                     : 'bg-black/60 border border-white/10 text-zinc-400 hover:text-white'
                 }`}
               >
-                {st === 'ALL' ? 'Barchasi' : st}
+                {st === 'ALL' ? 'Все' : st}
               </button>
             ))}
           </div>
@@ -116,20 +116,20 @@ export const AdminLeads: React.FC = () => {
           <table className="w-full text-left text-xs text-zinc-300">
             <thead className="bg-black/80 text-zinc-400 uppercase text-[10px] tracking-wider border-b border-white/10">
               <tr>
-                <th className="p-3.5">Mijoz</th>
-                <th className="p-3.5">Telefon</th>
-                <th className="p-3.5">Mahsulot / Turi</th>
-                <th className="p-3.5">Soni</th>
-                <th className="p-3.5">Holat</th>
-                <th className="p-3.5">Sana</th>
-                <th className="p-3.5 text-right">Amallar</th>
+                <th className="p-3.5">Клиент</th>
+                <th className="p-3.5">Телефон</th>
+                <th className="p-3.5">Товар / Тип</th>
+                <th className="p-3.5">Кол-во</th>
+                <th className="p-3.5">Статус</th>
+                <th className="p-3.5">Дата</th>
+                <th className="p-3.5 text-right">Действия</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-white/10">
               {filteredLeads.length === 0 ? (
                 <tr>
                   <td colSpan={7} className="p-8 text-center text-zinc-500">
-                    So‘rovlar topilmadi
+                    Заявки не найдены
                   </td>
                 </tr>
               ) : (
@@ -142,7 +142,7 @@ export const AdminLeads: React.FC = () => {
                       {lead.fullName}
                       {!lead.isRead && (
                         <span className="ml-2 px-1.5 py-0.5 bg-[#F59E0B] text-[#1A1A1A] text-[9px] font-black uppercase">
-                          Yangi
+                          Новая
                         </span>
                       )}
                     </td>
@@ -155,7 +155,7 @@ export const AdminLeads: React.FC = () => {
                     </td>
 
                     <td className="p-3.5 max-w-[180px] truncate">
-                      {lead.productName || 'Konsultatsiya'}
+                      {lead.productName || 'Консультация'}
                     </td>
 
                     <td className="p-3.5 font-mono">
@@ -168,16 +168,16 @@ export const AdminLeads: React.FC = () => {
                         onChange={(e) => handleStatusChange(lead.id, e.target.value as LeadStatus)}
                         className={`px-2.5 py-1 text-[10px] font-bold border ${statusColors[lead.status]} cursor-pointer focus:outline-none bg-black`}
                       >
-                        <option value="NEW">NEW (Yangi)</option>
-                        <option value="CONTACTED">CONTACTED (Bog‘lanildi)</option>
-                        <option value="IN_PROGRESS">IN_PROGRESS (Jarayonda)</option>
-                        <option value="COMPLETED">COMPLETED (Yakunlandi)</option>
-                        <option value="CANCELLED">CANCELLED (Bekor qilindi)</option>
+                        <option value="NEW">NEW (Новая)</option>
+                        <option value="CONTACTED">CONTACTED (Связались)</option>
+                        <option value="IN_PROGRESS">IN_PROGRESS (В процессе)</option>
+                        <option value="COMPLETED">COMPLETED (Завершено)</option>
+                        <option value="CANCELLED">CANCELLED (Отменено)</option>
                       </select>
                     </td>
 
                     <td className="p-3.5 text-zinc-500 text-[11px]">
-                      {new Date(lead.createdAt).toLocaleString('uz-UZ')}
+                      {new Date(lead.createdAt).toLocaleString('ru-RU')}
                     </td>
 
                     <td className="p-3.5 text-right space-x-2">
@@ -185,17 +185,17 @@ export const AdminLeads: React.FC = () => {
                         onClick={() => handleOpenLeadDrawer(lead)}
                         className="px-2.5 py-1 bg-black/60 border border-white/10 hover:border-[#064E3B] text-zinc-200 text-[11px] font-semibold uppercase tracking-wider"
                       >
-                        Ko‘rish
+                        Просмотр
                       </button>
 
                       <button
                         onClick={() => {
-                          if (confirm('So‘rovni o‘chirishni tasdiqlaysizmi?')) {
+                          if (confirm('Вы уверены, что хотите удалить заявку?')) {
                             deleteLead(lead.id);
                           }
                         }}
                         className="p-1 bg-black/60 border border-white/10 hover:border-rose-800 text-rose-400"
-                        title="O‘chirish"
+                        title="Удалить"
                       >
                         <Trash2 className="w-3.5 h-3.5" />
                       </button>
@@ -216,7 +216,7 @@ export const AdminLeads: React.FC = () => {
             <div className="flex items-center justify-between border-b border-white/10 pb-4">
               <div>
                 <span className="text-[10px] font-bold uppercase tracking-wider text-[#F59E0B]">
-                  LEAD DETAILS #{activeLead.id}
+                  ДЕТАЛИ ЗАЯВКИ #{activeLead.id}
                 </span>
                 <h3 className="text-lg font-bold text-white">{activeLead.fullName}</h3>
               </div>
@@ -231,7 +231,7 @@ export const AdminLeads: React.FC = () => {
             {/* Phone CTA */}
             <div className="p-4 bg-[#064E3B]/30 border border-[#064E3B] flex items-center justify-between">
               <div>
-                <span className="text-xs text-zinc-400 block font-semibold">Telefon:</span>
+                <span className="text-xs text-zinc-400 block font-semibold">Телефон:</span>
                 <span className="text-base font-extrabold text-white font-mono">{activeLead.phone}</span>
               </div>
               <a
@@ -239,54 +239,54 @@ export const AdminLeads: React.FC = () => {
                 className="px-4 py-2 bg-[#064E3B] hover:bg-[#064E3B]/80 text-white font-bold text-xs flex items-center gap-1.5 uppercase tracking-wider"
               >
                 <Phone className="w-3.5 h-3.5" />
-                <span>Qo‘ng‘iroq qilish</span>
+                <span>Позвонить</span>
               </a>
             </div>
 
             {/* Product details */}
             <div className="space-y-3 bg-black/60 p-4 border border-white/10 text-xs">
               <div className="flex justify-between border-b border-white/10 pb-2">
-                <span className="text-zinc-500">Mahsulot:</span>
-                <span className="font-bold text-white">{activeLead.productName || 'Konsultatsiya'}</span>
+                <span className="text-zinc-500">Товар:</span>
+                <span className="font-bold text-white">{activeLead.productName || 'Консультация'}</span>
               </div>
               <div className="flex justify-between border-b border-white/10 pb-2">
-                <span className="text-zinc-500">Kategoriya:</span>
+                <span className="text-zinc-500">Категория:</span>
                 <span className="font-semibold text-zinc-300">{activeLead.category || '-'}</span>
               </div>
               <div className="flex justify-between border-b border-white/10 pb-2">
-                <span className="text-zinc-500">Miqdori:</span>
-                <span className="font-bold text-[#F59E0B]">{activeLead.quantity ?? 1} ta</span>
+                <span className="text-zinc-500">Количество:</span>
+                <span className="font-bold text-[#F59E0B]">{activeLead.quantity ?? 1} шт.</span>
               </div>
               <div className="flex justify-between border-b border-white/10 pb-2">
-                <span className="text-zinc-500">Manbaa:</span>
+                <span className="text-zinc-500">Источник:</span>
                 <span className="text-zinc-400">{activeLead.source}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-zinc-500">Yaratilgan vaqti:</span>
-                <span className="text-zinc-400">{new Date(activeLead.createdAt).toLocaleString('uz-UZ')}</span>
+                <span className="text-zinc-500">Дата создания:</span>
+                <span className="text-zinc-400">{new Date(activeLead.createdAt).toLocaleString('ru-RU')}</span>
               </div>
             </div>
 
             {/* Comment */}
             <div>
               <label className="block text-xs font-bold uppercase text-zinc-400 mb-1.5">
-                Mijoz izohi:
+                Комментарий клиента:
               </label>
               <div className="p-3 bg-black/60 border border-white/10 text-xs text-zinc-300 italic">
-                {activeLead.comment || 'Izoh biriktirilmagan'}
+                {activeLead.comment || 'Комментарий отсутствует'}
               </div>
             </div>
 
             {/* Internal Admin Notes */}
             <div className="space-y-2">
               <label className="block text-xs font-bold uppercase text-zinc-400">
-                Ichki administrator eslatmasi (Notes):
+                Внутренняя заметка администратора (Notes):
               </label>
               <textarea
                 rows={4}
                 value={adminNoteInput}
                 onChange={(e) => setAdminNoteInput(e.target.value)}
-                placeholder="Masalan: Mijoz bilan gaplashildi, 12-avgustda joyiga borib o‘rganiladi..."
+                placeholder="Например: Связались с клиентом, 12 августа выезд на объект..."
                 className="w-full p-3 bg-black/60 border border-white/10 text-xs text-white focus:outline-none focus:border-[#064E3B]"
               />
               <button
@@ -294,7 +294,7 @@ export const AdminLeads: React.FC = () => {
                 className="py-2.5 px-4 bg-[#064E3B] hover:bg-[#064E3B]/80 text-white font-bold text-xs flex items-center justify-center gap-1.5 w-full uppercase tracking-wider"
               >
                 <Check className="w-4 h-4" />
-                <span>Eslatmani saqlash</span>
+                <span>Сохранить заметку</span>
               </button>
             </div>
 

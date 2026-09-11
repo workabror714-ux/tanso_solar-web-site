@@ -1,10 +1,10 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { 
-  Category, Product, HeroBanner, Service, Project, Partner, SiteSettings, Lead, AdminNotification, LeadStatus 
+import {
+  Category, Product, HeroBanner, Service, Project, Partner, Certificate, SiteSettings, Lead, AdminNotification, LeadStatus
 } from '@tanso/shared/types';
-import { 
-  initialCategories, initialProducts, initialHeroBanners, initialServices, 
-  initialProjects, initialPartners, initialSiteSettings, initialLeads 
+import {
+  initialCategories, initialProducts, initialHeroBanners, initialServices,
+  initialProjects, initialPartners, initialCertificates, initialSiteSettings, initialLeads
 } from '@tanso/shared/data/initialData';
 
 interface DataContextType {
@@ -14,6 +14,7 @@ interface DataContextType {
   services: Service[];
   projects: Project[];
   partners: Partner[];
+  certificates: Certificate[];
   settings: SiteSettings;
   leads: Lead[];
   notifications: AdminNotification[];
@@ -46,6 +47,10 @@ interface DataContextType {
   updatePartner: (id: string, partner: Partial<Partner>) => Promise<void>;
   deletePartner: (id: string) => Promise<void>;
 
+  addCertificate: (certificate: Omit<Certificate, 'id'>) => Promise<void>;
+  updateCertificate: (id: string, certificate: Partial<Certificate>) => Promise<void>;
+  deleteCertificate: (id: string) => Promise<void>;
+
   updateSettings: (settings: Partial<SiteSettings>) => Promise<void>;
   markAllNotificationsRead: () => Promise<void>;
 }
@@ -59,6 +64,7 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [services, setServices] = useState<Service[]>(initialServices);
   const [projects, setProjects] = useState<Project[]>(initialProjects);
   const [partners, setPartners] = useState<Partner[]>(initialPartners);
+  const [certificates, setCertificates] = useState<Certificate[]>(initialCertificates);
   const [settings, setSettings] = useState<SiteSettings>(initialSiteSettings);
   const [leads, setLeads] = useState<Lead[]>(initialLeads);
   const [notifications, setNotifications] = useState<AdminNotification[]>([]);
@@ -68,7 +74,7 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
     try {
       setIsLoading(true);
       const [
-        resCats, resProds, resBanners, resServs, resProjs, resParts, resSetts, resLeads, resNotifs
+        resCats, resProds, resBanners, resServs, resProjs, resParts, resCerts, resSetts, resLeads, resNotifs
       ] = await Promise.all([
         fetch('/api/categories').then(r => r.ok ? r.json() : null),
         fetch('/api/products').then(r => r.ok ? r.json() : null),
@@ -76,6 +82,7 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
         fetch('/api/services').then(r => r.ok ? r.json() : null),
         fetch('/api/projects').then(r => r.ok ? r.json() : null),
         fetch('/api/partners').then(r => r.ok ? r.json() : null),
+        fetch('/api/certificates').then(r => r.ok ? r.json() : null),
         fetch('/api/settings').then(r => r.ok ? r.json() : null),
         fetch('/api/leads').then(r => r.ok ? r.json() : null),
         fetch('/api/notifications').then(r => r.ok ? r.json() : null),
@@ -87,6 +94,7 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
       if (resServs) setServices(resServs);
       if (resProjs) setProjects(resProjs);
       if (resParts) setPartners(resParts);
+      if (resCerts) setCertificates(resCerts);
       if (resSetts) setSettings(resSetts);
       if (resLeads) setLeads(resLeads);
       if (resNotifs) setNotifications(resNotifs);
@@ -113,7 +121,7 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
         setLeads(prev => [data.lead, ...prev]);
         return { success: true, lead: data.lead };
       }
-      return { success: false, error: data.error || 'Xatolik yuz berdi' };
+      return { success: false, error: data.error || 'Произошла ошибка' };
     } catch (err: any) {
       const fallbackLead: Lead = {
         id: `lead-${Date.now()}`,
@@ -342,6 +350,38 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
     } catch (e) {}
   };
 
+  const addCertificate = async (certData: Omit<Certificate, 'id'>) => {
+    try {
+      const res = await fetch('/api/certificates', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(certData)
+      });
+      const newCert = await res.json();
+      setCertificates(prev => [...prev, newCert]);
+    } catch (e) {
+      setCertificates(prev => [...prev, { ...certData, id: `cert-${Date.now()}` }]);
+    }
+  };
+
+  const updateCertificate = async (id: string, certData: Partial<Certificate>) => {
+    setCertificates(prev => prev.map(c => c.id === id ? { ...c, ...certData } : c));
+    try {
+      await fetch(`/api/certificates/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(certData)
+      });
+    } catch (e) {}
+  };
+
+  const deleteCertificate = async (id: string) => {
+    setCertificates(prev => prev.filter(c => c.id !== id));
+    try {
+      await fetch(`/api/certificates/${id}`, { method: 'DELETE' });
+    } catch (e) {}
+  };
+
   const updateSettings = async (newSettings: Partial<SiteSettings>) => {
     setSettings(prev => ({ ...prev, ...newSettings }));
     try {
@@ -362,7 +402,7 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   return (
     <DataContext.Provider value={{
-      categories, products, banners, services, projects, partners, settings, leads, notifications, isLoading,
+      categories, products, banners, services, projects, partners, certificates, settings, leads, notifications, isLoading,
       createLead, updateLeadStatus, markLeadRead, deleteLead,
       addProduct, updateProduct, deleteProduct,
       addCategory, updateCategory, deleteCategory,
@@ -370,6 +410,7 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
       addService, updateService, deleteService,
       addProject, updateProject, deleteProject,
       addPartner, updatePartner, deletePartner,
+      addCertificate, updateCertificate, deleteCertificate,
       updateSettings, markAllNotificationsRead
     }}>
       {children}

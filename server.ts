@@ -497,6 +497,79 @@ const initialPartners = [
   }
 ];
 
+const initialCertificates = [
+  {
+    id: 'business-license',
+    image: '/images/certificates/business-license.jpg',
+    titleUz: 'Biznes ro‘yxatga olish guvohnomasi',
+    titleRu: 'Свидетельство о регистрации компании',
+    subtitleUz: 'Ishlab chiqaruvchi — rasmiy ro‘yxatga olingan korxona',
+    subtitleRu: 'Производитель — официально зарегистрированная компания',
+    active: true,
+    sortOrder: 1,
+  },
+  {
+    id: 'iso-9001',
+    image: '/images/certificates/iso-9001-quality.jpg',
+    titleUz: 'ISO 9001:2015',
+    titleRu: 'ISO 9001:2015',
+    subtitleUz: 'Sifat menejmenti tizimi sertifikati',
+    subtitleRu: 'Сертификат системы менеджмента качества',
+    active: true,
+    sortOrder: 2,
+  },
+  {
+    id: 'iso-14001',
+    image: '/images/certificates/iso-14001-environmental.jpg',
+    titleUz: 'ISO 14001:2015',
+    titleRu: 'ISO 14001:2015',
+    subtitleUz: 'Ekologik menejment tizimi sertifikati',
+    subtitleRu: 'Сертификат системы экологического менеджмента',
+    active: true,
+    sortOrder: 3,
+  },
+  {
+    id: 'iso-45001',
+    image: '/images/certificates/iso-45001-occupational.jpg',
+    titleUz: 'ISO 45001:2018',
+    titleRu: 'ISO 45001:2018',
+    subtitleUz: 'Mehnat muhofazasi va xavfsizlik tizimi sertifikati',
+    subtitleRu: 'Сертификат системы охраны труда и безопасности',
+    active: true,
+    sortOrder: 4,
+  },
+  {
+    id: '3c-certificate',
+    image: '/images/certificates/3c-certificate.jpg',
+    titleUz: 'CCC (3C) sertifikati',
+    titleRu: 'Сертификат CCC (3C)',
+    subtitleUz: 'Xitoy milliy majburiy mahsulot sertifikati',
+    subtitleRu: 'Национальный обязательный сертификат продукции Китая',
+    active: true,
+    sortOrder: 5,
+  },
+  {
+    id: 'eco-product',
+    image: '/images/certificates/eco-product-certificate.jpg',
+    titleUz: 'Ekologik mahsulot sertifikati',
+    titleRu: 'Сертификат экологической продукции',
+    subtitleUz: 'Xitoy ekologik mahsulot tasdiqnomasi',
+    subtitleRu: 'Китайская сертификация экологической продукции',
+    active: true,
+    sortOrder: 6,
+  },
+  {
+    id: 'energy-saving',
+    image: '/images/certificates/energy-saving-certificate.jpg',
+    titleUz: 'Energiya tejamkorligi sertifikati',
+    titleRu: 'Сертификат энергоэффективности',
+    subtitleUz: 'Xitoy energiya tejamkor mahsulot tasdiqnomasi',
+    subtitleRu: 'Китайская сертификация энергоэффективной продукции',
+    active: true,
+    sortOrder: 7,
+  },
+];
+
 const initialSiteSettings = {
   companyName: 'TANSO SOLAR',
   phone1: '+998 90 123 45 67',
@@ -567,6 +640,7 @@ const ROW_TABLES = [
   'services',
   'projects',
   'partners',
+  'certificates',
   'leads',
   'notifications',
 ] as const;
@@ -625,6 +699,7 @@ async function doInit(): Promise<void> {
     seedIfEmpty('services', initialServices as unknown as Record<string, unknown>[]),
     seedIfEmpty('projects', initialProjects as unknown as Record<string, unknown>[]),
     seedIfEmpty('partners', initialPartners as unknown as Record<string, unknown>[]),
+    seedIfEmpty('certificates', initialCertificates as unknown as Record<string, unknown>[]),
     seedIfEmpty('leads', initialLeads as unknown as Record<string, unknown>[]),
     seedSettingsIfEmpty(sql),
     seedNotificationsIfEmpty(sql),
@@ -1111,6 +1186,31 @@ async function startServer() {
   app.delete('/api/partners/:id', async (req, res) => {
     const { id } = req.params;
     await deleteRow('partners', id);
+    res.json({ success: true });
+  });
+
+  // CERTIFICATES API
+  app.get('/api/certificates', async (req, res) => {
+    const certificates = await getAll('certificates', `(data->>'sortOrder')::int NULLS LAST, seq ASC`);
+    res.json(certificates);
+  });
+
+  app.post('/api/certificates', async (req, res) => {
+    const certificate = { ...req.body, id: req.body.id || `cert-${Date.now()}` };
+    await insertRow('certificates', certificate);
+    res.status(201).json(certificate);
+  });
+
+  app.put('/api/certificates/:id', async (req, res) => {
+    const { id } = req.params;
+    const updated = await patchRow('certificates', id, req.body);
+    if (!updated) return res.status(404).json({ error: 'Sertifikat topilmadi.' });
+    res.json(updated);
+  });
+
+  app.delete('/api/certificates/:id', async (req, res) => {
+    const { id } = req.params;
+    await deleteRow('certificates', id);
     res.json({ success: true });
   });
 

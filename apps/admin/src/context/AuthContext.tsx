@@ -34,7 +34,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       localStorage.setItem('tanso_admin_user', JSON.stringify(u));
       return { success: true };
     }
-    return { success: false, error: 'Login yoki parol xato! (Demo: admin@tanso.uz / admin123)' };
+    return { success: false, error: 'Неверный логин или пароль! (Демо: admin@tanso.uz / admin123)' };
   };
 
   const logout = () => {
