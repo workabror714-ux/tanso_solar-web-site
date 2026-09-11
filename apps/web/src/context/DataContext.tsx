@@ -123,7 +123,7 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
         productId: leadData.productId,
         productName: leadData.productName,
         category: leadData.category,
-        quantity: leadData.quantity || 1,
+        quantity: leadData.quantity ?? 1,
         comment: leadData.comment || '',
         source: leadData.source || '/',
         status: 'NEW',

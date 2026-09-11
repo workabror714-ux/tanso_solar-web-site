@@ -18,7 +18,9 @@ export const LeadModal: React.FC<LeadModalProps> = ({ isOpen, onClose, product, 
 
   const [fullName, setFullName] = useState('');
   const [phone, setPhone] = useState('');
-  const [quantity, setQuantity] = useState(1);
+  // Kept as raw string (not a number) so the field always shows exactly what the user typed —
+  // clearing it or typing 0 no longer snaps back to a forced minimum of 1.
+  const [quantity, setQuantity] = useState('1');
   const [comment, setComment] = useState(defaultComment || '');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
@@ -73,7 +75,7 @@ export const LeadModal: React.FC<LeadModalProps> = ({ isOpen, onClose, product, 
       productId: product?.id,
       productName,
       category: categoryName,
-      quantity,
+      quantity: quantity === '' ? 0 : parseInt(quantity, 10),
       comment: metaDetails,
       source: window.location.href || window.location.pathname
     });
@@ -86,7 +88,7 @@ export const LeadModal: React.FC<LeadModalProps> = ({ isOpen, onClose, product, 
         // Reset form after delay
         setFullName('');
         setPhone('');
-        setQuantity(1);
+        setQuantity('1');
         setComment('');
         setIsSuccess(false);
         onClose();
@@ -202,10 +204,18 @@ export const LeadModal: React.FC<LeadModalProps> = ({ isOpen, onClose, product, 
                     <Hash className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--muted-dark)]" />
                     <input
                       type="number"
-                      min={1}
+                      min={0}
                       max={100}
                       value={quantity}
-                      onChange={(e) => setQuantity(Math.max(1, parseInt(e.target.value) || 1))}
+                      onChange={(e) => {
+                        const val = e.target.value;
+                        // Allow the field to be cleared or hold any digit string (including "0")
+                        // while typing — no more forcing it back up to 1 on every keystroke.
+                        if (val === '' || /^\d+$/.test(val)) setQuantity(val);
+                      }}
+                      onBlur={() => {
+                        if (quantity === '') setQuantity('1');
+                      }}
                       className="field-input-dark"
                     />
                   </div>

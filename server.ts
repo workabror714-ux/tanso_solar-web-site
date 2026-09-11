@@ -765,7 +765,7 @@ async function sendTelegramNotification(lead: any) {
     `📞 <b>Telefon:</b> <code>${lead.phone}</code>\n` +
     `📦 <b>Mahsulot:</b> ${lead.productName || 'Umumiy konsultatsiya'}\n` +
     `🏷️ <b>Kategoriya:</b> ${lead.category || 'Konsultatsiya'}\n` +
-    `🔢 <b>Soni:</b> ${lead.quantity || 1}\n` +
+    `🔢 <b>Soni:</b> ${lead.quantity ?? 1}\n` +
     `💬 <b>Izoh:</b> ${lead.comment || 'Izoh biriktirilmagan'}\n` +
     `🔗 <b>Manbaa:</b> ${lead.source || '/'}\n` +
     `🕒 <b>Vaqt:</b> ${new Date(lead.createdAt).toLocaleString('uz-UZ')}`;
@@ -912,7 +912,8 @@ async function startServer() {
       productId: productId || undefined,
       productName: productName || undefined,
       category: category || undefined,
-      quantity: quantity ? Number(quantity) : 1,
+      // quantity can legitimately be 0 — only fall back to 1 when it's genuinely missing.
+      quantity: (quantity !== undefined && quantity !== null && quantity !== '') ? Number(quantity) : 1,
       comment: comment ? comment.trim() : '',
       source: source || '/',
       status: 'NEW' as const,

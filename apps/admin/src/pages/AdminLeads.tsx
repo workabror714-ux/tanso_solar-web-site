@@ -159,7 +159,7 @@ export const AdminLeads: React.FC = () => {
                     </td>
 
                     <td className="p-3.5 font-mono">
-                      {lead.quantity || 1}
+                      {lead.quantity ?? 1}
                     </td>
 
                     <td className="p-3.5">
@@ -255,7 +255,7 @@ export const AdminLeads: React.FC = () => {
               </div>
               <div className="flex justify-between border-b border-white/10 pb-2">
                 <span className="text-zinc-500">Miqdori:</span>
-                <span className="font-bold text-[#F59E0B]">{activeLead.quantity || 1} ta</span>
+                <span className="font-bold text-[#F59E0B]">{activeLead.quantity ?? 1} ta</span>
               </div>
               <div className="flex justify-between border-b border-white/10 pb-2">
                 <span className="text-zinc-500">Manbaa:</span>
