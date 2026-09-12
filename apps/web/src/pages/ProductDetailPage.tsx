@@ -8,6 +8,112 @@ import { useData } from '../context/DataContext';
 import { ProductCard } from '../components/ProductCard';
 import { Product } from '../types';
 
+// ─── Smart description renderer ───────────────────────────────────────────────
+// Parses fullDesc text that may contain:
+//   • Emoji-led sections  →  icon + bold title + body text
+//   • ALL-CAPS lines      →  subsection heading
+//   • "1. text" entries   →  numbered step list
+//   • Plain lines         →  paragraph
+const RichDescription: React.FC<{ text: string }> = ({ text }) => {
+  if (!text?.trim()) return null;
+
+  type Block =
+    | { kind: 'heading'; text: string }
+    | { kind: 'para'; text: string }
+    | { kind: 'emoji'; emoji: string; title: string; body: string }
+    | { kind: 'numbered'; items: string[] };
+
+  // Insert a newline before every emoji so each emoji starts a new "line"
+  const normalized = text
+    .trim()
+    .replace(/([\u{1F300}-\u{1F9FF}\u{2600}-\u{27BF}])/gu, '\n$1')
+    .split('\n')
+    .map(l => l.trim())
+    .filter(Boolean);
+
+  const blocks: Block[] = [];
+  let pending: string[] = [];
+
+  const flushNumbered = () => {
+    if (pending.length) { blocks.push({ kind: 'numbered', items: [...pending] }); pending = []; }
+  };
+
+  for (const line of normalized) {
+    // Numbered list item  e.g. "1. Vakuumli..."
+    const numM = line.match(/^(\d+)[.)]\s+(.+)/);
+    if (numM) { pending.push(numM[2]); continue; }
+    flushNumbered();
+
+    // Emoji-led section  e.g. "🌟 SAMARALI ISITISH Vakuumli..."
+    const emojM = line.match(/^([\u{1F300}-\u{1F9FF}\u{2600}-\u{27BF}])\s*(.+)/u);
+    if (emojM) {
+      const rest = emojM[2];
+      // Title = the leading all-caps chunk; body = lowercase rest
+      const splitM = rest.match(/^([^a-zа-яё]+?)\s+([a-zа-яё'].*)$/s);
+      blocks.push({
+        kind: 'emoji',
+        emoji: emojM[1],
+        title: splitM ? splitM[1].trim() : rest.slice(0, 55).trim(),
+        body: splitM ? splitM[2].trim() : rest.slice(55).trim(),
+      });
+      continue;
+    }
+
+    // All-caps heading  e.g. "ISHLASH PRINSIPИ"
+    if (/^[A-ZА-ЯЁO'\sȀ-ɏ]{4,}$/.test(line) && line.length < 120) {
+      blocks.push({ kind: 'heading', text: line });
+      continue;
+    }
+
+    blocks.push({ kind: 'para', text: line });
+  }
+  flushNumbered();
+
+  return (
+    <div className="space-y-3 text-sm">
+      {blocks.map((b, i) => {
+        if (b.kind === 'heading')
+          return (
+            <h4 key={i} className="font-bold uppercase tracking-wide text-xs text-[var(--teal-dark)] pt-4 pb-1 border-b border-[var(--border)] first:pt-0">
+              {b.text}
+            </h4>
+          );
+
+        if (b.kind === 'para')
+          return <p key={i} className="text-[var(--muted)] leading-relaxed">{b.text}</p>;
+
+        if (b.kind === 'emoji')
+          return (
+            <div key={i} className="flex gap-3 items-start py-0.5">
+              <span className="text-lg shrink-0 mt-0.5 leading-none">{b.emoji}</span>
+              <div className="min-w-0">
+                <span className="font-semibold text-[var(--ink)] block leading-snug text-sm">{b.title}</span>
+                {b.body && <span className="text-[var(--muted)] block mt-0.5 leading-relaxed text-sm">{b.body}</span>}
+              </div>
+            </div>
+          );
+
+        if (b.kind === 'numbered')
+          return (
+            <ol key={i} className="space-y-2 mt-1">
+              {b.items.map((item, j) => (
+                <li key={j} className="flex gap-3 text-[var(--muted)]">
+                  <span className="shrink-0 w-5 h-5 rounded-full bg-[var(--teal)]/10 text-[var(--teal-dark)] text-[10px] font-bold grid place-items-center mt-0.5 border border-[var(--teal)]/20">
+                    {j + 1}
+                  </span>
+                  <span className="leading-relaxed">{item}</span>
+                </li>
+              ))}
+            </ol>
+          );
+
+        return null;
+      })}
+    </div>
+  );
+};
+// ──────────────────────────────────────────────────────────────────────────────
+
 interface ProductDetailPageProps {
   slug: string;
   onNavigate: (path: string) => void;
@@ -208,16 +314,8 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ slug, onNa
               <h2 className="text-xl font-bold text-[var(--ink)] mb-4 border-l-4 border-[var(--teal)] pl-3">
                 {language === 'ru' ? 'О продукте' : 'Mahsulot haqida'}
               </h2>
-              <div className="card p-6 text-xs sm:text-sm text-[var(--muted)] leading-relaxed space-y-4">
-                <p>
-                  {getLoc(product, 'fullDesc')}
-                </p>
-                <p>
-                  {language === 'ru'
-                    ? 'Оборудование TANSO изготавливается из высококачественных материалов: внутренний бак выполнен из пищевой нержавеющей стали SUS304 толщиной 0.4 мм, а термоизолирующий слой из пенополиуретана высочайшей плотности 50 мм минимизирует ночные теплопотери.'
-                    : 'TANSO uskunasi yuqori sifatli materiallardan tayyorlangan: ichki bak 0.4 mm qalinlikdagi SUS304 oziq-ovqat zanglamaydigan po‘latidan, 50 mm yuqori zichlikdagi poliuretan izolyatsiya qatlami esa tunda issiqlik yo‘qotilishini minimal darajaga tushiradi.'
-                  }
-                </p>
+              <div className="card p-6">
+                <RichDescription text={getLoc(product, ‘fullDesc’)} />
               </div>
             </section>
 

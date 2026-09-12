@@ -132,7 +132,7 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
               </a>
 
               <a
-                href={settings.mapIframeUrl || `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(getLoc(settings, 'address'))}`}
+                href={settings.mapIframeUrl || "https://yandex.uz/maps/10335/tashkent/?ll=69.201737%2C41.254642&mode=poi&poi%5Bpoint%5D=69.201614%2C41.254715&poi%5Buri%5D=ymapsbm1%3A%2F%2Forg%3Foid%3D95573878212&z=20.16"}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-start gap-2.5 hover:text-white transition-colors"
