@@ -1,13 +1,12 @@
-import React from 'react';
+import React, { Fragment } from 'react';
 import { ArrowRight, Phone } from 'lucide-react';
 import { motion } from 'motion/react';
 import { useLanguage } from '../context/LanguageContext';
 import { useData } from '../context/DataContext';
-h
 interface HeroProps {
   onNavigate: (path: string) => void;
   onOpenConsultation: () => void;
-}h
+}
 
 export const Hero: React.FC<HeroProps> = ({ onNavigate, onOpenConsultation }) => {
   const { language, t, getLoc } = useLanguage();
@@ -58,10 +57,10 @@ export const Hero: React.FC<HeroProps> = ({ onNavigate, onOpenConsultation }) =>
               className="text-[clamp(2rem,4.4vw,3.6rem)] font-extrabold leading-[1.15] tracking-[-0.02em] text-white"
             >
               {titleLines.map((line, i) => (
-                <React.Fragment key={i}>
+                <Fragment key={i}>
                   {i > 0 && <br />}
                   {line}
-                </React.Fragment>
+                </Fragment>
               ))}
             </motion.h1>
 
