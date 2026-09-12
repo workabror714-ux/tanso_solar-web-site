@@ -48,8 +48,8 @@ const RichDescription: React.FC<{ text: string }> = ({ text }) => {
     const emojM = line.match(/^([\u{1F300}-\u{1F9FF}\u{2600}-\u{27BF}])\s*(.+)/u);
     if (emojM) {
       const rest = emojM[2];
-      // Title = the leading all-caps chunk; body = lowercase rest
-      const splitM = rest.match(/^([^a-zа-яё]+?)\s+([a-zа-яё'].*)$/s);
+      // Title = leading uppercase block (no lowercase a-z); body = the rest
+      const splitM = rest.match(/^([^a-z]+?)\s+([a-z].*)$/s);
       blocks.push({
         kind: 'emoji',
         emoji: emojM[1],
@@ -59,8 +59,8 @@ const RichDescription: React.FC<{ text: string }> = ({ text }) => {
       continue;
     }
 
-    // All-caps heading  e.g. "ISHLASH PRINSIPИ"
-    if (/^[A-ZА-ЯЁO'\sȀ-ɏ]{4,}$/.test(line) && line.length < 120) {
+    // All-caps heading  e.g. "ISHLASH PRINSIPИ" or "TANSO SOLAR AFZALLIKLARI"
+    if (/^[A-Z0-9\s']{4,}$/.test(line) && line.length < 120) {
       blocks.push({ kind: 'heading', text: line });
       continue;
     }
@@ -315,7 +315,7 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ slug, onNa
                 {language === 'ru' ? 'О продукте' : 'Mahsulot haqida'}
               </h2>
               <div className="card p-6">
-                <RichDescription text={getLoc(product, ‘fullDesc’)} />
+                <RichDescription text={getLoc(product, 'fullDesc')} />
               </div>
             </section>
 
