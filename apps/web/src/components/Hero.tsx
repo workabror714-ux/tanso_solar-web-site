@@ -117,3 +117,4 @@ export const Hero: React.FC<HeroProps> = ({ onNavigate, onOpenConsultation }) =>
     </section>
   );
 };
+
