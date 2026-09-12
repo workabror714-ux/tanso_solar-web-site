@@ -14,9 +14,9 @@ export const Hero: React.FC<HeroProps> = ({ onNavigate, onOpenConsultation }) =>
   const { banners } = useData();
   const banner = banners.find((b) => b.active) || banners[0];
 
-  const title = getLoc(banner, 'title') || (language === 'ru'
+    const title = getLoc(banner, 'title') || (language === 'ru'
     ? 'Горячая вода\nот солнца\nкаждый день'
-    : 'Quyoshdan\nissiq suv\nhar kuni');
+    : 'Quyoshdan\nissiq suv —\nhar kuni');
   const subtitle = getLoc(banner, 'subtitle') || (language === 'ru'
     ? 'Солнечные водонагреватели TANSO для дома и бизнеса: напорные, безнапорные и SPLIT-системы.'
     : 'Uy va biznes uchun TANSO quyosh suv isitgichlari: bosimli, bosimsiz va SPLIT tizimlar.');
