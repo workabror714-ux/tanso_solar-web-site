@@ -3,11 +3,11 @@ import { ArrowRight, Phone } from 'lucide-react';
 import { motion } from 'motion/react';
 import { useLanguage } from '../context/LanguageContext';
 import { useData } from '../context/DataContext';
-
+h
 interface HeroProps {
   onNavigate: (path: string) => void;
   onOpenConsultation: () => void;
-}
+}h
 
 export const Hero: React.FC<HeroProps> = ({ onNavigate, onOpenConsultation }) => {
   const { language, t, getLoc } = useLanguage();
@@ -19,7 +19,7 @@ export const Hero: React.FC<HeroProps> = ({ onNavigate, onOpenConsultation }) =>
     ? 'Солнечные водонагреватели TANSO для дома и бизнеса: напорные, безнапорные и SPLIT-системы.'
     : 'Uy va biznes uchun TANSO quyosh suv isitgichlari: bosimli, bosimsiz va SPLIT tizimlar.');
 
-  const titleLines = titleText
+  const titleLines = (titleText && titleText.includes('\n'))
     ? titleText.split('\n')
     : language === 'ru'
       ? ['Горячая вода', 'от солнца', 'каждый день']
