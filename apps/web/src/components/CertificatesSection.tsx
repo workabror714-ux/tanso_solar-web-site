@@ -88,8 +88,8 @@ export const CertificatesSection: React.FC = () => {
                   </span>
                 </div>
               </div>
-              <div className="p-4">
-                <p className="text-[13px] font-extrabold leading-tight text-white">
+              <div className="p-4 h-[84px] sm:h-[80px] flex flex-col">
+                <p className="text-[13px] font-extrabold leading-tight text-white line-clamp-1">
                   {language === 'ru' ? cert.titleRu : cert.titleUz}
                 </p>
                 <p className="mt-1 text-[11px] leading-snug text-[var(--muted-dark)] line-clamp-2">

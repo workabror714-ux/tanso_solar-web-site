@@ -15,8 +15,8 @@ export const Hero: React.FC<HeroProps> = ({ onNavigate, onOpenConsultation }) =>
   const banner = banners.find((b) => b.active) || banners[0];
 
   const title = getLoc(banner, 'title') || (language === 'ru'
-    ? '? 'Горячая вода\nот солнца\nкаждый день''
-    : 'Quyoshdan\nissiq suv —\nhar kuni');
+    ? 'Горячая вода\nот солнца\nкаждый день'
+    : 'Quyoshdan\nissiq suv\nhar kuni');
   const subtitle = getLoc(banner, 'subtitle') || (language === 'ru'
     ? 'Солнечные водонагреватели TANSO для дома и бизнеса: напорные, безнапорные и SPLIT-системы.'
     : 'Uy va biznes uchun TANSO quyosh suv isitgichlari: bosimli, bosimsiz va SPLIT tizimlar.');
@@ -51,7 +51,7 @@ export const Hero: React.FC<HeroProps> = ({ onNavigate, onOpenConsultation }) =>
               initial={{ opacity: 0, y: 22 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: .7, delay: .08, ease: [0.22, 1, 0.36, 1] }}
-              className="text-[clamp(2rem,4.4vw,3.6rem)] font-extrabold leading-[1.04] tracking-[-0.02em] text-white whitespace-pre-line"
+              className="text-[clamp(2rem,4.4vw,3.6rem)] font-extrabold leading-[1.15] tracking-[-0.02em] text-white whitespace-pre-line"
             >
               {title}
             </motion.h1>
@@ -117,4 +117,3 @@ export const Hero: React.FC<HeroProps> = ({ onNavigate, onOpenConsultation }) =>
     </section>
   );
 };
-
