@@ -51,7 +51,7 @@ export const Hero: React.FC<HeroProps> = ({ onNavigate, onOpenConsultation }) =>
               initial={{ opacity: 0, y: 22 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: .7, delay: .08, ease: [0.22, 1, 0.36, 1] }}
-              className="text-[clamp(2rem,4.4vw,3.6rem)] font-extrabold leading-[1.04] tracking-[-0.02em] text-white"
+              className="text-[clamp(2rem,4.4vw,3.6rem)] font-extrabold leading-[1.04] tracking-[-0.02em] text-white whitespace-pre-line"
             >
               {title}
             </motion.h1>
