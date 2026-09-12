@@ -22,7 +22,7 @@ export const Hero: React.FC<HeroProps> = ({ onNavigate, onOpenConsultation }) =>
     ? titleText.split('\n')
     : language === 'ru'
       ? ['Горячая вода', 'от солнца', 'каждый день']
-      : ['Quyoshdan', 'issiq suv —', 'har kuni'];
+      : ['Quyoshdan', 'issiq suv ', 'har kuni'];
 
   return (
     <section id="home" className="scroll-mt-28 relative flex items-center overflow-hidden bg-[var(--ink)] pt-16 lg:pt-14">
