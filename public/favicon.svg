@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
+  <!-- TANSO T lettermark favicon -->
+  <!-- T crossbar (teal) -->
+  <path d="M4 6 H60 V24 H42 L36 30 H28 L22 24 H4 Z" fill="#04AF9D"/>
+  <!-- Orange triangle accent — top-right corner of crossbar -->
+  <polygon points="44,6 60,6 60,24" fill="#F6852D"/>
+  <!-- T stem (teal) -->
+  <rect x="22" y="24" width="20" height="32" rx="2" fill="#04AF9D"/>
+</svg>
