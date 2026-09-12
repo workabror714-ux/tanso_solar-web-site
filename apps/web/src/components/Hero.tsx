@@ -14,12 +14,16 @@ export const Hero: React.FC<HeroProps> = ({ onNavigate, onOpenConsultation }) =>
   const { banners } = useData();
   const banner = banners.find((b) => b.active) || banners[0];
 
-  const title = getLoc(banner, 'title') || (language === 'ru'
-    ? 'Горячая вода\nот солнца\nкаждый день'
-    : 'Quyoshdan\nissiq suv —\nhar kuni');
+  const titleText = getLoc(banner, 'title');
   const subtitle = getLoc(banner, 'subtitle') || (language === 'ru'
     ? 'Солнечные водонагреватели TANSO для дома и бизнеса: напорные, безнапорные и SPLIT-системы.'
     : 'Uy va biznes uchun TANSO quyosh suv isitgichlari: bosimli, bosimsiz va SPLIT tizimlar.');
+
+  const titleLines = titleText
+    ? titleText.split('\n')
+    : language === 'ru'
+      ? ['Горячая вода', 'от солнца', 'каждый день']
+      : ['Quyoshdan', 'issiq suv —', 'har kuni'];
 
   return (
     <section id="home" className="scroll-mt-28 relative flex items-center overflow-hidden bg-[var(--ink)] pt-16 lg:pt-14">
@@ -51,9 +55,14 @@ export const Hero: React.FC<HeroProps> = ({ onNavigate, onOpenConsultation }) =>
               initial={{ opacity: 0, y: 22 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: .7, delay: .08, ease: [0.22, 1, 0.36, 1] }}
-              className="text-[clamp(2rem,4.4vw,3.6rem)] font-extrabold leading-[1.15] tracking-[-0.02em] text-white whitespace-pre-line"
+              className="text-[clamp(2rem,4.4vw,3.6rem)] font-extrabold leading-[1.15] tracking-[-0.02em] text-white"
             >
-              {title}
+              {titleLines.map((line, i) => (
+                <React.Fragment key={i}>
+                  {i > 0 && <br />}
+                  {line}
+                </React.Fragment>
+              ))}
             </motion.h1>
 
             <motion.p
