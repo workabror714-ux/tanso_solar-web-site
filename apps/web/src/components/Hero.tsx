@@ -14,7 +14,7 @@ export const Hero: React.FC<HeroProps> = ({ onNavigate, onOpenConsultation }) =>
   const { banners } = useData();
   const banner = banners.find((b) => b.active) || banners[0];
 
-    const title = getLoc(banner, 'title') || (language === 'ru'
+  const title = getLoc(banner, 'title') || (language === 'ru'
     ? 'Горячая вода\nот солнца\nкаждый день'
     : 'Quyoshdan\nissiq suv —\nhar kuni');
   const subtitle = getLoc(banner, 'subtitle') || (language === 'ru'
@@ -44,7 +44,7 @@ export const Hero: React.FC<HeroProps> = ({ onNavigate, onOpenConsultation }) =>
               transition={{ duration: .55, ease: [0.22, 1, 0.36, 1] }}
               className="kicker-dark mb-5"
             >
-              TANSO • O‘ZBEKISTON
+              TANSO • O'ZBEKISTON
             </motion.div>
 
             <motion.h1
