@@ -278,26 +278,14 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ slug, onNa
                 <span>{language === 'ru' ? 'Отправить запрос' : 'So‘rov yuborish'}</span>
               </button>
 
-              <button
-                onClick={() => onOpenConsultation(product)}
-                className="btn-secondary w-full"
+              <a
+                href="tel:+998903455505"
+                className="text-2xl sm:text-3xl font-mono-num font-bold text-[var(--amber)] mt-1 block text-center"
               >
-                <Phone className="w-4 h-4" />
-                <span>{language === 'ru' ? 'Получить консультацию' : 'Konsultatsiya olish'}</span>
-              </button>
+                +998 90 345 55 05
+              </a>
             </div>
 
-            {/* Quick Spec Highlights */}
-            {product.specs && product.specs.length > 0 && (
-              <div className="card p-4">
-                {product.specs.slice(0, 4).map((sp) => (
-                  <div key={sp.id} className="spec-row">
-                    <span className="spec-row-label">{getLoc(sp, 'key')}</span>
-                    <span className="spec-row-value">{getLoc(sp, 'value')}</span>
-                  </div>
-                ))}
-              </div>
-            )}
 
           </div>
 
@@ -367,7 +355,7 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ slug, onNa
             <div className="card p-6 space-y-3">
               <h4 className="font-bold text-xs uppercase tracking-wider text-[var(--amber)] flex items-center gap-2">
                 <Award className="w-4 h-4" />
-                <span>{language === 'ru' ? 'Официальный дилер TANSO' : 'Rasmiy TANSO dileri'}</span>
+                <span>{language === 'ru' ? 'Председатель Узбекистана' : "O'zbekiston raisi"}</span>
               </h4>
               <p className="text-xs text-[var(--muted)] leading-relaxed">
                 {language === 'ru'
