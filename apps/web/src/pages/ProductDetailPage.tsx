@@ -361,7 +361,7 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ slug, onNa
               <p className="text-xs text-[var(--muted)] leading-relaxed">
                 {language === 'ru'
                   ? 'Все поставляемое оборудование проходит заводской контроль качества.'
-                  : 'Barcha yetkazib beriladigan uskunalar zavod sifat nazoratidan o‘tgan. O‘zbekiston bo‘ylab yetkazib berish va professional montaj.'
+                  : "Barcha yetkazib beriladigan uskunalar zavod sifat nazoratidan o'tgan."
                 }
               </p>
             </div>
