@@ -280,8 +280,9 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ slug, onNa
 
               <a
                 href="tel:+998903455505"
-                className="text-2xl sm:text-3xl font-mono-num font-bold text-[var(--amber)] mt-1 block text-center"
+                className="w-full min-h-[52px] flex items-center justify-center gap-3 rounded-xl border-2 border-[var(--amber)] py-3 px-4 text-xl sm:text-2xl font-mono-num font-bold text-[var(--amber)] hover:bg-[var(--amber)]/10 transition-all duration-200"
               >
+                <Phone className="w-5 h-5 shrink-0" />
                 +998 90 345 55 05
               </a>
             </div>
@@ -355,11 +356,11 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ slug, onNa
             <div className="card p-6 space-y-3">
               <h4 className="font-bold text-xs uppercase tracking-wider text-[var(--amber)] flex items-center gap-2">
                 <Award className="w-4 h-4" />
-                <span>{language === 'ru' ? 'Председатель Узбекистана' : "O'zbekiston raisi"}</span>
+                <span>{language === 'ru' ? 'Представительство в Узбекистане' : "O'zbekistonda vakolatxona"}</span>
               </h4>
               <p className="text-xs text-[var(--muted)] leading-relaxed">
                 {language === 'ru'
-                  ? 'Все поставляемое оборудование проходит заводской контроль качества. Доставка и профессиональный монтаж по всему Узбекистану.'
+                  ? 'Все поставляемое оборудование проходит заводской контроль качества.'
                   : 'Barcha yetkazib beriladigan uskunalar zavod sifat nazoratidan o‘tgan. O‘zbekiston bo‘ylab yetkazib berish va professional montaj.'
                 }
               </p>
