@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import {
-  ChevronRight, ShieldCheck, ShoppingBag, Phone, CheckCircle2,
+  ChevronRight, ShieldCheck, ShoppingBag, Phone, CheckCircle2, ZoomIn,
   Award
 } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
@@ -126,6 +126,7 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ slug, onNa
 
   const product = products.find(p => p.slug === slug || p.id === slug);
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
+  const [lightboxOpen, setLightboxOpen] = useState(false);
 
   if (!product) {
     return (
@@ -193,12 +194,20 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ slug, onNa
 
           {/* Gallery */}
           <div className="space-y-4">
-            <div className="relative h-[380px] sm:h-[500px] bg-[var(--teal-tint)] border border-[var(--border)] rounded-[14px] overflow-hidden">
+            <div
+              className="relative h-[380px] sm:h-[500px] bg-[var(--teal-tint)] border border-[var(--border)] rounded-[14px] overflow-hidden group cursor-zoom-in"
+              onClick={() => setLightboxOpen(true)}
+            >
               <img
                 src={product.images?.[selectedImageIndex] || product.images?.[0] || '/images/products/tanso-bosimsiz-main.png'}
                 alt={getLoc(product, 'title')}
-                className="w-full h-full object-contain object-center p-5 sm:p-8"
+                className="w-full h-full object-contain object-center p-5 sm:p-8 transition-transform duration-500 group-hover:scale-105"
               />
+              <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
+                <div className="bg-black/40 backdrop-blur-sm rounded-full p-3 shadow-xl">
+                  <ZoomIn className="w-7 h-7 text-white" />
+                </div>
+              </div>
 
               <div className="absolute top-4 left-4 flex gap-2 z-10">
                 {product.specs?.[0]?.valueUz && (
@@ -360,8 +369,8 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ slug, onNa
               </h4>
               <p className="text-xs text-[var(--muted)] leading-relaxed">
                 {language === 'ru'
-                  ? 'Все поставляемое оборудование проходит заводской контроль качества.'
-                  : "Barcha yetkazib beriladigan uskunalar zavod sifat nazoratidan o'tgan."
+                  ? 'TANSO Solar — единственный официальный представитель в Узбекистане. Прямые поставки с завода-производителя.'
+                  : "TANSO Solar — O'zbekistondagi yagona rasmiy vakil. Mahsulotlar to'g'ridan-to'g'ri zavod-ishlab chiqaruvchidan keltiriladi."
                 }
               </p>
             </div>
@@ -399,6 +408,27 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ slug, onNa
           </div>
         )}
 
+      {/* Lightbox Modal */}
+      {lightboxOpen && (
+        <div
+          className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/90 cursor-zoom-out"
+          onClick={() => setLightboxOpen(false)}
+        >
+          <button
+            className="absolute top-4 right-4 text-white/70 hover:text-white transition-colors bg-white/10 hover:bg-white/20 rounded-full p-2"
+            onClick={() => setLightboxOpen(false)}
+            aria-label="Close"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </button>
+          <img
+            src={product.images?.[selectedImageIndex] || product.images?.[0] || '/images/products/tanso-bosimsiz-main.png'}
+            alt={getLoc(product, 'title')}
+            className="max-w-[92vw] max-h-[90vh] object-contain"
+            onClick={(e) => e.stopPropagation()}
+          />
+        </div>
+      )}
       </div>
     </div>
   );
