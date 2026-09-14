@@ -13,9 +13,9 @@ interface HeroProps {
 const CELL = 86;   // px — cell size
 const GAP  = 5;    // px — gap between cells
 const STEP = CELL + GAP;   // 91
-const COLS = 7;
+const COLS = 20;
 const ROWS = 6;
-const N    = COLS * ROWS;  // 42 cells
+const N    = COLS * ROWS;  // 120 cells
 
 // Deterministic bar widths per cell (5 bars each, no randomness at runtime)
 const BARS: number[][] = Array.from({ length: N }, (_, i) => {
@@ -29,15 +29,23 @@ const BARS: number[][] = Array.from({ length: N }, (_, i) => {
   ];
 });
 
-// Pre-seeded base opacity — visible even without cursor
+// Pre-seeded base opacity — left cols (text area) very faint, right cols more visible
 const BASE = new Float32Array(N);
 ([ // [col, row, opacity]
-  [2,0,0.28],[4,0,0.16],
-  [1,1,0.38],[3,1,0.20],[5,1,0.14],
-  [2,2,0.46],[4,2,0.26],[6,2,0.16],
-  [0,3,0.18],[3,3,0.36],[5,3,0.24],
-  [2,4,0.16],[4,4,0.30],[6,4,0.12],
-  [1,5,0.20],[3,5,0.14],[5,5,0.26],
+  // Left area (cols 0–8, behind text) — ultra faint
+  [1,0,0.07],[3,0,0.10],[5,0,0.06],[7,0,0.08],
+  [0,1,0.09],[2,1,0.06],[4,1,0.10],[6,1,0.07],[8,1,0.09],
+  [1,2,0.11],[3,2,0.08],[5,2,0.05],[7,2,0.09],
+  [0,3,0.07],[2,3,0.10],[4,3,0.06],[6,3,0.08],[8,3,0.07],
+  [1,4,0.09],[3,4,0.07],[5,4,0.10],[7,4,0.06],
+  [2,5,0.08],[4,5,0.11],[6,5,0.07],[8,5,0.09],
+  // Right area (cols 9–19, behind product) — more visible
+  [10,0,0.28],[12,0,0.16],[14,0,0.22],[16,0,0.18],[18,0,0.14],
+  [9,1,0.38],[11,1,0.20],[13,1,0.14],[15,1,0.28],[17,1,0.16],[19,1,0.12],
+  [10,2,0.46],[12,2,0.26],[14,2,0.16],[16,2,0.20],[18,2,0.13],
+  [9,3,0.18],[11,3,0.36],[13,3,0.24],[15,3,0.18],[17,3,0.14],[19,3,0.10],
+  [10,4,0.16],[12,4,0.30],[14,4,0.12],[16,4,0.22],[18,4,0.15],
+  [9,5,0.20],[11,5,0.14],[13,5,0.26],[15,5,0.16],[17,5,0.12],
 ] as [number,number,number][]).forEach(([c,r,o]) => { BASE[c + r * COLS] = o; });
 
 // Cells that get an amber accent bar (bar index 1)
@@ -83,17 +91,20 @@ export const Hero: React.FC<HeroProps> = ({ onNavigate, onOpenConsultation }) =>
     const grid    = gridRef.current;
     if (!section || !grid) return;
 
-    // Cache grid's top-left corner in section-local coordinates
+    // Cache first cell's top-left corner in section-local coordinates
+    // (more accurate than grid container, accounts for alignContent centering)
     const cacheOrigin = () => {
-      const sr = section.getBoundingClientRect();
-      const gr = grid.getBoundingClientRect();
-      gridOrigin.current = { x: gr.left - sr.left, y: gr.top - sr.top };
+      const sr       = section.getBoundingClientRect();
+      const firstCell = cellRefs.current[0];
+      if (!firstCell) return;
+      const cr = firstCell.getBoundingClientRect();
+      gridOrigin.current = { x: cr.left - sr.left, y: cr.top - sr.top };
     };
 
     // After first layout paint
     requestAnimationFrame(() => requestAnimationFrame(cacheOrigin));
 
-    const RADIUS   = 280;
+    const RADIUS   = 300;
     const LERP_IN  = 0.16;
     const LERP_OUT = 0.08;
 
@@ -177,17 +188,17 @@ export const Hero: React.FC<HeroProps> = ({ onNavigate, onOpenConsultation }) =>
         <div className="absolute inset-0 bg-[linear-gradient(90deg,var(--ink)_0%,var(--ink)_44%,rgba(16,33,27,.80)_68%,rgba(16,33,27,.96)_100%)]" />
         <div className="bg-line-grid-dark absolute inset-0 opacity-30" />
 
-        {/* ── Render-style interactive grid (desktop only) ──────────── */}
+        {/* ── Full-width cursor-reactive grid (desktop only) ─────────── */}
         <div
           ref={gridRef}
           className="absolute pointer-events-none hidden lg:grid"
           style={{
-            left: '47%', right: '-4px', top: 0, bottom: 0,
+            left: 0, right: 0, top: 0, bottom: 0,
             gridTemplateColumns: `repeat(${COLS}, ${CELL}px)`,
             gridTemplateRows:    `repeat(${ROWS}, ${CELL}px)`,
             gap: `${GAP}px`,
             alignContent: 'center',
-            overflow: 'visible',
+            overflow: 'hidden',
           }}
         >
           {Array.from({ length: N }, (_, i) => {
@@ -310,8 +321,6 @@ export const Hero: React.FC<HeroProps> = ({ onNavigate, onOpenConsultation }) =>
             transition={{ duration: 2.4, delay: .22, ease: [0.16, 1, 0.3, 1] }}
             className="relative min-h-[260px] sm:min-h-[320px] lg:min-h-[360px] flex items-center justify-center pb-4 lg:pb-0"
           >
-            <div className="absolute w-[80%] aspect-square rounded-full border border-white/[0.06]" />
-
             <div className="relative z-10 w-[76%] sm:w-[70%] lg:w-[80%] drop-shadow-[0_36px_50px_rgba(0,0,0,.6)]">
               <img
                 src="/images/products/tanso-bosimsiz-main.png"
