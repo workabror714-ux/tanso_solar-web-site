@@ -10,14 +10,14 @@ interface HeroProps {
 }
 
 // ── Grid constants ─────────────────────────────────────────────────────────
-const CELL = 86;   // px — cell size
-const GAP  = 5;    // px — gap between cells
-const STEP = CELL + GAP;   // 91
-const COLS = 20;
-const ROWS = 6;
-const N    = COLS * ROWS;  // 120 cells
+const CELL = 86;
+const GAP  = 5;
+const STEP = CELL + GAP;   // 91px
+const COLS = 22;            // 22 × 91 = 2002px → covers up to 1920px
+const ROWS = 9;             // 9  × 91 = 819px  → covers hero height + overflow clipped
+const N    = COLS * ROWS;  // 198 cells
 
-// Deterministic bar widths per cell (5 bars each, no randomness at runtime)
+// Deterministic bar widths per cell
 const BARS: number[][] = Array.from({ length: N }, (_, i) => {
   const s = i * 37 + 11;
   return [
@@ -29,26 +29,34 @@ const BARS: number[][] = Array.from({ length: N }, (_, i) => {
   ];
 });
 
-// Pre-seeded base opacity — left cols (text area) very faint, right cols more visible
+// Pre-seeded base opacity
+// Left cols 0–8 (text area): ultra-faint so text stays readable
+// Right cols 9–21 (product area): more visible
 const BASE = new Float32Array(N);
 ([ // [col, row, opacity]
-  // Left area (cols 0–8, behind text) — ultra faint
+  // ── left (text) ───────────────────────────────────────────────────────
   [1,0,0.07],[3,0,0.10],[5,0,0.06],[7,0,0.08],
   [0,1,0.09],[2,1,0.06],[4,1,0.10],[6,1,0.07],[8,1,0.09],
   [1,2,0.11],[3,2,0.08],[5,2,0.05],[7,2,0.09],
   [0,3,0.07],[2,3,0.10],[4,3,0.06],[6,3,0.08],[8,3,0.07],
   [1,4,0.09],[3,4,0.07],[5,4,0.10],[7,4,0.06],
   [2,5,0.08],[4,5,0.11],[6,5,0.07],[8,5,0.09],
-  // Right area (cols 9–19, behind product) — more visible
-  [10,0,0.28],[12,0,0.16],[14,0,0.22],[16,0,0.18],[18,0,0.14],
-  [9,1,0.38],[11,1,0.20],[13,1,0.14],[15,1,0.28],[17,1,0.16],[19,1,0.12],
-  [10,2,0.46],[12,2,0.26],[14,2,0.16],[16,2,0.20],[18,2,0.13],
-  [9,3,0.18],[11,3,0.36],[13,3,0.24],[15,3,0.18],[17,3,0.14],[19,3,0.10],
-  [10,4,0.16],[12,4,0.30],[14,4,0.12],[16,4,0.22],[18,4,0.15],
-  [9,5,0.20],[11,5,0.14],[13,5,0.26],[15,5,0.16],[17,5,0.12],
+  [1,6,0.07],[3,6,0.09],[5,6,0.06],[7,6,0.08],
+  [0,7,0.08],[2,7,0.06],[4,7,0.09],[6,7,0.07],
+  [1,8,0.06],[3,8,0.08],[5,8,0.05],[7,8,0.07],
+  // ── right (product) ───────────────────────────────────────────────────
+  [10,0,0.26],[12,0,0.15],[14,0,0.20],[16,0,0.14],[18,0,0.18],[20,0,0.12],
+  [9,1,0.36],[11,1,0.18],[13,1,0.13],[15,1,0.26],[17,1,0.15],[19,1,0.20],[21,1,0.10],
+  [10,2,0.44],[12,2,0.24],[14,2,0.15],[16,2,0.19],[18,2,0.12],[20,2,0.16],
+  [9,3,0.17],[11,3,0.34],[13,3,0.22],[15,3,0.17],[17,3,0.13],[19,3,0.22],[21,3,0.09],
+  [10,4,0.15],[12,4,0.28],[14,4,0.11],[16,4,0.20],[18,4,0.14],[20,4,0.18],
+  [9,5,0.19],[11,5,0.13],[13,5,0.24],[15,5,0.15],[17,5,0.11],[19,5,0.17],[21,5,0.08],
+  [10,6,0.14],[12,6,0.22],[14,6,0.10],[16,6,0.17],[18,6,0.12],[20,6,0.15],
+  [9,7,0.16],[11,7,0.11],[13,7,0.20],[15,7,0.13],[17,7,0.09],[19,7,0.15],[21,7,0.07],
+  [10,8,0.12],[12,8,0.18],[14,8,0.08],[16,8,0.14],[18,8,0.10],[20,8,0.12],
 ] as [number,number,number][]).forEach(([c,r,o]) => { BASE[c + r * COLS] = o; });
 
-// Cells that get an amber accent bar (bar index 1)
+// Amber accent cells
 const AMBER = new Set<number>(
   Array.from({ length: N }, (_, i) => {
     const col = i % COLS, row = Math.floor(i / COLS);
@@ -88,23 +96,20 @@ export const Hero: React.FC<HeroProps> = ({ onNavigate, onOpenConsultation }) =>
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
     const section = sectionRef.current;
-    const grid    = gridRef.current;
-    if (!section || !grid) return;
+    if (!section) return;
 
-    // Cache first cell's top-left corner in section-local coordinates
-    // (more accurate than grid container, accounts for alignContent centering)
+    // Cache first cell's position (top-left corner of the actual cell grid)
     const cacheOrigin = () => {
-      const sr       = section.getBoundingClientRect();
+      const sr        = section.getBoundingClientRect();
       const firstCell = cellRefs.current[0];
       if (!firstCell) return;
       const cr = firstCell.getBoundingClientRect();
       gridOrigin.current = { x: cr.left - sr.left, y: cr.top - sr.top };
     };
 
-    // After first layout paint
     requestAnimationFrame(() => requestAnimationFrame(cacheOrigin));
 
-    const RADIUS   = 300;
+    const RADIUS   = 310;
     const LERP_IN  = 0.16;
     const LERP_OUT = 0.08;
 
@@ -116,34 +121,30 @@ export const Hero: React.FC<HeroProps> = ({ onNavigate, onOpenConsultation }) =>
         const col = i % COLS;
         const row = Math.floor(i / COLS);
 
-        // Cell centre in section-local coords
         const cx = gx + col * STEP + CELL / 2;
         const cy = gy + row * STEP + CELL / 2;
 
         const dist   = Math.sqrt((mx - cx) ** 2 + (my - cy) ** 2);
         const target = inside ? Math.max(0, 1 - dist / RADIUS) : 0;
 
-        // Smooth lerp — faster approach, slower retreat
         const prev = strengths.current[i];
         const lf   = target > prev ? LERP_IN : LERP_OUT;
         const s    = prev + (target - prev) * lf;
         strengths.current[i] = s;
 
-        const eff = Math.max(BASE[i], s); // base always visible
+        const eff = Math.max(BASE[i], s);
 
-        // Bars opacity
         const barsEl = barsRefs.current[i];
         if (barsEl) barsEl.style.opacity = eff.toFixed(3);
 
-        // Cell border + background + subtle scale
         const cellEl = cellRefs.current[i];
         if (cellEl) {
           const bAlpha = 0.07 + s * 0.45;
           const bgA    = eff * 0.09;
           const sc     = 1 + s * 0.04;
-          cellEl.style.borderColor       = `rgba(4,175,157,${bAlpha.toFixed(3)})`;
-          cellEl.style.backgroundColor   = `rgba(4,175,157,${bgA.toFixed(3)})`;
-          cellEl.style.transform         = `scale(${sc.toFixed(4)})`;
+          cellEl.style.borderColor     = `rgba(4,175,157,${bAlpha.toFixed(3)})`;
+          cellEl.style.backgroundColor = `rgba(4,175,157,${bgA.toFixed(3)})`;
+          cellEl.style.transform       = `scale(${sc.toFixed(4)})`;
         }
       }
 
@@ -188,17 +189,17 @@ export const Hero: React.FC<HeroProps> = ({ onNavigate, onOpenConsultation }) =>
         <div className="absolute inset-0 bg-[linear-gradient(90deg,var(--ink)_0%,var(--ink)_44%,rgba(16,33,27,.80)_68%,rgba(16,33,27,.96)_100%)]" />
         <div className="bg-line-grid-dark absolute inset-0 opacity-30" />
 
-        {/* ── Full-width cursor-reactive grid (desktop only) ─────────── */}
+        {/* ── Full-bleed cursor-reactive grid (desktop only) ─────────── */}
+        {/* Grid anchored at top-left; overflows right+bottom → clipped by section overflow-hidden */}
         <div
           ref={gridRef}
           className="absolute pointer-events-none hidden lg:grid"
           style={{
-            left: 0, right: 0, top: 0, bottom: 0,
+            left: 0,
+            top: 0,
             gridTemplateColumns: `repeat(${COLS}, ${CELL}px)`,
             gridTemplateRows:    `repeat(${ROWS}, ${CELL}px)`,
             gap: `${GAP}px`,
-            alignContent: 'center',
-            overflow: 'hidden',
           }}
         >
           {Array.from({ length: N }, (_, i) => {
@@ -218,7 +219,6 @@ export const Hero: React.FC<HeroProps> = ({ onNavigate, onOpenConsultation }) =>
                   overflow: 'hidden',
                 }}
               >
-                {/* Inner bars */}
                 <div
                   ref={el => { barsRefs.current[i] = el; }}
                   style={{
@@ -254,7 +254,7 @@ export const Hero: React.FC<HeroProps> = ({ onNavigate, onOpenConsultation }) =>
           })}
         </div>
 
-        {/* Subtle ambient glow (static) */}
+        {/* Ambient glow */}
         <div
           className="absolute inset-0 pointer-events-none"
           style={{ background: 'radial-gradient(ellipse 50% 55% at 74% 50%, rgba(4,175,157,0.10) 0%, transparent 70%)' }}
@@ -314,7 +314,7 @@ export const Hero: React.FC<HeroProps> = ({ onNavigate, onOpenConsultation }) =>
             </motion.div>
           </div>
 
-          {/* Product image — sits in front of the grid */}
+          {/* Product image */}
           <motion.div
             initial={{ opacity: 0, x: 30, scale: .96 }}
             animate={{ opacity: 1, x: 0, scale: 1 }}
