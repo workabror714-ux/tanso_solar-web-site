@@ -35,7 +35,18 @@ export const Hero: React.FC<HeroProps> = ({ onNavigate, onOpenConsultation }) =>
           />
         )}
         <div className="absolute inset-0 bg-[linear-gradient(90deg,var(--ink)_0%,var(--ink)_46%,rgba(16,33,27,.82)_70%,rgba(16,33,27,.95)_100%)]" />
-        <div className="bg-line-grid-dark absolute inset-0 opacity-60" />
+        <motion.div
+          className="bg-line-grid-dark absolute inset-0 opacity-60"
+          animate={{ backgroundPositionX: ['0px', '80px'], backgroundPositionY: ['0px', '80px'] }}
+          transition={{ duration: 28, ease: 'linear', repeat: Infinity }}
+        />
+        {/* Floating ambient glow */}
+        <motion.div
+          className="absolute inset-0 pointer-events-none"
+          animate={{ opacity: [0.06, 0.13, 0.06] }}
+          transition={{ duration: 6, ease: 'easeInOut', repeat: Infinity }}
+          style={{ background: 'radial-gradient(ellipse 55% 50% at 72% 48%, rgba(4,175,157,0.28) 0%, transparent 70%)' }}
+        />
       </div>
 
       <div className="relative z-10 tanso-container py-7 lg:py-9">
