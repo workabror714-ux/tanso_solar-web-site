@@ -114,12 +114,21 @@ export const Hero: React.FC<HeroProps> = ({ onNavigate, onOpenConsultation }) =>
     const LERP_OUT = 0.08;
 
     const tick = () => {
+      const now = performance.now() * 0.001; // seconds
       const { x: mx, y: my, in: inside } = mouse.current;
       const { x: gx, y: gy } = gridOrigin.current;
 
       for (let i = 0; i < N; i++) {
         const col = i % COLS;
         const row = Math.floor(i / COLS);
+
+        // ── Idle shimmer ─────────────────────────────────────────────
+        // Each cell has a unique phase so they don't pulse in sync.
+        // Two layers: slow diagonal wave + faster micro-flicker.
+        const phase   = col * 0.31 + row * 0.23 + i * 0.07;
+        const slow    = 0.07 * (0.5 + 0.5 * Math.sin(now * 0.85 + phase));
+        const flicker = 0.04 * (0.5 + 0.5 * Math.sin(now * 3.4  + phase * 1.7));
+        const idle    = slow + flicker; // 0 … 0.11
 
         const cx = gx + col * STEP + CELL / 2;
         const cy = gy + row * STEP + CELL / 2;
@@ -132,7 +141,8 @@ export const Hero: React.FC<HeroProps> = ({ onNavigate, onOpenConsultation }) =>
         const s    = prev + (target - prev) * lf;
         strengths.current[i] = s;
 
-        const eff = Math.max(BASE[i], s);
+        // cursor strength wins when near; otherwise base + idle shimmer
+        const eff = Math.max(BASE[i] + idle, s);
 
         const barsEl = barsRefs.current[i];
         if (barsEl) barsEl.style.opacity = eff.toFixed(3);
