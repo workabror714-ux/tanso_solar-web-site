@@ -17,11 +17,13 @@ import { Product } from '../types';
 const RichDescription: React.FC<{ text: string }> = ({ text }) => {
   if (!text?.trim()) return null;
 
+  // Numbered item with optional body paragraph on the next line
+  type NumberedItem = { title: string; body?: string };
   type Block =
     | { kind: 'heading'; text: string }
     | { kind: 'para'; text: string }
     | { kind: 'emoji'; emoji: string; title: string; body: string }
-    | { kind: 'numbered'; items: string[] };
+    | { kind: 'numbered'; items: NumberedItem[] };
 
   // Insert a newline before every emoji so each emoji starts a new "line"
   const normalized = text
@@ -32,16 +34,28 @@ const RichDescription: React.FC<{ text: string }> = ({ text }) => {
     .filter(Boolean);
 
   const blocks: Block[] = [];
-  let pending: string[] = [];
+  let pending: NumberedItem[] = [];
 
   const flushNumbered = () => {
     if (pending.length) { blocks.push({ kind: 'numbered', items: [...pending] }); pending = []; }
   };
 
+  const isEmojiLine  = (l: string) => /^[\u{1F300}-\u{1F9FF}\u{2600}-\u{27BF}]/u.test(l);
+  const isAllCapsLine = (l: string) => /^[A-Z0-9\s']{4,}$/.test(l) && l.length < 120;
+
   for (const line of normalized) {
     // Numbered list item  e.g. "1. Vakuumli..."
     const numM = line.match(/^(\d+)[.)]\s+(.+)/);
-    if (numM) { pending.push(numM[2]); continue; }
+    if (numM) { pending.push({ title: numM[2] }); continue; }
+
+    // Plain paragraph immediately after a numbered item → attach as its body
+    // so that "1. Title\nBody text\n2. Title\nBody text" all stay in one <ol>
+    if (pending.length > 0 && !pending[pending.length - 1].body
+        && !isEmojiLine(line) && !isAllCapsLine(line)) {
+      pending[pending.length - 1].body = line;
+      continue;
+    }
+
     flushNumbered();
 
     // Emoji-led section  e.g. "🌟 SAMARALI ISITISH Vakuumli..."
@@ -60,7 +74,7 @@ const RichDescription: React.FC<{ text: string }> = ({ text }) => {
     }
 
     // All-caps heading  e.g. "ISHLASH PRINSIPИ" or "TANSO SOLAR AFZALLIKLARI"
-    if (/^[A-Z0-9\s']{4,}$/.test(line) && line.length < 120) {
+    if (isAllCapsLine(line)) {
       blocks.push({ kind: 'heading', text: line });
       continue;
     }
@@ -95,13 +109,16 @@ const RichDescription: React.FC<{ text: string }> = ({ text }) => {
 
         if (b.kind === 'numbered')
           return (
-            <ol key={i} className="space-y-2 mt-1">
+            <ol key={i} className="space-y-3 mt-1">
               {b.items.map((item, j) => (
                 <li key={j} className="flex gap-3 text-[var(--muted)]">
                   <span className="shrink-0 w-5 h-5 rounded-full bg-[var(--teal)]/10 text-[var(--teal-dark)] text-[10px] font-bold grid place-items-center mt-0.5 border border-[var(--teal)]/20">
                     {j + 1}
                   </span>
-                  <span className="leading-relaxed">{item}</span>
+                  <div className="flex-1 min-w-0">
+                    <span className="leading-relaxed font-medium text-[var(--ink)]">{item.title}</span>
+                    {item.body && <p className="text-[var(--muted)] mt-0.5 leading-relaxed">{item.body}</p>}
+                  </div>
                 </li>
               ))}
             </ol>
@@ -206,22 +223,12 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ slug, onNa
                   setZoomState({ active: true, x, y });
                 }
               }}
-              onMouseMove={(e) => {
-                if (!zoomState.active) return;
-                const rect = e.currentTarget.getBoundingClientRect();
-                const x = ((e.clientX - rect.left) / rect.width) * 100;
-                const y = ((e.clientY - rect.top) / rect.height) * 100;
-                setZoomState(prev => ({ ...prev, x, y }));
-              }}
             >
               <img
                 src={product.images?.[selectedImageIndex] || product.images?.[0] || '/images/products/tanso-bosimsiz-main.png'}
                 alt={getLoc(product, 'title')}
-                className="w-full h-full object-contain object-center p-5 sm:p-8"
-                style={zoomState.active
-                  ? { transform: `scale(2.5)`, transformOrigin: `${zoomState.x}% ${zoomState.y}%`, transition: 'transform 0.4s ease' }
-                  : { transition: 'transform 0.4s ease' }
-                }
+                className="w-full h-full object-contain object-center p-5 sm:p-8 transition-all duration-500"
+                style={zoomState.active ? { transform: `scale(2.5)`, transformOrigin: `${zoomState.x}% ${zoomState.y}%` } : {}}
               />
               {!zoomState.active && (
                 <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
