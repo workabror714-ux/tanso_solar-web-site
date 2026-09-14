@@ -1,12 +1,28 @@
-import React, { Fragment } from 'react';
+import React, { Fragment, useRef, useEffect } from 'react';
 import { ArrowRight, Phone } from 'lucide-react';
 import { motion } from 'motion/react';
 import { useLanguage } from '../context/LanguageContext';
 import { useData } from '../context/DataContext';
+
 interface HeroProps {
   onNavigate: (path: string) => void;
   onOpenConsultation: () => void;
 }
+
+const BG_SQUARES = [
+  { l:'53%', t:'4%',  w:32, h:32, d:0,   dr:5.8, filled:false },
+  { l:'68%', t:'2%',  w:16, h:16, d:1.4, dr:4.2, filled:true  },
+  { l:'81%', t:'8%',  w:24, h:24, d:0.7, dr:6.5, filled:false },
+  { l:'93%', t:'18%', w:14, h:14, d:2.3, dr:3.9, filled:true  },
+  { l:'57%', t:'36%', w:20, h:20, d:0.4, dr:5.1, filled:false },
+  { l:'87%', t:'42%', w:28, h:28, d:1.8, dr:4.7, filled:false },
+  { l:'73%', t:'58%', w:18, h:18, d:0.6, dr:6.2, filled:true  },
+  { l:'94%', t:'55%', w:22, h:22, d:2.8, dr:3.6, filled:false },
+  { l:'61%', t:'74%', w:26, h:26, d:1.0, dr:5.5, filled:false },
+  { l:'79%', t:'80%', w:14, h:14, d:1.6, dr:4.0, filled:true  },
+  { l:'91%', t:'78%', w:20, h:20, d:0.2, dr:6.8, filled:false },
+  { l:'55%', t:'90%', w:12, h:12, d:2.0, dr:3.4, filled:true  },
+] as const;
 
 export const Hero: React.FC<HeroProps> = ({ onNavigate, onOpenConsultation }) => {
   const { language, t, getLoc } = useLanguage();
@@ -24,8 +40,98 @@ export const Hero: React.FC<HeroProps> = ({ onNavigate, onOpenConsultation }) =>
       ? ['Горячая вода', 'от солнца', 'каждый день']
       : ['Quyoshdan', 'issiq suv ', 'har kuni'];
 
+  // ── Cursor-reactive squares (desktop only, respects prefers-reduced-motion) ──
+  const sectionRef = useRef<HTMLElement>(null);
+  const squareRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const mouseRef   = useRef({ x: -9999, y: -9999, inside: false });
+  const centersRef = useRef<{ x: number; y: number }[]>([]);
+  const rafRef     = useRef<number>(0);
+
+  useEffect(() => {
+    // Skip on touch / reduced-motion
+    const isTouchOnly = !window.matchMedia('(hover: hover)').matches;
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (isTouchOnly || reducedMotion) return;
+
+    const section = sectionRef.current;
+    if (!section) return;
+
+    const RADIUS  = 240;  // px — influence radius
+    const MAX_SCALE = 0.40; // +40% scale at center
+    const MAX_GLOW  = 8;   // px drop-shadow blur at center
+
+    // Cache square center positions (relative to section top-left)
+    const cacheCenters = () => {
+      const sr = section.getBoundingClientRect();
+      centersRef.current = squareRefs.current.map(el => {
+        if (!el) return { x: 0, y: 0 };
+        const r = el.getBoundingClientRect();
+        return { x: r.left - sr.left + r.width / 2, y: r.top - sr.top + r.height / 2 };
+      });
+    };
+
+    // Slight delay so layout is settled
+    const cacheTimer = setTimeout(cacheCenters, 80);
+
+    const tick = () => {
+      const { x: mx, y: my, inside } = mouseRef.current;
+
+      squareRefs.current.forEach((el, i) => {
+        if (!el) return;
+        const c = centersRef.current[i];
+        if (!c) return;
+
+        const dx   = mx - c.x;
+        const dy   = my - c.y;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+
+        // Smooth ease-out falloff: strength³ for a gentler curve near the edge
+        const t01     = inside ? Math.max(0, 1 - dist / RADIUS) : 0;
+        const strength = t01 * t01 * (3 - 2 * t01); // smoothstep
+
+        const scale     = 1 + strength * MAX_SCALE;
+        const glowPx    = strength * MAX_GLOW;
+        const glowAlpha = strength * 0.7;
+        const bright    = 1 + strength * 0.9;
+
+        el.style.transform = `scale(${scale.toFixed(3)})`;
+        el.style.filter = strength > 0.02
+          ? `brightness(${bright.toFixed(2)}) drop-shadow(0 0 ${glowPx.toFixed(1)}px rgba(4,175,157,${glowAlpha.toFixed(2)}))`
+          : '';
+      });
+
+      rafRef.current = requestAnimationFrame(tick);
+    };
+
+    const onMouseMove = (e: MouseEvent) => {
+      const sr = section.getBoundingClientRect();
+      mouseRef.current = { x: e.clientX - sr.left, y: e.clientY - sr.top, inside: true };
+    };
+    const onMouseLeave = () => {
+      mouseRef.current = { x: -9999, y: -9999, inside: false };
+    };
+    const onResize = () => cacheCenters();
+
+    section.addEventListener('mousemove', onMouseMove, { passive: true });
+    section.addEventListener('mouseleave', onMouseLeave);
+    window.addEventListener('resize', onResize, { passive: true });
+    rafRef.current = requestAnimationFrame(tick);
+
+    return () => {
+      clearTimeout(cacheTimer);
+      section.removeEventListener('mousemove', onMouseMove);
+      section.removeEventListener('mouseleave', onMouseLeave);
+      window.removeEventListener('resize', onResize);
+      cancelAnimationFrame(rafRef.current);
+    };
+  }, []);
+
   return (
-    <section id="home" className="scroll-mt-28 relative flex items-center overflow-hidden bg-[var(--ink)] pt-16 lg:pt-14">
+    <section
+      ref={sectionRef}
+      id="home"
+      className="scroll-mt-28 relative flex items-center overflow-hidden bg-[var(--ink)] pt-16 lg:pt-14"
+    >
       <div className="absolute inset-0">
         {banner?.bgImageUrl && (
           <img
@@ -37,32 +143,29 @@ export const Hero: React.FC<HeroProps> = ({ onNavigate, onOpenConsultation }) =>
         <div className="absolute inset-0 bg-[linear-gradient(90deg,var(--ink)_0%,var(--ink)_46%,rgba(16,33,27,.82)_70%,rgba(16,33,27,.95)_100%)]" />
         <div className="bg-line-grid-dark absolute inset-0 opacity-50" />
 
-        {/* Animated squares — right side only, behind product image */}
-        {[
-          { l:'53%', t:'4%',  w:32, h:32, d:0,   dr:5.8, filled:false },
-          { l:'68%', t:'2%',  w:16, h:16, d:1.4, dr:4.2, filled:true  },
-          { l:'81%', t:'8%',  w:24, h:24, d:0.7, dr:6.5, filled:false },
-          { l:'93%', t:'18%', w:14, h:14, d:2.3, dr:3.9, filled:true  },
-          { l:'57%', t:'36%', w:20, h:20, d:0.4, dr:5.1, filled:false },
-          { l:'87%', t:'42%', w:28, h:28, d:1.8, dr:4.7, filled:false },
-          { l:'73%', t:'58%', w:18, h:18, d:0.6, dr:6.2, filled:true  },
-          { l:'94%', t:'55%', w:22, h:22, d:2.8, dr:3.6, filled:false },
-          { l:'61%', t:'74%', w:26, h:26, d:1.0, dr:5.5, filled:false },
-          { l:'79%', t:'80%', w:14, h:14, d:1.6, dr:4.0, filled:true  },
-          { l:'91%', t:'78%', w:20, h:20, d:0.2, dr:6.8, filled:false },
-          { l:'55%', t:'90%', w:12, h:12, d:2.0, dr:3.4, filled:true  },
-        ].map((sq, i) => (
-          <motion.div
+        {/* Animated squares — right side, cursor-reactive on desktop */}
+        {BG_SQUARES.map((sq, i) => (
+          <div
             key={i}
-            className="absolute pointer-events-none rounded-[3px]"
+            ref={(el) => { squareRefs.current[i] = el; }}
+            className="absolute pointer-events-none"
             style={{
-              left: sq.l, top: sq.t, width: sq.w, height: sq.h,
-              border: sq.filled ? 'none' : '1px solid rgba(4,175,157,0.18)',
-              backgroundColor: sq.filled ? 'rgba(4,175,157,0.07)' : 'transparent',
+              left: sq.l, top: sq.t,
+              width: sq.w, height: sq.h,
+              transformOrigin: 'center',
+              willChange: 'transform, filter',
             }}
-            animate={{ opacity: [0.25, 1, 0.25], scale: [0.93, 1.05, 0.93] }}
-            transition={{ duration: sq.dr, delay: sq.d, repeat: Infinity, ease: 'easeInOut' }}
-          />
+          >
+            <motion.div
+              className="w-full h-full rounded-[3px]"
+              style={{
+                border: sq.filled ? 'none' : '1px solid rgba(4,175,157,0.18)',
+                backgroundColor: sq.filled ? 'rgba(4,175,157,0.07)' : 'transparent',
+              }}
+              animate={{ opacity: [0.25, 1, 0.25], scale: [0.93, 1.05, 0.93] }}
+              transition={{ duration: sq.dr, delay: sq.d, repeat: Infinity, ease: 'easeInOut' }}
+            />
+          </div>
         ))}
 
         {/* Ambient glow behind product */}
