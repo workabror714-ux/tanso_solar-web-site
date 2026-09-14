@@ -91,9 +91,9 @@ export const Hero: React.FC<HeroProps> = ({ onNavigate, onOpenConsultation }) =>
           </div>
 
           <motion.div
-            initial={{ opacity: 0, x: 40, scale: .96 }}
+            initial={{ opacity: 0, x: 60, scale: .94 }}
             animate={{ opacity: 1, x: 0, scale: 1 }}
-            transition={{ duration: .9, delay: .12, ease: [0.22, 1, 0.36, 1] }}
+            transition={{ duration: 1.6, delay: .18, ease: [0.16, 1, 0.3, 1] }}
             className="relative min-h-[260px] sm:min-h-[320px] lg:min-h-[360px] flex items-center justify-center pb-4 lg:pb-0"
           >
             <div className="absolute w-[80%] aspect-square rounded-full border border-white/[0.06]" />
