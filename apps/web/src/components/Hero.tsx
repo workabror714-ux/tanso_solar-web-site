@@ -35,17 +35,42 @@ export const Hero: React.FC<HeroProps> = ({ onNavigate, onOpenConsultation }) =>
           />
         )}
         <div className="absolute inset-0 bg-[linear-gradient(90deg,var(--ink)_0%,var(--ink)_46%,rgba(16,33,27,.82)_70%,rgba(16,33,27,.95)_100%)]" />
-        <motion.div
-          className="bg-line-grid-dark absolute inset-0 opacity-60"
-          animate={{ backgroundPositionX: ['0px', '80px'], backgroundPositionY: ['0px', '80px'] }}
-          transition={{ duration: 28, ease: 'linear', repeat: Infinity }}
-        />
-        {/* Floating ambient glow */}
+        <div className="bg-line-grid-dark absolute inset-0 opacity-50" />
+
+        {/* Animated squares — right side only, behind product image */}
+        {[
+          { l:'53%', t:'4%',  w:32, h:32, d:0,   dr:5.8, filled:false },
+          { l:'68%', t:'2%',  w:16, h:16, d:1.4, dr:4.2, filled:true  },
+          { l:'81%', t:'8%',  w:24, h:24, d:0.7, dr:6.5, filled:false },
+          { l:'93%', t:'18%', w:14, h:14, d:2.3, dr:3.9, filled:true  },
+          { l:'57%', t:'36%', w:20, h:20, d:0.4, dr:5.1, filled:false },
+          { l:'87%', t:'42%', w:28, h:28, d:1.8, dr:4.7, filled:false },
+          { l:'73%', t:'58%', w:18, h:18, d:0.6, dr:6.2, filled:true  },
+          { l:'94%', t:'55%', w:22, h:22, d:2.8, dr:3.6, filled:false },
+          { l:'61%', t:'74%', w:26, h:26, d:1.0, dr:5.5, filled:false },
+          { l:'79%', t:'80%', w:14, h:14, d:1.6, dr:4.0, filled:true  },
+          { l:'91%', t:'78%', w:20, h:20, d:0.2, dr:6.8, filled:false },
+          { l:'55%', t:'90%', w:12, h:12, d:2.0, dr:3.4, filled:true  },
+        ].map((sq, i) => (
+          <motion.div
+            key={i}
+            className="absolute pointer-events-none rounded-[3px]"
+            style={{
+              left: sq.l, top: sq.t, width: sq.w, height: sq.h,
+              border: sq.filled ? 'none' : '1px solid rgba(4,175,157,0.18)',
+              backgroundColor: sq.filled ? 'rgba(4,175,157,0.07)' : 'transparent',
+            }}
+            animate={{ opacity: [0.25, 1, 0.25], scale: [0.93, 1.05, 0.93] }}
+            transition={{ duration: sq.dr, delay: sq.d, repeat: Infinity, ease: 'easeInOut' }}
+          />
+        ))}
+
+        {/* Ambient glow behind product */}
         <motion.div
           className="absolute inset-0 pointer-events-none"
-          animate={{ opacity: [0.06, 0.13, 0.06] }}
-          transition={{ duration: 6, ease: 'easeInOut', repeat: Infinity }}
-          style={{ background: 'radial-gradient(ellipse 55% 50% at 72% 48%, rgba(4,175,157,0.28) 0%, transparent 70%)' }}
+          animate={{ opacity: [0.05, 0.12, 0.05] }}
+          transition={{ duration: 7, ease: 'easeInOut', repeat: Infinity }}
+          style={{ background: 'radial-gradient(ellipse 50% 55% at 74% 50%, rgba(4,175,157,0.22) 0%, transparent 70%)' }}
         />
       </div>
 
