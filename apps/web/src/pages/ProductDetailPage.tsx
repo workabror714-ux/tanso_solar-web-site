@@ -206,12 +206,22 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ slug, onNa
                   setZoomState({ active: true, x, y });
                 }
               }}
+              onMouseMove={(e) => {
+                if (!zoomState.active) return;
+                const rect = e.currentTarget.getBoundingClientRect();
+                const x = ((e.clientX - rect.left) / rect.width) * 100;
+                const y = ((e.clientY - rect.top) / rect.height) * 100;
+                setZoomState(prev => ({ ...prev, x, y }));
+              }}
             >
               <img
                 src={product.images?.[selectedImageIndex] || product.images?.[0] || '/images/products/tanso-bosimsiz-main.png'}
                 alt={getLoc(product, 'title')}
-                className="w-full h-full object-contain object-center p-5 sm:p-8 transition-all duration-500"
-                style={zoomState.active ? { transform: `scale(2.5)`, transformOrigin: `${zoomState.x}% ${zoomState.y}%` } : {}}
+                className="w-full h-full object-contain object-center p-5 sm:p-8"
+                style={zoomState.active
+                  ? { transform: `scale(2.5)`, transformOrigin: `${zoomState.x}% ${zoomState.y}%`, transition: 'transform 0.4s ease' }
+                  : { transition: 'transform 0.4s ease' }
+                }
               />
               {!zoomState.active && (
                 <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
