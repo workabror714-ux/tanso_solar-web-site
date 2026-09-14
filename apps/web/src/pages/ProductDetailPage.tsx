@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import {
-  ChevronRight, ShieldCheck, ShoppingBag, Phone, CheckCircle2,
+  ChevronRight, ShieldCheck, ShoppingBag, Phone, CheckCircle2, ZoomIn,
   Award
 } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
@@ -126,6 +126,7 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ slug, onNa
 
   const product = products.find(p => p.slug === slug || p.id === slug);
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
+  const [zoomState, setZoomState] = useState<{ active: boolean; x: number; y: number }>({ active: false, x: 50, y: 50 });
 
   if (!product) {
     return (
@@ -193,12 +194,32 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ slug, onNa
 
           {/* Gallery */}
           <div className="space-y-4">
-            <div className="relative h-[380px] sm:h-[500px] bg-[var(--teal-tint)] border border-[var(--border)] rounded-[14px] overflow-hidden">
+            <div
+              className={`relative h-[380px] sm:h-[500px] bg-[var(--teal-tint)] border border-[var(--border)] rounded-[14px] overflow-hidden ${zoomState.active ? 'cursor-zoom-out' : 'group cursor-zoom-in'}`}
+              onClick={(e) => {
+                if (zoomState.active) {
+                  setZoomState({ active: false, x: 50, y: 50 });
+                } else {
+                  const rect = e.currentTarget.getBoundingClientRect();
+                  const x = ((e.clientX - rect.left) / rect.width) * 100;
+                  const y = ((e.clientY - rect.top) / rect.height) * 100;
+                  setZoomState({ active: true, x, y });
+                }
+              }}
+            >
               <img
                 src={product.images?.[selectedImageIndex] || product.images?.[0] || '/images/products/tanso-bosimsiz-main.png'}
                 alt={getLoc(product, 'title')}
-                className="w-full h-full object-contain object-center p-5 sm:p-8"
+                className="w-full h-full object-contain object-center p-5 sm:p-8 transition-all duration-500"
+                style={zoomState.active ? { transform: `scale(2.5)`, transformOrigin: `${zoomState.x}% ${zoomState.y}%` } : {}}
               />
+              {!zoomState.active && (
+                <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
+                  <div className="bg-black/40 backdrop-blur-sm rounded-full p-3 shadow-xl">
+                    <ZoomIn className="w-7 h-7 text-white" />
+                  </div>
+                </div>
+              )}
 
               <div className="absolute top-4 left-4 flex gap-2 z-10">
                 {product.specs?.[0]?.valueUz && (
@@ -278,26 +299,15 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ slug, onNa
                 <span>{language === 'ru' ? 'Отправить запрос' : 'So‘rov yuborish'}</span>
               </button>
 
-              <button
-                onClick={() => onOpenConsultation(product)}
-                className="btn-secondary w-full"
+              <a
+                href="tel:+998903455505"
+                className="w-full min-h-[52px] flex items-center justify-center gap-3 rounded-xl border-2 border-[var(--amber)] py-3 px-4 text-xl sm:text-2xl font-mono-num font-bold text-[var(--amber)] hover:bg-[var(--amber)]/10 transition-all duration-200"
               >
-                <Phone className="w-4 h-4" />
-                <span>{language === 'ru' ? 'Получить консультацию' : 'Konsultatsiya olish'}</span>
-              </button>
+                <Phone className="w-5 h-5 shrink-0" />
+                +998 90 345 55 05
+              </a>
             </div>
 
-            {/* Quick Spec Highlights */}
-            {product.specs && product.specs.length > 0 && (
-              <div className="card p-4">
-                {product.specs.slice(0, 4).map((sp) => (
-                  <div key={sp.id} className="spec-row">
-                    <span className="spec-row-label">{getLoc(sp, 'key')}</span>
-                    <span className="spec-row-value">{getLoc(sp, 'value')}</span>
-                  </div>
-                ))}
-              </div>
-            )}
 
           </div>
 
@@ -367,12 +377,12 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ slug, onNa
             <div className="card p-6 space-y-3">
               <h4 className="font-bold text-xs uppercase tracking-wider text-[var(--amber)] flex items-center gap-2">
                 <Award className="w-4 h-4" />
-                <span>{language === 'ru' ? 'Официальный дилер TANSO' : 'Rasmiy TANSO dileri'}</span>
+                <span>{language === 'ru' ? 'Представительство в Узбекистане' : "O'zbekistonda vakolatxona"}</span>
               </h4>
               <p className="text-xs text-[var(--muted)] leading-relaxed">
                 {language === 'ru'
-                  ? 'Все поставляемое оборудование проходит заводской контроль качества. Доставка и профессиональный монтаж по всему Узбекистану.'
-                  : 'Barcha yetkazib beriladigan uskunalar zavod sifat nazoratidan o‘tgan. O‘zbekiston bo‘ylab yetkazib berish va professional montaj.'
+                  ? 'TANSO Solar — единственный официальный представитель в Узбекистане. Прямые поставки с завода-производителя.'
+                  : "TANSO Solar — O'zbekistondagi yagona rasmiy vakil. Mahsulotlar to'g'ridan-to'g'ri zavod-ishlab chiqaruvchidan keltiriladi."
                 }
               </p>
             </div>

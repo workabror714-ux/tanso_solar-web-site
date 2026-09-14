@@ -41,7 +41,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onNavigate, o
         <img
           src={product.images?.[0] || '/images/products/tanso-bosimsiz-main.png'}
           alt={getLoc(product, 'title')}
-          className="relative z-[1] h-full w-full object-contain object-center p-5 transition-transform duration-500 ease-out group-hover:scale-[1.04]"
+          className="relative z-[1] h-full w-full object-contain object-center p-5 transition-transform duration-500 ease-out group-hover:scale-[1.12]"
         />
 
         <div className="absolute left-4 top-4 z-10 max-w-[72%]">

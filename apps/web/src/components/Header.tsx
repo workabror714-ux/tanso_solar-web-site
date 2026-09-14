@@ -180,10 +180,6 @@ export const Header: React.FC<HeaderProps> = ({ currentPath, onNavigate, onOpenC
                 <span className="text-[11px] font-mono-num font-semibold text-white whitespace-nowrap">{settings.phone1}</span>
               </a>
             )}
-
-            <button onClick={onOpenConsultation} className="btn-primary whitespace-nowrap !min-h-[42px] !px-4">
-              {t('consultation')}
-            </button>
           </div>
 
           <div className="flex xl:hidden items-center gap-1.5 sm:gap-2 min-w-0">
@@ -243,9 +239,6 @@ export const Header: React.FC<HeaderProps> = ({ currentPath, onNavigate, onOpenC
                     {settings.phone1}
                   </a>
                 )}
-                <button onClick={() => { setMobileMenuOpen(false); onOpenConsultation(); }} className="btn-primary w-full">
-                  {t('consultation')}
-                </button>
               </div>
             </div>
           </div>
