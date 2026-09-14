@@ -1,9 +1,22 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
-  <!-- TANSO T lettermark favicon -->
-  <!-- T crossbar (teal) -->
-  <path d="M4 6 H60 V24 H42 L36 30 H28 L22 24 H4 Z" fill="#04AF9D"/>
-  <!-- Orange triangle accent — top-right corner of crossbar -->
-  <polygon points="44,6 60,6 60,24" fill="#F6852D"/>
-  <!-- T stem (teal) -->
-  <rect x="22" y="24" width="20" height="32" rx="2" fill="#04AF9D"/>
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Creator: CorelDRAW -->
+<svg xmlns="http://www.w3.org/2000/svg" xml:space="preserve" width="31.2588mm" height="38.4243mm" version="1.1" style="shape-rendering:geometricPrecision; text-rendering:geometricPrecision; image-rendering:optimizeQuality; fill-rule:evenodd; clip-rule:evenodd"
+viewBox="0 0 239.58 294.5"
+ xmlns:xlink="http://www.w3.org/1999/xlink"
+ xmlns:xodm="http://www.corel.com/coreldraw/odm/2003">
+ <defs>
+  <style type="text/css">
+   <![CDATA[
+    .fil0 {fill:#04AF9D}
+    .fil1 {fill:#FB8405}
+   ]]>
+  </style>
+ </defs>
+ <g id="Слой_x0020_1">
+  <metadata id="CorelCorpID_0Corel-Layer"/>
+  <path class="fil0" d="M239.58 97.2c-32.29,-1.01 -67.32,-6.82 -68.76,-29.54l0.04 -39.41c-32.19,0.17 -109.64,-4.64 -134.61,4.74 -43.88,16.48 -36.35,54.17 -34.78,105.5 4.79,-4.03 7.37,-11.19 11.66,-16.48 18.3,-22.57 44.07,-22.91 69.84,-22.83 40.18,0.12 116.76,-0.53 156.6,-1.99z"/>
+  <polygon class="fil0" points="74.23,294.5 123.26,294.17 122.65,127.41 74.2,127.58 "/>
+  <path class="fil1" d="M170.86 28.25l-0.04 39.41c0.44,24.89 40.8,32.88 68.76,29.54 0,-22.58 -0.32,-49.47 -0.94,-65.72 -30.97,-1.12 -49.61,-10.62 -67.64,-31.48l-0.14 28.25z"/>
+ </g>
 </svg>
