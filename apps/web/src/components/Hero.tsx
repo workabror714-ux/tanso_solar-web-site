@@ -9,6 +9,7 @@ interface HeroProps {
   onOpenConsultation: () => void;
 }
 
+// ── Square definitions (positions, sizes, pulse timing) ────────────────────
 const BG_SQUARES = [
   { l:'53%', t:'4%',  w:32, h:32, d:0,   dr:5.8, filled:false },
   { l:'68%', t:'2%',  w:16, h:16, d:1.4, dr:4.2, filled:true  },
@@ -24,13 +25,30 @@ const BG_SQUARES = [
   { l:'55%', t:'90%', w:12, h:12, d:2.0, dr:3.4, filled:true  },
 ] as const;
 
+// Pre-parse percentage strings to 0-1 floats once (avoids repeated parseFloat in rAF)
+const SQ = BG_SQUARES.map(s => ({
+  lf: parseFloat(s.l) / 100,
+  tf: parseFloat(s.t) / 100,
+  w: s.w,
+  h: s.h,
+}));
+
+// ── Interaction constants — tuned to be clearly visible ────────────────────
+const RADIUS   = 260;   // px — cursor influence field radius
+const S_MAX    = 0.55;  // scale boost at center (+55%)
+const B_MAX    = 2.2;   // brightness multiplier boost at center (total 3.2×)
+const G_PX     = 18;    // max teal glow blur in px
+const G_ALPHA  = 0.90;  // max teal glow alpha
+const L_IN     = 0.16;  // lerp speed towards cursor (faster)
+const L_OUT    = 0.09;  // lerp speed returning to rest (softer fade)
+
 export const Hero: React.FC<HeroProps> = ({ onNavigate, onOpenConsultation }) => {
   const { language, t, getLoc } = useLanguage();
   const { banners } = useData();
   const banner = banners.find((b) => b.active) || banners[0];
 
   const titleText = getLoc(banner, 'title');
-  const subtitle = getLoc(banner, 'subtitle') || (language === 'ru'
+  const subtitle  = getLoc(banner, 'subtitle') || (language === 'ru'
     ? 'Солнечные водонагреватели TANSO для дома и бизнеса: напорные, безнапорные и SPLIT-системы.'
     : 'Uy va biznes uchun TANSO quyosh suv isitgichlari: bosimli, bosimsiz va SPLIT tizimlar.');
 
@@ -40,89 +58,82 @@ export const Hero: React.FC<HeroProps> = ({ onNavigate, onOpenConsultation }) =>
       ? ['Горячая вода', 'от солнца', 'каждый день']
       : ['Quyoshdan', 'issiq suv ', 'har kuni'];
 
-  // ── Cursor-reactive squares (desktop only, respects prefers-reduced-motion) ──
-  const sectionRef = useRef<HTMLElement>(null);
-  const squareRefs = useRef<(HTMLDivElement | null)[]>([]);
-  const mouseRef   = useRef({ x: -9999, y: -9999, inside: false });
-  const centersRef = useRef<{ x: number; y: number }[]>([]);
-  const rafRef     = useRef<number>(0);
+  // ── Cursor-reactive field refs ─────────────────────────────────────────────
+  const sectionRef   = useRef<HTMLElement>(null);
+  const sqRefs       = useRef<(HTMLDivElement | null)[]>([]);
+  const mouse        = useRef({ x: -9999, y: -9999, in: false });
+  const strengths    = useRef<number[]>(new Array(BG_SQUARES.length).fill(0));
+  const secSize      = useRef({ w: 1, h: 1 });
+  const rafId        = useRef<number>(0);
 
   useEffect(() => {
-    // Skip on touch / reduced-motion
-    const isTouchOnly = !window.matchMedia('(hover: hover)').matches;
-    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    if (isTouchOnly || reducedMotion) return;
+    // Skip on touch devices (no cursor) and reduced-motion
+    if (
+      !window.matchMedia('(hover: hover)').matches ||
+      window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    ) return;
 
-    const section = sectionRef.current;
-    if (!section) return;
+    const sec = sectionRef.current;
+    if (!sec) return;
 
-    const RADIUS  = 240;  // px — influence radius
-    const MAX_SCALE = 0.40; // +40% scale at center
-    const MAX_GLOW  = 8;   // px drop-shadow blur at center
-
-    // Cache square center positions (relative to section top-left)
-    const cacheCenters = () => {
-      const sr = section.getBoundingClientRect();
-      centersRef.current = squareRefs.current.map(el => {
-        if (!el) return { x: 0, y: 0 };
-        const r = el.getBoundingClientRect();
-        return { x: r.left - sr.left + r.width / 2, y: r.top - sr.top + r.height / 2 };
-      });
+    // Cache section size (re-cached on resize)
+    const cacheSize = () => {
+      const r = sec.getBoundingClientRect();
+      secSize.current = { w: r.width || 1, h: r.height || 1 };
     };
+    cacheSize();
 
-    // Slight delay so layout is settled
-    const cacheTimer = setTimeout(cacheCenters, 80);
-
+    // ── rAF loop — zero React state updates ─────────────────────────────────
     const tick = () => {
-      const { x: mx, y: my, inside } = mouseRef.current;
+      const { x: mx, y: my, in: inside } = mouse.current;
+      const { w: sw, h: sh } = secSize.current;
 
-      squareRefs.current.forEach((el, i) => {
+      sqRefs.current.forEach((el, i) => {
         if (!el) return;
-        const c = centersRef.current[i];
-        if (!c) return;
+        const sq = SQ[i];
 
-        const dx   = mx - c.x;
-        const dy   = my - c.y;
-        const dist = Math.sqrt(dx * dx + dy * dy);
+        // Square centre in section-local px (calculated from % each frame — always accurate)
+        const cx = sw * sq.lf + sq.w / 2;
+        const cy = sh * sq.tf + sq.h / 2;
 
-        // Smooth ease-out falloff: strength³ for a gentler curve near the edge
-        const t01     = inside ? Math.max(0, 1 - dist / RADIUS) : 0;
-        const strength = t01 * t01 * (3 - 2 * t01); // smoothstep
+        // Distance cursor → square centre
+        const dist   = Math.sqrt((mx - cx) ** 2 + (my - cy) ** 2);
+        const target = inside ? Math.max(0, 1 - dist / RADIUS) : 0;
 
-        const scale     = 1 + strength * MAX_SCALE;
-        const glowPx    = strength * MAX_GLOW;
-        const glowAlpha = strength * 0.7;
-        const bright    = 1 + strength * 0.9;
+        // LERP: faster towards cursor, slower fade back → "magnetic" feel
+        const prev = strengths.current[i];
+        const lf   = target >= prev ? L_IN : L_OUT;
+        const s    = prev + (target - prev) * lf;
+        strengths.current[i] = s;
 
-        el.style.transform = `scale(${scale.toFixed(3)})`;
-        el.style.filter = strength > 0.02
-          ? `brightness(${bright.toFixed(2)}) drop-shadow(0 0 ${glowPx.toFixed(1)}px rgba(4,175,157,${glowAlpha.toFixed(2)}))`
+        // Write directly to DOM — no React re-render
+        el.style.transform = `scale(${(1 + s * S_MAX).toFixed(4)})`;
+        el.style.filter    = s > 0.005
+          ? `brightness(${(1 + s * B_MAX).toFixed(3)}) drop-shadow(0 0 ${(s * G_PX).toFixed(1)}px rgba(4,175,157,${(s * G_ALPHA).toFixed(3)}))`
           : '';
       });
 
-      rafRef.current = requestAnimationFrame(tick);
+      rafId.current = requestAnimationFrame(tick);
     };
 
-    const onMouseMove = (e: MouseEvent) => {
-      const sr = section.getBoundingClientRect();
-      mouseRef.current = { x: e.clientX - sr.left, y: e.clientY - sr.top, inside: true };
+    // Mouse events — update ref only (no setState)
+    const onMove = (e: MouseEvent) => {
+      const r = sec.getBoundingClientRect();
+      mouse.current = { x: e.clientX - r.left, y: e.clientY - r.top, in: true };
     };
-    const onMouseLeave = () => {
-      mouseRef.current = { x: -9999, y: -9999, inside: false };
-    };
-    const onResize = () => cacheCenters();
+    const onLeave = () => { mouse.current.in = false; };
+    const onResize = () => cacheSize();
 
-    section.addEventListener('mousemove', onMouseMove, { passive: true });
-    section.addEventListener('mouseleave', onMouseLeave);
+    sec.addEventListener('mousemove', onMove, { passive: true });
+    sec.addEventListener('mouseleave', onLeave);
     window.addEventListener('resize', onResize, { passive: true });
-    rafRef.current = requestAnimationFrame(tick);
+    rafId.current = requestAnimationFrame(tick);
 
     return () => {
-      clearTimeout(cacheTimer);
-      section.removeEventListener('mousemove', onMouseMove);
-      section.removeEventListener('mouseleave', onMouseLeave);
+      sec.removeEventListener('mousemove', onMove);
+      sec.removeEventListener('mouseleave', onLeave);
       window.removeEventListener('resize', onResize);
-      cancelAnimationFrame(rafRef.current);
+      cancelAnimationFrame(rafId.current);
     };
   }, []);
 
@@ -143,11 +154,11 @@ export const Hero: React.FC<HeroProps> = ({ onNavigate, onOpenConsultation }) =>
         <div className="absolute inset-0 bg-[linear-gradient(90deg,var(--ink)_0%,var(--ink)_46%,rgba(16,33,27,.82)_70%,rgba(16,33,27,.95)_100%)]" />
         <div className="bg-line-grid-dark absolute inset-0 opacity-50" />
 
-        {/* Animated squares — right side, cursor-reactive on desktop */}
+        {/* ── Interactive squares ─────────────────────────────────────────── */}
         {BG_SQUARES.map((sq, i) => (
           <div
             key={i}
-            ref={(el) => { squareRefs.current[i] = el; }}
+            ref={(el) => { sqRefs.current[i] = el; }}
             className="absolute pointer-events-none"
             style={{
               left: sq.l, top: sq.t,
@@ -156,27 +167,29 @@ export const Hero: React.FC<HeroProps> = ({ onNavigate, onOpenConsultation }) =>
               willChange: 'transform, filter',
             }}
           >
+            {/* Inner motion.div owns the base pulse — cursor rAF owns outer wrapper */}
             <motion.div
               className="w-full h-full rounded-[3px]"
               style={{
-                border: sq.filled ? 'none' : '1px solid rgba(4,175,157,0.18)',
-                backgroundColor: sq.filled ? 'rgba(4,175,157,0.07)' : 'transparent',
+                border: sq.filled ? 'none' : '1px solid rgba(4,175,157,0.22)',
+                backgroundColor: sq.filled ? 'rgba(4,175,157,0.10)' : 'transparent',
               }}
-              animate={{ opacity: [0.25, 1, 0.25], scale: [0.93, 1.05, 0.93] }}
+              animate={{ opacity: [0.30, 1, 0.30], scale: [0.92, 1.06, 0.92] }}
               transition={{ duration: sq.dr, delay: sq.d, repeat: Infinity, ease: 'easeInOut' }}
             />
           </div>
         ))}
 
-        {/* Ambient glow behind product */}
+        {/* Ambient glow behind product image */}
         <motion.div
           className="absolute inset-0 pointer-events-none"
-          animate={{ opacity: [0.05, 0.12, 0.05] }}
+          animate={{ opacity: [0.05, 0.13, 0.05] }}
           transition={{ duration: 7, ease: 'easeInOut', repeat: Infinity }}
           style={{ background: 'radial-gradient(ellipse 50% 55% at 74% 50%, rgba(4,175,157,0.22) 0%, transparent 70%)' }}
         />
       </div>
 
+      {/* ── Hero content ─────────────────────────────────────────────────── */}
       <div className="relative z-10 tanso-container py-7 lg:py-9">
         <div className="grid lg:grid-cols-[1.02fr_.98fr] items-center gap-8 lg:gap-6">
           <div className="max-w-3xl">
