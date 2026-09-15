@@ -223,6 +223,16 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ slug, onNa
                   setZoomState({ active: true, x, y });
                 }
               }}
+              onMouseMove={(e) => {
+                if (!zoomState.active) return;
+                const rect = e.currentTarget.getBoundingClientRect();
+                const x = Math.min(100, Math.max(0, ((e.clientX - rect.left) / rect.width) * 100));
+                const y = Math.min(100, Math.max(0, ((e.clientY - rect.top) / rect.height) * 100));
+                setZoomState(prev => ({ ...prev, x, y }));
+              }}
+              onMouseLeave={() => {
+                if (zoomState.active) setZoomState({ active: false, x: 50, y: 50 });
+              }}
             >
               <img
                 src={product.images?.[selectedImageIndex] || product.images?.[0] || '/images/products/tanso-bosimsiz-main.png'}
