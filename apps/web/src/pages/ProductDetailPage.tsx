@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import {
   ChevronRight, ShieldCheck, ShoppingBag, Phone, CheckCircle2, ZoomIn,
   Award
@@ -143,7 +143,8 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ slug, onNa
 
   const product = products.find(p => p.slug === slug || p.id === slug);
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
-  const [zoomState, setZoomState] = useState<{ active: boolean; x: number; y: number }>({ active: false, x: 50, y: 50 });
+  const [zoomActive, setZoomActive] = useState(false);
+  const imgRef = useRef<HTMLImageElement>(null);
 
   if (!product) {
     return (
@@ -212,35 +213,38 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ slug, onNa
           {/* Gallery */}
           <div className="space-y-4">
             <div
-              className={`relative h-[380px] sm:h-[500px] bg-[var(--teal-tint)] border border-[var(--border)] rounded-[14px] overflow-hidden ${zoomState.active ? 'cursor-zoom-out' : 'group cursor-zoom-in'}`}
+              className={`relative h-[380px] sm:h-[500px] bg-[var(--teal-tint)] border border-[var(--border)] rounded-[14px] overflow-hidden ${zoomActive ? 'cursor-zoom-out' : 'group cursor-zoom-in'}`}
               onClick={(e) => {
-                if (zoomState.active) {
-                  setZoomState({ active: false, x: 50, y: 50 });
+                if (zoomActive) {
+                  setZoomActive(false);
+                  if (imgRef.current) { imgRef.current.style.transform = ''; imgRef.current.style.transformOrigin = ''; }
                 } else {
                   const rect = e.currentTarget.getBoundingClientRect();
                   const x = ((e.clientX - rect.left) / rect.width) * 100;
                   const y = ((e.clientY - rect.top) / rect.height) * 100;
-                  setZoomState({ active: true, x, y });
+                  setZoomActive(true);
+                  if (imgRef.current) { imgRef.current.style.transformOrigin = `${x}% ${y}%`; imgRef.current.style.transform = 'scale(2.5)'; }
                 }
               }}
               onMouseMove={(e) => {
-                if (!zoomState.active) return;
+                if (!zoomActive || !imgRef.current) return;
                 const rect = e.currentTarget.getBoundingClientRect();
                 const x = Math.min(100, Math.max(0, ((e.clientX - rect.left) / rect.width) * 100));
                 const y = Math.min(100, Math.max(0, ((e.clientY - rect.top) / rect.height) * 100));
-                setZoomState(prev => ({ ...prev, x, y }));
+                imgRef.current.style.transformOrigin = `${x}% ${y}%`;
               }}
               onMouseLeave={() => {
-                if (zoomState.active) setZoomState({ active: false, x: 50, y: 50 });
+                if (zoomActive) { setZoomActive(false); if (imgRef.current) { imgRef.current.style.transform = ''; imgRef.current.style.transformOrigin = ''; } }
               }}
             >
               <img
+                ref={imgRef}
                 src={product.images?.[selectedImageIndex] || product.images?.[0] || '/images/products/tanso-bosimsiz-main.png'}
                 alt={getLoc(product, 'title')}
-                className="w-full h-full object-contain object-center p-5 sm:p-8 transition-all duration-500"
-                style={zoomState.active ? { transform: `scale(2.5)`, transformOrigin: `${zoomState.x}% ${zoomState.y}%` } : {}}
+                className="w-full h-full object-contain object-center p-5 sm:p-8"
+                style={{}}
               />
-              {!zoomState.active && (
+              {!zoomActive && (
                 <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
                   <div className="bg-black/40 backdrop-blur-sm rounded-full p-3 shadow-xl">
                     <ZoomIn className="w-7 h-7 text-white" />
