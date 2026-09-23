@@ -26,38 +26,52 @@ export const ContactPage: React.FC = () => {
 
         {/* Contact Info Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-5 mb-16">
-          <div className="card-interactive p-6 space-y-3">
+
+          {/* Phone card */}
+          <div className="card-interactive p-6 flex flex-col gap-3">
             <div className="grid place-items-center w-11 h-11 rounded-md bg-[var(--teal-tint)] text-[var(--teal-dark)]">
               <Phone className="w-5 h-5" />
             </div>
-            <h3 className="font-bold text-sm text-[var(--ink)]">{language === 'ru' ? 'Номера телефонов' : 'Telefon raqamlar'}</h3>
-            <a href={`tel:${settings.phone1.replace(/\s+/g, '')}`} className="block text-xs font-bold font-mono-num text-[var(--teal-dark)] hover:underline">
-              {settings.phone1}
-            </a>
-            <a href={`tel:${settings.phone2.replace(/\s+/g, '')}`} className="block text-xs font-mono-num text-[var(--muted)] hover:underline">
-              {settings.phone2}
-            </a>
+            <p className="text-xs text-[var(--muted)] font-medium">{language === 'ru' ? 'Номера телефонов' : 'Telefon raqamlar'}</p>
+            <div>
+              <a href={`tel:${settings.phone1.replace(/\s+/g, '')}`} className="block text-2xl font-extrabold font-mono-num text-[var(--ink)] hover:text-[var(--teal-dark)] transition-colors leading-tight">
+                {settings.phone1}
+              </a>
+              {settings.phone2 && (
+                <a href={`tel:${settings.phone2.replace(/\s+/g, '')}`} className="block text-sm font-mono-num text-[var(--muted)] hover:text-[var(--teal-dark)] transition-colors mt-1">
+                  {settings.phone2}
+                </a>
+              )}
+            </div>
           </div>
 
-          <div className="card-interactive p-6 space-y-3">
+          {/* Address card */}
+          <a
+            href={settings.mapIframeUrl || "https://yandex.uz/maps/10335/tashkent/?ll=69.201737%2C41.254642&mode=poi&poi%5Bpoint%5D=69.201614%2C41.254715&poi%5Buri%5D=ymapsbm1%3A%2F%2Forg%3Foid%3D95573878212&z=20.16"}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="card-interactive p-6 flex flex-col gap-3 group"
+          >
             <div className="grid place-items-center w-11 h-11 rounded-md bg-[var(--amber-tint)] text-[var(--amber)]">
               <MapPin className="w-5 h-5" />
             </div>
-            <h3 className="font-bold text-sm text-[var(--ink)]">{t('address')}</h3>
-            <p className="text-xs text-[var(--muted)]">
+            <p className="text-xs text-[var(--muted)] font-medium">{t('address')}</p>
+            <span className="text-xl font-extrabold text-[var(--ink)] group-hover:text-[var(--teal-dark)] transition-colors leading-tight">
               {getLoc(settings, 'address')}
-            </p>
-          </div>
+            </span>
+          </a>
 
-          <div className="card-interactive p-6 space-y-3">
+          {/* Working hours card */}
+          <div className="card-interactive p-6 flex flex-col gap-3">
             <div className="grid place-items-center w-11 h-11 rounded-md bg-[var(--teal-tint)] text-[var(--teal-dark)]">
               <Clock className="w-5 h-5" />
             </div>
-            <h3 className="font-bold text-sm text-[var(--ink)]">{t('workingHours')}</h3>
-            <p className="text-xs text-[var(--muted)]">
+            <p className="text-xs text-[var(--muted)] font-medium">{t('workingHours')}</p>
+            <span className="text-xl font-extrabold text-[var(--ink)] leading-tight">
               {getLoc(settings, 'workingHours')}
-            </p>
+            </span>
           </div>
+
         </div>
 
       </div>

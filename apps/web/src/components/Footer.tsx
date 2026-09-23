@@ -51,11 +51,9 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
                   <Facebook className="w-4 h-4 text-[var(--muted-dark)]" />
                 </a>
               )}
-              {settings.youtube && (
-                <a href={settings.youtube} target="_blank" rel="noopener noreferrer" className="w-9 h-9 rounded-md border border-white/12 hover:border-[var(--teal)] flex items-center justify-center transition-colors" title="YouTube">
-                  <Youtube className="w-4 h-4 text-[var(--muted-dark)]" />
-                </a>
-              )}
+              <a href={settings.youtube || 'https://www.youtube.com/@tansosolar'} target="_blank" rel="noopener noreferrer" className="w-9 h-9 rounded-md border border-white/12 hover:border-[var(--teal)] flex items-center justify-center transition-colors" title="YouTube">
+                <Youtube className="w-4 h-4 text-[var(--muted-dark)]" />
+              </a>
             </div>
           </div>
 

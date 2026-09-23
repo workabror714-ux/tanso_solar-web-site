@@ -94,6 +94,13 @@ export const Header: React.FC<HeaderProps> = ({ currentPath, onNavigate, onOpenC
   const handleNavClick = (item: NavItem) => {
     setMobileMenuOpen(false);
 
+    // Contact always routes to its dedicated page regardless of current location
+    if (item.path === '/contact') {
+      onNavigate('/contact');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      return;
+    }
+
     if (currentPath === '/') {
       scrollToSection(item.sectionId);
       return;
