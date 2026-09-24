@@ -1303,10 +1303,10 @@ async function startServer() {
 
     const description =
       (req.body?.description as string) ||
-      "TANSO quyosh suv isitgichlari — katalog, narxlar, buyurtma";
+      "TANSO - quyosh energiyasi bilan ishlaydigan suv isitgichlari ishlab chiqaruvchi. Katalog, narxlar va buyurtma shu bot orqali.";
     const shortDescription =
       (req.body?.shortDescription as string) ||
-      "TANSO — quyosh energiyasida ishlaydigan suv isitgichlari ishlab chiqaruvchisi. Katalog, narxlar va buyurtma shu bot orqali.";
+      "TANSO rasmiy boti. Quyosh suv isitgichlari katalogi, narxlar va buyurtma.";
 
     try {
       const [descRes, shortDescRes] = await Promise.all([
