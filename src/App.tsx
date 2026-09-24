@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import WebApp from '../apps/web/src/App';
 import AdminApp from '../apps/admin/src/App';
+import MiniApp from '../apps/miniapp/src/App';
 
 export default function App() {
   const [currentPath, setCurrentPath] = useState<string>(window.location.pathname || '/');
@@ -15,6 +16,10 @@ export default function App() {
 
   if (currentPath.startsWith('/admin')) {
     return <AdminApp />;
+  }
+
+  if (currentPath.startsWith('/bot')) {
+    return <MiniApp />;
   }
 
   return <WebApp />;

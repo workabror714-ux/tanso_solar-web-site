@@ -1237,6 +1237,95 @@ async function startServer() {
     res.json({ success: true });
   });
 
+  // TELEGRAM MINI APP — bot menu button + /start webhook
+  // Reuses the existing TELEGRAM_BOT_TOKEN (already configured above for
+  // lead notifications) to turn the existing bot into a launcher for the
+  // Mini App served at /bot. No new bot or token is needed.
+  async function getTelegramToken(): Promise<string | undefined> {
+    try {
+      const settings = await getSettings();
+      return (settings?.telegramBotToken as string) || process.env.TELEGRAM_BOT_TOKEN;
+    } catch {
+      return process.env.TELEGRAM_BOT_TOKEN;
+    }
+  }
+
+  // One-time (idempotent) setup call: points the bot's menu button and
+  // webhook at this deployment. Safe to call again after a domain change.
+  app.post('/api/admin/telegram/setup-miniapp', async (req, res) => {
+    const token = await getTelegramToken();
+    if (!token) {
+      return res.status(400).json({ error: 'TELEGRAM_BOT_TOKEN sozlanmagan (Sayt Sozlamalari yoki env).' });
+    }
+
+    const origin = `https://${req.headers.host}`;
+    const miniAppUrl = `${origin}/bot`;
+    const webhookUrl = `${origin}/api/telegram/webhook`;
+
+    try {
+      const [menuRes, webhookRes, commandsRes] = await Promise.all([
+        fetch(`https://api.telegram.org/bot${token}/setChatMenuButton`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            menu_button: { type: 'web_app', text: '🛒 Katalog', web_app: { url: miniAppUrl } },
+          }),
+        }).then((r) => r.json()),
+        fetch(`https://api.telegram.org/bot${token}/setWebhook`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ url: webhookUrl, drop_pending_updates: false }),
+        }).then((r) => r.json()),
+        fetch(`https://api.telegram.org/bot${token}/setMyCommands`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ commands: [{ command: 'start', description: 'Katalogni ochish' }] }),
+        }).then((r) => r.json()),
+      ]);
+
+      res.json({ miniAppUrl, webhookUrl, menuRes, webhookRes, commandsRes });
+    } catch (err: any) {
+      console.error('[Telegram Mini App Setup Error]', err);
+      res.status(500).json({ error: String(err?.message || err) });
+    }
+  });
+
+  app.post('/api/telegram/webhook', async (req, res) => {
+    // Ack immediately — Telegram retries aggressively on anything but 2xx,
+    // and the actual reply below is fire-and-forget from Telegram's view.
+    res.json({ ok: true });
+
+    try {
+      const token = await getTelegramToken();
+      if (!token) return;
+
+      const message = req.body?.message;
+      if (!message?.chat?.id) return;
+
+      const chatId = message.chat.id;
+      const text: string = message.text || '';
+
+      if (text.startsWith('/start')) {
+        const origin = `https://${req.headers.host}`;
+        await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            chat_id: chatId,
+            text: "TANSO SOLAR botiga xush kelibsiz! ☀️\n\nQuyosh suv isitgichlari katalogini ko'rish, mahsulot tanlash va buyurtma berish uchun pastdagi tugmani bosing.",
+            reply_markup: {
+              inline_keyboard: [[
+                { text: '🛍️ Katalogni ochish', web_app: { url: `${origin}/bot` } },
+              ]],
+            },
+          }),
+        });
+      }
+    } catch (err) {
+      console.error('[Telegram Webhook Error]', err);
+    }
+  });
+
   // Vite Middleware or Static Production Serving
   if (process.env.NODE_ENV !== 'production') {
     const vite = await createViteServer({
