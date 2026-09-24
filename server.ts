@@ -1290,6 +1290,45 @@ async function startServer() {
     }
   });
 
+  // One-time (idempotent) setup call: sets the bot's public profile text
+  // (the "what can this bot do?" description + the short about text shown
+  // when the bot is shared/forwarded). Bot profile PHOTO has no Bot API
+  // equivalent — Telegram only allows that via BotFather's /setuserpic,
+  // uploaded manually.
+  app.post('/api/admin/telegram/set-profile', async (req, res) => {
+    const token = await getTelegramToken();
+    if (!token) {
+      return res.status(400).json({ error: 'TELEGRAM_BOT_TOKEN sozlanmagan (Sayt Sozlamalari yoki env).' });
+    }
+
+    const description =
+      (req.body?.description as string) ||
+      "TANSO quyosh suv isitgichlari — katalog, narxlar, buyurtma";
+    const shortDescription =
+      (req.body?.shortDescription as string) ||
+      "TANSO — quyosh energiyasida ishlaydigan suv isitgichlari ishlab chiqaruvchisi. Katalog, narxlar va buyurtma shu bot orqali.";
+
+    try {
+      const [descRes, shortDescRes] = await Promise.all([
+        fetch(`https://api.telegram.org/bot${token}/setMyDescription`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ description }),
+        }).then((r) => r.json()),
+        fetch(`https://api.telegram.org/bot${token}/setMyShortDescription`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ short_description: shortDescription }),
+        }).then((r) => r.json()),
+      ]);
+
+      res.json({ description, shortDescription, descRes, shortDescRes });
+    } catch (err: any) {
+      console.error('[Telegram Profile Setup Error]', err);
+      res.status(500).json({ error: String(err?.message || err) });
+    }
+  });
+
   app.post('/api/telegram/webhook', async (req, res) => {
     // Ack immediately — Telegram retries aggressively on anything but 2xx,
     // and the actual reply below is fire-and-forget from Telegram's view.
