@@ -835,14 +835,19 @@ async function sendTelegramNotification(lead: any) {
     return;
   }
 
+  // Manbaa (source) is shown as a short, human-readable label rather than
+  // the raw URL/path (website) or the internal 'telegram-miniapp' string
+  // (bot), so anyone reading the group chat instantly knows where a lead
+  // came from.
+  const sourceLabel = lead.source === 'telegram-miniapp' ? 'Bot' : 'Sayt';
+
   const message = `☀️ <b>YANGI TANSO SOLAR SO‘ROVI</b>\n\n` +
     `👤 <b>Mijoz:</b> ${lead.fullName}\n` +
     `📞 <b>Telefon:</b> <code>${lead.phone}</code>\n` +
     `📦 <b>Mahsulot:</b> ${lead.productName || 'Umumiy konsultatsiya'}\n` +
-    `🏷️ <b>Kategoriya:</b> ${lead.category || 'Konsultatsiya'}\n` +
     `🔢 <b>Soni:</b> ${lead.quantity ?? 1}\n` +
     `💬 <b>Izoh:</b> ${lead.comment || 'Izoh biriktirilmagan'}\n` +
-    `🔗 <b>Manbaa:</b> ${lead.source || '/'}\n` +
+    `🔗 <b>Manbaa:</b> ${sourceLabel}\n` +
     `🕒 <b>Vaqt:</b> ${new Date(lead.createdAt).toLocaleString('uz-UZ')}`;
 
   try {

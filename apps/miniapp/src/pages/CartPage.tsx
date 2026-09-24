@@ -91,7 +91,7 @@ export const CartPage: React.FC<CartPageProps> = ({ onBrowse }) => {
       phone: `+998${phoneDigits}`,
       productName: productNames,
       quantity: totalQty,
-      comment: [`[Telegram Bot buyurtmasi] ${itemsSummary}`, comment.trim()].filter(Boolean).join(' — '),
+      comment: [itemsSummary, comment.trim()].filter(Boolean).join(' — '),
       source: 'telegram-miniapp',
     });
 
