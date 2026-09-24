@@ -4,6 +4,7 @@ import { createServer as createViteServer } from 'vite';
 import { neon } from '@neondatabase/serverless';
 import multer from 'multer';
 import { put as blobPut, list as blobList, del as blobDel } from '@vercel/blob';
+import sharp from 'sharp';
 // --- Inlined seed data (originally packages/shared/data/initialData.ts) ---
 // Kept in this file rather than imported: see the comment on the db helpers
 // below for why.
@@ -909,11 +910,42 @@ async function startServer() {
         });
       }
       try {
-        const ext = (file.originalname.split('.').pop() || 'jpg').toLowerCase().replace(/[^a-z0-9]/g, '') || 'jpg';
-        const key = `uploads/${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`;
-        const blob = await blobPut(key, file.buffer, {
+        // Admin uploads are frequently full-resolution phone-camera photos
+        // (several MB) shown at small sizes everywhere (catalog cards,
+        // product thumbnails, cart lines) — that mismatch is what made
+        // image loads feel slow. Re-encode as WebP capped at 1600px on the
+        // long edge (never upscaled) before it ever reaches Blob storage,
+        // so every consumer of this URL — site, admin, mini app — benefits
+        // automatically. SVG (vector) and GIF (possibly animated) pass
+        // through untouched.
+        const PASSTHROUGH_IMAGE_TYPES = new Set(['image/svg+xml', 'image/gif']);
+        let uploadBuffer: Buffer = file.buffer;
+        let uploadContentType = file.mimetype;
+        let uploadExt = (file.originalname.split('.').pop() || 'jpg').toLowerCase().replace(/[^a-z0-9]/g, '') || 'jpg';
+
+        if (!PASSTHROUGH_IMAGE_TYPES.has(file.mimetype)) {
+          try {
+            uploadBuffer = await sharp(file.buffer)
+              .rotate() // respect EXIF orientation before resizing
+              .resize({ width: 1600, height: 1600, fit: 'inside', withoutEnlargement: true })
+              .webp({ quality: 82 })
+              .toBuffer();
+            uploadContentType = 'image/webp';
+            uploadExt = 'webp';
+          } catch (resizeErr) {
+            // Corrupt/unsupported image data, etc. — fall back to the
+            // original upload rather than failing the whole request.
+            console.error('[Upload Resize Warning] Falling back to original file.', resizeErr);
+            uploadBuffer = file.buffer;
+            uploadContentType = file.mimetype;
+            uploadExt = (file.originalname.split('.').pop() || 'jpg').toLowerCase().replace(/[^a-z0-9]/g, '') || 'jpg';
+          }
+        }
+
+        const key = `uploads/${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${uploadExt}`;
+        const blob = await blobPut(key, uploadBuffer, {
           access: 'public',
-          contentType: file.mimetype,
+          contentType: uploadContentType,
         });
         res.json({ url: blob.url });
       } catch (uploadErr: any) {
