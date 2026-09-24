@@ -78,17 +78,22 @@ export const ContactPage: React.FC = () => {
           </a>
         )}
 
-        {settings.youtube && (
-          <a href={settings.youtube} target="_blank" rel="noopener noreferrer" className="card-interactive p-4 flex items-center gap-3">
-            <div className="grid place-items-center w-10 h-10 rounded-md bg-[var(--danger-tint)] shrink-0" style={{ color: '#D32F2F' }}>
-              <Youtube className="w-5 h-5" />
-            </div>
-            <div>
-              <p className="text-xs text-[var(--muted)] font-medium mb-0.5">YouTube</p>
-              <p className="font-bold text-[var(--ink)] text-sm">{t('ourVideos')}</p>
-            </div>
-          </a>
-        )}
+        {/* Admin panel has no field to set this yet, so it falls back to the
+            channel URL — same behavior as the main site's footer. */}
+        <a
+          href={settings.youtube || 'https://www.youtube.com/@tansosolar'}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="card-interactive p-4 flex items-center gap-3"
+        >
+          <div className="grid place-items-center w-10 h-10 rounded-md bg-[var(--danger-tint)] shrink-0" style={{ color: '#D32F2F' }}>
+            <Youtube className="w-5 h-5" />
+          </div>
+          <div>
+            <p className="text-xs text-[var(--muted)] font-medium mb-0.5">YouTube</p>
+            <p className="font-bold text-[var(--ink)] text-sm">{t('ourVideos')}</p>
+          </div>
+        </a>
       </div>
 
       <a href="https://tanso-solar.uz" target="_blank" rel="noopener noreferrer" className="btn-secondary w-full mt-5">
