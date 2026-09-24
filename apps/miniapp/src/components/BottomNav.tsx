@@ -1,9 +1,9 @@
 import React from 'react';
-import { LayoutGrid, ShoppingCart, ClipboardList, Phone, User } from 'lucide-react';
+import { LayoutGrid, ShoppingCart, Phone, User } from 'lucide-react';
 import { useCart } from '../context/CartContext';
 import { useLanguage } from '../context/LanguageContext';
 
-export type TabKey = 'catalog' | 'cart' | 'orders' | 'contact' | 'profile';
+export type TabKey = 'catalog' | 'cart' | 'contact' | 'profile';
 
 interface BottomNavProps {
   active: TabKey;
@@ -17,7 +17,6 @@ export const BottomNav: React.FC<BottomNavProps> = ({ active, onChange }) => {
   const tabs: { key: TabKey; label: string; icon: React.ReactNode }[] = [
     { key: 'catalog', label: t('catalog'), icon: <LayoutGrid className="w-5 h-5" /> },
     { key: 'cart', label: t('cart'), icon: <ShoppingCart className="w-5 h-5" /> },
-    { key: 'orders', label: t('myOrdersShort'), icon: <ClipboardList className="w-5 h-5" /> },
     { key: 'contact', label: t('contact'), icon: <Phone className="w-5 h-5" /> },
     { key: 'profile', label: t('profile'), icon: <User className="w-5 h-5" /> },
   ];
@@ -27,7 +26,7 @@ export const BottomNav: React.FC<BottomNavProps> = ({ active, onChange }) => {
       className="fixed bottom-0 left-0 right-0 z-40 bg-[var(--surface)] border-t border-[var(--border)]"
       style={{ paddingBottom: 'env(safe-area-inset-bottom, 0px)' }}
     >
-      <div className="grid grid-cols-5">
+      <div className="grid grid-cols-4">
         {tabs.map((tab) => {
           const isActive = active === tab.key;
           return (
@@ -45,7 +44,7 @@ export const BottomNav: React.FC<BottomNavProps> = ({ active, onChange }) => {
                   </span>
                 )}
               </span>
-              <span className="text-[9.5px] font-semibold leading-none">{tab.label}</span>
+              <span className="text-[10px] font-semibold">{tab.label}</span>
               {isActive && <span className="absolute top-0 left-1/2 -translate-x-1/2 w-8 h-0.5 rounded-full bg-[var(--teal)]" />}
             </button>
           );

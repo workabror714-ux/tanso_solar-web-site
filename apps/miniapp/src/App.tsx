@@ -8,7 +8,6 @@ import { BottomNav, TabKey } from './components/BottomNav';
 import { CatalogPage } from './pages/CatalogPage';
 import { ProductPage } from './pages/ProductPage';
 import { CartPage } from './pages/CartPage';
-import { OrdersPage } from './pages/OrdersPage';
 import { ContactPage } from './pages/ContactPage';
 import { ProfilePage } from './pages/ProfilePage';
 
@@ -53,7 +52,6 @@ const MiniAppShell: React.FC = () => {
         <>
           {tab === 'catalog' && <CatalogPage onOpenProduct={setOpenProduct} />}
           {tab === 'cart' && <CartPage onBrowse={() => goToTab('catalog')} />}
-          {tab === 'orders' && <OrdersPage />}
           {tab === 'contact' && <ContactPage />}
           {tab === 'profile' && <ProfilePage />}
           <BottomNav active={tab} onChange={goToTab} />

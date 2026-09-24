@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from 'react';
-import { Search } from 'lucide-react';
+import { Search, Globe } from 'lucide-react';
 import { Product } from '@tanso/shared/types';
 import { useMiniData } from '../context/MiniDataContext';
 import { useLanguage } from '../context/LanguageContext';
@@ -12,7 +12,7 @@ interface CatalogPageProps {
 
 export const CatalogPage: React.FC<CatalogPageProps> = ({ onOpenProduct }) => {
   const { categories, products, isLoading } = useMiniData();
-  const { t, getLoc } = useLanguage();
+  const { t, getLoc, language, setLanguage } = useLanguage();
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
   const [query, setQuery] = useState('');
 
@@ -32,10 +32,20 @@ export const CatalogPage: React.FC<CatalogPageProps> = ({ onOpenProduct }) => {
           <div className="w-9 h-9 rounded-md bg-white border border-[var(--border)] flex items-center justify-center shrink-0 overflow-hidden p-1">
             <img src="/android-chrome-512x512.png" alt="TANSO" className="w-full h-full object-contain" />
           </div>
-          <div>
+          <div className="flex-1 min-w-0">
             <p className="text-sm font-extrabold text-[var(--ink)] leading-tight">TANSO SOLAR</p>
             <p className="text-[11px] text-[var(--muted)] leading-tight">{t('catalogSubtitle')}</p>
           </div>
+          {/* Quick language toggle so switching doesn't require a trip to
+              Profile — full picker still lives there too. */}
+          <button
+            onClick={() => setLanguage(language === 'ru' ? 'uz' : 'ru')}
+            className="flex items-center gap-1 px-2.5 py-1.5 rounded-full border border-[var(--border)] bg-[var(--surface)] shrink-0"
+            aria-label={t('language')}
+          >
+            <Globe className="w-3.5 h-3.5 text-[var(--teal-dark)]" />
+            <span className="text-[11px] font-bold uppercase text-[var(--ink)]">{language}</span>
+          </button>
         </div>
 
         <div className="relative mb-3">
