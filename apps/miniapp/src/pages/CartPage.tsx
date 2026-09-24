@@ -127,7 +127,7 @@ export const CartPage: React.FC<CartPageProps> = ({ onBrowse }) => {
           return (
             <div key={product.id} className="card-interactive p-3 flex items-center gap-3">
               <div className="w-16 h-16 rounded-lg bg-[var(--teal-tint)] shrink-0 flex items-center justify-center overflow-hidden">
-                {product.images?.[0] && <img src={product.images[0]} alt="" className="w-full h-full object-contain p-1.5" />}
+                {product.images?.[0] && <img src={product.images[0]} alt="" className="w-full h-full object-contain p-1.5" loading="lazy" decoding="async" />}
               </div>
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-bold text-[var(--ink)] line-clamp-2 leading-snug mb-1">{title}</p>
