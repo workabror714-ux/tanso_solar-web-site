@@ -1,5 +1,6 @@
 import React from 'react';
 import { Category } from '@tanso/shared/types';
+import { useLanguage } from '../context/LanguageContext';
 
 interface CategoryChipsProps {
   categories: Category[];
@@ -8,6 +9,8 @@ interface CategoryChipsProps {
 }
 
 export const CategoryChips: React.FC<CategoryChipsProps> = ({ categories, active, onChange }) => {
+  const { t, getLoc } = useLanguage();
+
   return (
     <div className="flex gap-2 overflow-x-auto pb-1 -mx-4 px-4 scrollbar-none" style={{ scrollbarWidth: 'none' }}>
       <button
@@ -19,7 +22,7 @@ export const CategoryChips: React.FC<CategoryChipsProps> = ({ categories, active
             : { background: 'var(--surface)', color: 'var(--ink)', borderColor: 'var(--border)' }
         }
       >
-        Barchasi
+        {t('all')}
       </button>
       {categories.filter((c) => c.active).sort((a, b) => a.sortOrder - b.sortOrder).map((cat) => {
         const isActive = active === cat.id;
@@ -34,7 +37,7 @@ export const CategoryChips: React.FC<CategoryChipsProps> = ({ categories, active
                 : { background: 'var(--surface)', color: 'var(--ink)', borderColor: 'var(--border)' }
             }
           >
-            {cat.nameUz}
+            {getLoc(cat, 'name')}
           </button>
         );
       })}

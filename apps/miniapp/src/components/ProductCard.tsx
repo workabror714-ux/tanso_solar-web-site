@@ -2,6 +2,7 @@ import React from 'react';
 import { Plus, Check } from 'lucide-react';
 import { Product } from '@tanso/shared/types';
 import { useCart } from '../context/CartContext';
+import { useLanguage } from '../context/LanguageContext';
 
 interface ProductCardProps {
   product: Product;
@@ -16,8 +17,10 @@ const formatPrice = (product: Product) => {
 
 export const ProductCard: React.FC<ProductCardProps> = ({ product, onOpen }) => {
   const { addToCart, getQty } = useCart();
+  const { t, getLoc } = useLanguage();
   const qty = getQty(product.id);
   const price = formatPrice(product);
+  const title = getLoc(product, 'title');
 
   return (
     <div className="card-interactive overflow-hidden flex flex-col">
@@ -26,7 +29,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onOpen }) => 
           {product.images?.[0] ? (
             <img
               src={product.images[0]}
-              alt={product.titleUz}
+              alt={title}
               className="w-full h-full object-contain p-3"
               onError={(e) => { (e.target as HTMLImageElement).style.visibility = 'hidden'; }}
             />
@@ -38,12 +41,12 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onOpen }) => 
 
       <div className="p-3 flex flex-col gap-2 flex-1">
         <button onClick={() => onOpen(product)} className="text-left">
-          <p className="text-sm font-bold text-[var(--ink)] leading-snug line-clamp-2">{product.titleUz}</p>
+          <p className="text-sm font-bold text-[var(--ink)] leading-snug line-clamp-2">{title}</p>
         </button>
 
         {!product.inStock && (
           <span className="badge" style={{ color: 'var(--danger)', borderColor: 'rgba(179,67,47,.3)', background: 'var(--danger-tint)', alignSelf: 'flex-start' }}>
-            Tugagan
+            {t('outOfStock')}
           </span>
         )}
 
@@ -51,7 +54,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onOpen }) => 
           {price ? (
             <span className="font-mono-num font-extrabold text-[var(--ink)] text-sm">{price}</span>
           ) : (
-            <span className="text-xs text-[var(--muted)]">Narx so'rov bo'yicha</span>
+            <span className="text-xs text-[var(--muted)]">{t('priceOnRequest')}</span>
           )}
 
           {product.inStock && (
@@ -59,7 +62,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onOpen }) => 
               onClick={() => addToCart(product.id, 1)}
               className="w-8 h-8 rounded-full flex items-center justify-center shrink-0 transition-colors"
               style={{ background: qty > 0 ? 'var(--teal)' : 'var(--teal-tint)', color: qty > 0 ? '#fff' : 'var(--teal-dark)' }}
-              aria-label="Savatga qo'shish"
+              aria-label={t('addToCart')}
             >
               {qty > 0 ? <Check className="w-4 h-4" /> : <Plus className="w-4 h-4" />}
             </button>

@@ -3,12 +3,14 @@ import { Product } from '@tanso/shared/types';
 import { TelegramProvider, useTelegram } from './context/TelegramContext';
 import { CartProvider } from './context/CartContext';
 import { MiniDataProvider } from './context/MiniDataContext';
+import { LanguageProvider } from './context/LanguageContext';
 import { BottomNav, TabKey } from './components/BottomNav';
 import { CatalogPage } from './pages/CatalogPage';
 import { ProductPage } from './pages/ProductPage';
 import { CartPage } from './pages/CartPage';
 import { OrdersPage } from './pages/OrdersPage';
 import { ContactPage } from './pages/ContactPage';
+import { ProfilePage } from './pages/ProfilePage';
 
 const MiniAppShell: React.FC = () => {
   const [tab, setTab] = useState<TabKey>('catalog');
@@ -53,6 +55,7 @@ const MiniAppShell: React.FC = () => {
           {tab === 'cart' && <CartPage onBrowse={() => goToTab('catalog')} />}
           {tab === 'orders' && <OrdersPage />}
           {tab === 'contact' && <ContactPage />}
+          {tab === 'profile' && <ProfilePage />}
           <BottomNav active={tab} onChange={goToTab} />
         </>
       )}
@@ -63,11 +66,13 @@ const MiniAppShell: React.FC = () => {
 const MiniApp: React.FC = () => {
   return (
     <TelegramProvider>
-      <MiniDataProvider>
-        <CartProvider>
-          <MiniAppShell />
-        </CartProvider>
-      </MiniDataProvider>
+      <LanguageProvider>
+        <MiniDataProvider>
+          <CartProvider>
+            <MiniAppShell />
+          </CartProvider>
+        </MiniDataProvider>
+      </LanguageProvider>
     </TelegramProvider>
   );
 };
