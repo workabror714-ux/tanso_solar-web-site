@@ -1,5 +1,6 @@
 import express from 'express';
 import path from 'path';
+import crypto from 'crypto';
 import { createServer as createViteServer } from 'vite';
 import { neon } from '@neondatabase/serverless';
 import multer from 'multer';
@@ -877,8 +878,63 @@ async function sendTelegramNotification(lead: any) {
 const app = express();
 const PORT = 3000;
 
+// --- ADMIN AUTH -------------------------------------------------------
+// Everything under the admin panel (product/category/settings/lead edits,
+// image uploads, Telegram admin actions) used to have NO server-side
+// check at all: the admin "login" was purely client-side (any email +
+// password >2 chars worked, or the hardcoded admin@tanso.uz/admin123),
+// and none of the ~40 mutating API routes verified anything. That is how
+// the site got defaced (2026-09-30): an attacker simply called the open
+// PUT/POST endpoints directly.
+//
+// This replaces that with a single shared-secret check: every protected
+// request must send the correct key in the `x-admin-key` header. The
+// admin panel gets this key from the password field on its login screen
+// (see apps/admin/src/context/AuthContext.tsx) and stores it locally to
+// attach to every subsequent request (see DataContext.tsx's adminFetch).
+//
+// Set ADMIN_API_KEY in Vercel's Environment Variables (Project Settings
+// -> Environment Variables) to a long random value BEFORE relying on
+// this — if it's unset, every protected request is refused (fails
+// closed, not open).
+const ADMIN_API_KEY = process.env.ADMIN_API_KEY;
+
+function timingSafeEqualStr(a: string, b: string): boolean {
+  const bufA = Buffer.from(a);
+  const bufB = Buffer.from(b);
+  if (bufA.length !== bufB.length) return false;
+  try {
+    return crypto.timingSafeEqual(bufA, bufB);
+  } catch {
+    return false;
+  }
+}
+
+function requireAdminAuth(req: express.Request, res: express.Response, next: express.NextFunction) {
+  if (!ADMIN_API_KEY) {
+    console.error('[Admin Auth] ADMIN_API_KEY is not set — refusing admin request.');
+    return res.status(500).json({ error: 'Server administrator sozlanmagan (ADMIN_API_KEY yo‘q). Vercel environment variables ga qo‘shing.' });
+  }
+  const provided = req.header('x-admin-key') || '';
+  if (!provided || !timingSafeEqualStr(provided, ADMIN_API_KEY)) {
+    return res.status(401).json({ error: 'Ruxsat yo‘q. Admin panelga qayta kiring.' });
+  }
+  next();
+}
+
 async function startServer() {
   app.use(express.json({ limit: '10mb' }));
+
+  app.post('/api/admin/login', (req, res) => {
+    if (!ADMIN_API_KEY) {
+      return res.status(500).json({ error: 'Server administrator sozlanmagan (ADMIN_API_KEY yo‘q).' });
+    }
+    const { key } = req.body || {};
+    if (typeof key === 'string' && timingSafeEqualStr(key, ADMIN_API_KEY)) {
+      return res.json({ ok: true });
+    }
+    res.status(401).json({ error: 'Noto‘g‘ri kalit.' });
+  });
 
   // IMAGE UPLOAD (Vercel Blob storage) — registered before the DB-ready
   // gate below since uploads don't touch Postgres at all.
@@ -888,7 +944,7 @@ async function startServer() {
     limits: { fileSize: 10 * 1024 * 1024 }, // 10MB
   });
 
-  app.post('/api/upload', (req, res) => {
+  app.post('/api/upload', requireAdminAuth, (req, res) => {
     upload.single('file')(req, res, async (err: any) => {
       if (err) {
         const message = err.code === 'LIMIT_FILE_SIZE'
@@ -955,7 +1011,7 @@ async function startServer() {
     });
   });
 
-  app.get('/api/media', async (req, res) => {
+  app.get('/api/media', requireAdminAuth, async (req, res) => {
     if (!process.env.BLOB_READ_WRITE_TOKEN) {
       return res.json([]);
     }
@@ -971,7 +1027,7 @@ async function startServer() {
     }
   });
 
-  app.delete('/api/media', async (req, res) => {
+  app.delete('/api/media', requireAdminAuth, async (req, res) => {
     const { url } = req.body || {};
     if (!url || typeof url !== 'string') {
       return res.status(400).json({ error: 'Fayl URL kerak.' });
@@ -1004,11 +1060,14 @@ async function startServer() {
   });
 
   // LEADS API
-  app.get('/api/leads', async (req, res) => {
+  // GET is admin-only: leads carry customer names and phone numbers.
+  app.get('/api/leads', requireAdminAuth, async (req, res) => {
     const leads = await getAll('leads', 'seq DESC');
     res.json(leads);
   });
 
+  // POST stays public — this is how the site's own contact/order forms
+  // (and the Telegram mini app) submit a new lead.
   app.post('/api/leads', async (req, res) => {
     const { fullName, phone, productId, productName, category, quantity, comment, source, type } = req.body;
 
@@ -1059,7 +1118,7 @@ async function startServer() {
     res.status(201).json({ success: true, lead: newLead });
   });
 
-  app.patch('/api/leads/:id', async (req, res) => {
+  app.patch('/api/leads/:id', requireAdminAuth, async (req, res) => {
     const { id } = req.params;
     const { status, adminNotes, isRead } = req.body;
 
@@ -1076,7 +1135,7 @@ async function startServer() {
     res.json({ success: true, lead: updated });
   });
 
-  app.delete('/api/leads/:id', async (req, res) => {
+  app.delete('/api/leads/:id', requireAdminAuth, async (req, res) => {
     const { id } = req.params;
     await deleteRow('leads', id);
     res.json({ success: true });
@@ -1088,7 +1147,7 @@ async function startServer() {
     res.json(products);
   });
 
-  app.post('/api/products', async (req, res) => {
+  app.post('/api/products', requireAdminAuth, async (req, res) => {
     const product = {
       ...req.body,
       id: `prod-${Date.now()}`,
@@ -1099,14 +1158,14 @@ async function startServer() {
     res.status(201).json(product);
   });
 
-  app.put('/api/products/:id', async (req, res) => {
+  app.put('/api/products/:id', requireAdminAuth, async (req, res) => {
     const { id } = req.params;
     const updated = await patchRow('products', id, { ...req.body, updatedAt: new Date().toISOString() });
     if (!updated) return res.status(404).json({ error: 'Mahsulot topilmadi.' });
     res.json(updated);
   });
 
-  app.delete('/api/products/:id', async (req, res) => {
+  app.delete('/api/products/:id', requireAdminAuth, async (req, res) => {
     const { id } = req.params;
     await deleteRow('products', id);
     res.json({ success: true });
@@ -1118,7 +1177,7 @@ async function startServer() {
     res.json(categories);
   });
 
-  app.post('/api/categories', async (req, res) => {
+  app.post('/api/categories', requireAdminAuth, async (req, res) => {
     const category = {
       ...req.body,
       id: `cat-${Date.now()}`
@@ -1127,14 +1186,14 @@ async function startServer() {
     res.status(201).json(category);
   });
 
-  app.put('/api/categories/:id', async (req, res) => {
+  app.put('/api/categories/:id', requireAdminAuth, async (req, res) => {
     const { id } = req.params;
     const updated = await patchRow('categories', id, req.body);
     if (!updated) return res.status(404).json({ error: 'Kategoriya topilmadi.' });
     res.json(updated);
   });
 
-  app.delete('/api/categories/:id', async (req, res) => {
+  app.delete('/api/categories/:id', requireAdminAuth, async (req, res) => {
     const { id } = req.params;
     await deleteRow('categories', id);
     res.json({ success: true });
@@ -1146,7 +1205,7 @@ async function startServer() {
     res.json(banners);
   });
 
-  app.put('/api/banners', async (req, res) => {
+  app.put('/api/banners', requireAdminAuth, async (req, res) => {
     const banners = await replaceAllBanners(req.body);
     res.json(banners);
   });
@@ -1157,20 +1216,20 @@ async function startServer() {
     res.json(services);
   });
 
-  app.post('/api/services', async (req, res) => {
+  app.post('/api/services', requireAdminAuth, async (req, res) => {
     const service = { ...req.body, id: `serv-${Date.now()}` };
     await insertRow('services', service);
     res.status(201).json(service);
   });
 
-  app.put('/api/services/:id', async (req, res) => {
+  app.put('/api/services/:id', requireAdminAuth, async (req, res) => {
     const { id } = req.params;
     const updated = await patchRow('services', id, req.body);
     if (!updated) return res.status(404).json({ error: 'Xizmat topilmadi.' });
     res.json(updated);
   });
 
-  app.delete('/api/services/:id', async (req, res) => {
+  app.delete('/api/services/:id', requireAdminAuth, async (req, res) => {
     const { id } = req.params;
     await deleteRow('services', id);
     res.json({ success: true });
@@ -1182,20 +1241,20 @@ async function startServer() {
     res.json(projects);
   });
 
-  app.post('/api/projects', async (req, res) => {
+  app.post('/api/projects', requireAdminAuth, async (req, res) => {
     const project = { ...req.body, id: `proj-${Date.now()}` };
     await insertRow('projects', project);
     res.status(201).json(project);
   });
 
-  app.put('/api/projects/:id', async (req, res) => {
+  app.put('/api/projects/:id', requireAdminAuth, async (req, res) => {
     const { id } = req.params;
     const updated = await patchRow('projects', id, req.body);
     if (!updated) return res.status(404).json({ error: 'Loyiha topilmadi.' });
     res.json(updated);
   });
 
-  app.delete('/api/projects/:id', async (req, res) => {
+  app.delete('/api/projects/:id', requireAdminAuth, async (req, res) => {
     const { id } = req.params;
     await deleteRow('projects', id);
     res.json({ success: true });
@@ -1207,20 +1266,20 @@ async function startServer() {
     res.json(partners);
   });
 
-  app.post('/api/partners', async (req, res) => {
+  app.post('/api/partners', requireAdminAuth, async (req, res) => {
     const partner = { ...req.body, id: `part-${Date.now()}` };
     await insertRow('partners', partner);
     res.status(201).json(partner);
   });
 
-  app.put('/api/partners/:id', async (req, res) => {
+  app.put('/api/partners/:id', requireAdminAuth, async (req, res) => {
     const { id } = req.params;
     const updated = await patchRow('partners', id, req.body);
     if (!updated) return res.status(404).json({ error: 'Hamkor topilmadi.' });
     res.json(updated);
   });
 
-  app.delete('/api/partners/:id', async (req, res) => {
+  app.delete('/api/partners/:id', requireAdminAuth, async (req, res) => {
     const { id } = req.params;
     await deleteRow('partners', id);
     res.json({ success: true });
@@ -1232,43 +1291,69 @@ async function startServer() {
     res.json(certificates);
   });
 
-  app.post('/api/certificates', async (req, res) => {
+  app.post('/api/certificates', requireAdminAuth, async (req, res) => {
     const certificate = { ...req.body, id: req.body.id || `cert-${Date.now()}` };
     await insertRow('certificates', certificate);
     res.status(201).json(certificate);
   });
 
-  app.put('/api/certificates/:id', async (req, res) => {
+  app.put('/api/certificates/:id', requireAdminAuth, async (req, res) => {
     const { id } = req.params;
     const updated = await patchRow('certificates', id, req.body);
     if (!updated) return res.status(404).json({ error: 'Sertifikat topilmadi.' });
     res.json(updated);
   });
 
-  app.delete('/api/certificates/:id', async (req, res) => {
+  app.delete('/api/certificates/:id', requireAdminAuth, async (req, res) => {
     const { id } = req.params;
     await deleteRow('certificates', id);
     res.json({ success: true });
   });
 
   // SETTINGS API
+  // Public settings shape only — telegramBotToken/telegramChatId (and any
+  // other secret field an admin may have saved into this same JSONB blob)
+  // must NEVER reach this response: this endpoint has no auth and is read
+  // by every visitor's browser (site footer/contact) and the Telegram mini
+  // app on every load.
+  const PUBLIC_SETTINGS_FIELDS = [
+    'companyName', 'phone1', 'phone2', 'email', 'addressUz', 'addressRu',
+    'telegram', 'instagram', 'facebook', 'youtube', 'mapIframeUrl',
+    'workingHoursUz', 'workingHoursRu',
+  ] as const;
+
+  function toPublicSettings(settings: Record<string, unknown> | undefined | null) {
+    const out: Record<string, unknown> = {};
+    for (const key of PUBLIC_SETTINGS_FIELDS) {
+      if (settings && settings[key] !== undefined) out[key] = settings[key];
+    }
+    return out;
+  }
+
   app.get('/api/settings', async (req, res) => {
-    const settings = await getSettings();
+    const settings = await getSettings<Record<string, unknown>>();
+    res.json(toPublicSettings(settings));
+  });
+
+  // Full settings, including telegramBotToken/telegramChatId — admin
+  // panel only, so it can populate its own settings form.
+  app.get('/api/admin/settings', requireAdminAuth, async (req, res) => {
+    const settings = await getSettings<Record<string, unknown>>();
     res.json(settings);
   });
 
-  app.put('/api/settings', async (req, res) => {
+  app.put('/api/settings', requireAdminAuth, async (req, res) => {
     const settings = await updateSettings(req.body);
     res.json(settings);
   });
 
   // NOTIFICATIONS API
-  app.get('/api/notifications', async (req, res) => {
+  app.get('/api/notifications', requireAdminAuth, async (req, res) => {
     const notifications = await getAll('notifications', 'seq DESC');
     res.json(notifications);
   });
 
-  app.patch('/api/notifications/read-all', async (req, res) => {
+  app.patch('/api/notifications/read-all', requireAdminAuth, async (req, res) => {
     const notifications = await getAll<{ id: string }>('notifications');
     await Promise.all(notifications.map((n) => patchRow('notifications', n.id, { isRead: true })));
     res.json({ success: true });
@@ -1289,7 +1374,7 @@ async function startServer() {
 
   // One-time (idempotent) setup call: points the bot's menu button and
   // webhook at this deployment. Safe to call again after a domain change.
-  app.post('/api/admin/telegram/setup-miniapp', async (req, res) => {
+  app.post('/api/admin/telegram/setup-miniapp', requireAdminAuth, async (req, res) => {
     const token = await getTelegramToken();
     if (!token) {
       return res.status(400).json({ error: 'TELEGRAM_BOT_TOKEN sozlanmagan (Sayt Sozlamalari yoki env).' });
@@ -1332,7 +1417,7 @@ async function startServer() {
   // when the bot is shared/forwarded). Bot profile PHOTO has no Bot API
   // equivalent — Telegram only allows that via BotFather's /setuserpic,
   // uploaded manually.
-  app.post('/api/admin/telegram/set-profile', async (req, res) => {
+  app.post('/api/admin/telegram/set-profile', requireAdminAuth, async (req, res) => {
     const token = await getTelegramToken();
     if (!token) {
       return res.status(400).json({ error: 'TELEGRAM_BOT_TOKEN sozlanmagan (Sayt Sozlamalari yoki env).' });

@@ -7,6 +7,27 @@ import {
   initialProjects, initialPartners, initialCertificates, initialSiteSettings, initialLeads
 } from '@tanso/shared/data/initialData';
 
+// Every mutating admin API call (and the two reads below that expose
+// customer/business data — leads and notifications) must carry the admin
+// key so server.ts's requireAdminAuth middleware accepts it. The key is
+// whatever was entered as the password on the admin login screen (see
+// AuthContext.tsx) — the server checks it against the ADMIN_API_KEY
+// environment variable. Public, read-only endpoints (categories,
+// products, banners, services, projects, partners, certificates,
+// settings) are intentionally left as plain fetch() below since the
+// public site and the Telegram mini app also need to read them without
+// any admin session.
+function adminFetch(url: string, options: RequestInit = {}) {
+  const key = localStorage.getItem('tanso_admin_key') || '';
+  return fetch(url, {
+    ...options,
+    headers: {
+      ...(options.headers || {}),
+      'x-admin-key': key,
+    },
+  });
+}
+
 interface DataContextType {
   categories: Category[];
   products: Product[];
@@ -19,7 +40,7 @@ interface DataContextType {
   leads: Lead[];
   notifications: AdminNotification[];
   isLoading: boolean;
-  
+
   createLead: (leadData: Partial<Lead>) => Promise<{ success: boolean; lead?: Lead; error?: string }>;
   updateLeadStatus: (id: string, status: LeadStatus, adminNotes?: string) => Promise<void>;
   markLeadRead: (id: string) => Promise<void>;
@@ -83,9 +104,12 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
         fetch('/api/projects').then(r => r.ok ? r.json() : null),
         fetch('/api/partners').then(r => r.ok ? r.json() : null),
         fetch('/api/certificates').then(r => r.ok ? r.json() : null),
-        fetch('/api/settings').then(r => r.ok ? r.json() : null),
-        fetch('/api/leads').then(r => r.ok ? r.json() : null),
-        fetch('/api/notifications').then(r => r.ok ? r.json() : null),
+        // Full settings (incl. Telegram token/chat id) — admin-only, auth'd.
+        adminFetch('/api/admin/settings').then(r => r.ok ? r.json() : null),
+        // Leads and notifications carry customer contact details —
+        // admin-only, auth'd.
+        adminFetch('/api/leads').then(r => r.ok ? r.json() : null),
+        adminFetch('/api/notifications').then(r => r.ok ? r.json() : null),
       ]);
 
       if (resCats) setCategories(resCats);
@@ -111,6 +135,8 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const createLead = async (leadData: Partial<Lead>) => {
     try {
+      // Public endpoint — no admin key needed, this is also how the
+      // public site itself submits leads.
       const res = await fetch('/api/leads', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -147,7 +173,7 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const updateLeadStatus = async (id: string, status: LeadStatus, adminNotes?: string) => {
     setLeads(prev => prev.map(l => l.id === id ? { ...l, status, adminNotes: adminNotes !== undefined ? adminNotes : l.adminNotes, updatedAt: new Date().toISOString() } : l));
     try {
-      await fetch(`/api/leads/${id}`, {
+      await adminFetch(`/api/leads/${id}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ status, adminNotes })
@@ -158,7 +184,7 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const markLeadRead = async (id: string) => {
     setLeads(prev => prev.map(l => l.id === id ? { ...l, isRead: true } : l));
     try {
-      await fetch(`/api/leads/${id}`, {
+      await adminFetch(`/api/leads/${id}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ isRead: true })
@@ -169,13 +195,13 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const deleteLead = async (id: string) => {
     setLeads(prev => prev.filter(l => l.id !== id));
     try {
-      await fetch(`/api/leads/${id}`, { method: 'DELETE' });
+      await adminFetch(`/api/leads/${id}`, { method: 'DELETE' });
     } catch (e) {}
   };
 
   const addProduct = async (prodData: Omit<Product, 'id' | 'createdAt' | 'updatedAt'>) => {
     try {
-      const res = await fetch('/api/products', {
+      const res = await adminFetch('/api/products', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(prodData)
@@ -196,7 +222,7 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const updateProduct = async (id: string, prodData: Partial<Product>) => {
     setProducts(prev => prev.map(p => p.id === id ? { ...p, ...prodData, updatedAt: new Date().toISOString() } : p));
     try {
-      await fetch(`/api/products/${id}`, {
+      await adminFetch(`/api/products/${id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(prodData)
@@ -207,13 +233,13 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const deleteProduct = async (id: string) => {
     setProducts(prev => prev.filter(p => p.id !== id));
     try {
-      await fetch(`/api/products/${id}`, { method: 'DELETE' });
+      await adminFetch(`/api/products/${id}`, { method: 'DELETE' });
     } catch (e) {}
   };
 
   const addCategory = async (catData: Omit<Category, 'id'>) => {
     try {
-      const res = await fetch('/api/categories', {
+      const res = await adminFetch('/api/categories', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(catData)
@@ -228,7 +254,7 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const updateCategory = async (id: string, catData: Partial<Category>) => {
     setCategories(prev => prev.map(c => c.id === id ? { ...c, ...catData } : c));
     try {
-      await fetch(`/api/categories/${id}`, {
+      await adminFetch(`/api/categories/${id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(catData)
@@ -239,14 +265,14 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const deleteCategory = async (id: string) => {
     setCategories(prev => prev.filter(c => c.id !== id));
     try {
-      await fetch(`/api/categories/${id}`, { method: 'DELETE' });
+      await adminFetch(`/api/categories/${id}`, { method: 'DELETE' });
     } catch (e) {}
   };
 
   const updateBanners = async (newBanners: HeroBanner[]) => {
     setBanners(newBanners);
     try {
-      await fetch('/api/banners', {
+      await adminFetch('/api/banners', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(newBanners)
@@ -256,7 +282,7 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const addService = async (servData: Omit<Service, 'id'>) => {
     try {
-      const res = await fetch('/api/services', {
+      const res = await adminFetch('/api/services', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(servData)
@@ -271,7 +297,7 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const updateService = async (id: string, servData: Partial<Service>) => {
     setServices(prev => prev.map(s => s.id === id ? { ...s, ...servData } : s));
     try {
-      await fetch(`/api/services/${id}`, {
+      await adminFetch(`/api/services/${id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(servData)
@@ -282,13 +308,13 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const deleteService = async (id: string) => {
     setServices(prev => prev.filter(s => s.id !== id));
     try {
-      await fetch(`/api/services/${id}`, { method: 'DELETE' });
+      await adminFetch(`/api/services/${id}`, { method: 'DELETE' });
     } catch (e) {}
   };
 
   const addProject = async (projData: Omit<Project, 'id'>) => {
     try {
-      const res = await fetch('/api/projects', {
+      const res = await adminFetch('/api/projects', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(projData)
@@ -303,7 +329,7 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const updateProject = async (id: string, projData: Partial<Project>) => {
     setProjects(prev => prev.map(p => p.id === id ? { ...p, ...projData } : p));
     try {
-      await fetch(`/api/projects/${id}`, {
+      await adminFetch(`/api/projects/${id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(projData)
@@ -314,13 +340,13 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const deleteProject = async (id: string) => {
     setProjects(prev => prev.filter(p => p.id !== id));
     try {
-      await fetch(`/api/projects/${id}`, { method: 'DELETE' });
+      await adminFetch(`/api/projects/${id}`, { method: 'DELETE' });
     } catch (e) {}
   };
 
   const addPartner = async (partData: Omit<Partner, 'id'>) => {
     try {
-      const res = await fetch('/api/partners', {
+      const res = await adminFetch('/api/partners', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(partData)
@@ -335,7 +361,7 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const updatePartner = async (id: string, partData: Partial<Partner>) => {
     setPartners(prev => prev.map(p => p.id === id ? { ...p, ...partData } : p));
     try {
-      await fetch(`/api/partners/${id}`, {
+      await adminFetch(`/api/partners/${id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(partData)
@@ -346,13 +372,13 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const deletePartner = async (id: string) => {
     setPartners(prev => prev.filter(p => p.id !== id));
     try {
-      await fetch(`/api/partners/${id}`, { method: 'DELETE' });
+      await adminFetch(`/api/partners/${id}`, { method: 'DELETE' });
     } catch (e) {}
   };
 
   const addCertificate = async (certData: Omit<Certificate, 'id'>) => {
     try {
-      const res = await fetch('/api/certificates', {
+      const res = await adminFetch('/api/certificates', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(certData)
@@ -367,7 +393,7 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const updateCertificate = async (id: string, certData: Partial<Certificate>) => {
     setCertificates(prev => prev.map(c => c.id === id ? { ...c, ...certData } : c));
     try {
-      await fetch(`/api/certificates/${id}`, {
+      await adminFetch(`/api/certificates/${id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(certData)
@@ -378,14 +404,14 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const deleteCertificate = async (id: string) => {
     setCertificates(prev => prev.filter(c => c.id !== id));
     try {
-      await fetch(`/api/certificates/${id}`, { method: 'DELETE' });
+      await adminFetch(`/api/certificates/${id}`, { method: 'DELETE' });
     } catch (e) {}
   };
 
   const updateSettings = async (newSettings: Partial<SiteSettings>) => {
     setSettings(prev => ({ ...prev, ...newSettings }));
     try {
-      await fetch('/api/settings', {
+      await adminFetch('/api/settings', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(newSettings)
@@ -396,7 +422,7 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const markAllNotificationsRead = async () => {
     setNotifications(prev => prev.map(n => ({ ...n, isRead: true })));
     try {
-      await fetch('/api/notifications/read-all', { method: 'PATCH' });
+      await adminFetch('/api/notifications/read-all', { method: 'PATCH' });
     } catch (e) {}
   };
 

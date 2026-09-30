@@ -15,31 +15,56 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
+// These two keys are always written together by login() below, and are
+// what every admin API call (see DataContext.tsx's adminFetch) sends as
+// the `x-admin-key` header. Previously this "login" was entirely
+// client-side (any email/password combo worked) and no request was ever
+// checked server-side — see server.ts's requireAdminAuth for the real
+// check this now talks to.
+const ADMIN_KEY_STORAGE = 'tanso_admin_key';
+const ADMIN_USER_STORAGE = 'tanso_admin_user';
+
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(() => {
-    const saved = localStorage.getItem('tanso_admin_user');
-    return saved ? JSON.parse(saved) : null;
+    // A saved user is only trusted together with a saved admin key (they're
+    // always written together). A user without a key means an old
+    // pre-auth session (or a cleared key) — not valid, log in again.
+    const savedUser = localStorage.getItem(ADMIN_USER_STORAGE);
+    const savedKey = localStorage.getItem(ADMIN_KEY_STORAGE);
+    if (savedUser && savedKey) {
+      try {
+        return JSON.parse(savedUser);
+      } catch {
+        return null;
+      }
+    }
+    return null;
   });
 
   const login = async (email: string, pass: string) => {
-    if ((email === 'admin@tanso.uz' || email === 'admin') && (pass === 'admin123' || pass === 'admin')) {
-      const u: User = { email: 'admin@tanso.uz', role: 'admin', name: 'Tanso Admin' };
-      setUser(u);
-      localStorage.setItem('tanso_admin_user', JSON.stringify(u));
-      return { success: true };
-    }
-    if (email.length > 2 && pass.length > 2) {
+    try {
+      const res = await fetch('/api/admin/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ key: pass }),
+      });
+      if (!res.ok) {
+        return { success: false, error: 'Email yoki parol noto‘g‘ri.' };
+      }
       const u: User = { email, role: 'admin', name: email.split('@')[0] || 'Administrator' };
       setUser(u);
-      localStorage.setItem('tanso_admin_user', JSON.stringify(u));
+      localStorage.setItem(ADMIN_USER_STORAGE, JSON.stringify(u));
+      localStorage.setItem(ADMIN_KEY_STORAGE, pass);
       return { success: true };
+    } catch {
+      return { success: false, error: 'Serverga ulanib bo‘lmadi. Internet aloqasini tekshiring.' };
     }
-    return { success: false, error: 'Неверный логин или пароль! (Демо: admin@tanso.uz / admin123)' };
   };
 
   const logout = () => {
     setUser(null);
-    localStorage.removeItem('tanso_admin_user');
+    localStorage.removeItem(ADMIN_USER_STORAGE);
+    localStorage.removeItem(ADMIN_KEY_STORAGE);
   };
 
   return (
