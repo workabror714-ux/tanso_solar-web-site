@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Copy, Check, Trash2, RefreshCw, Loader2 } from 'lucide-react';
 import { ImageUploader } from '../components/ImageUploader';
+import { adminHeaders } from '../lib/adminAuth';
 
 interface MediaItem {
   url: string;
@@ -26,7 +27,7 @@ export const AdminMedia: React.FC = () => {
     setLoading(true);
     setError(null);
     try {
-      const res = await fetch('/api/media');
+      const res = await fetch('/api/media', { headers: adminHeaders() });
       const data = await res.json().catch(() => []);
       if (!res.ok) throw new Error((data as any)?.error || 'Ошибка при получении списка медиафайлов.');
       setItems(Array.isArray(data) ? data : []);
@@ -61,7 +62,7 @@ export const AdminMedia: React.FC = () => {
     try {
       const res = await fetch('/api/media', {
         method: 'DELETE',
-        headers: { 'Content-Type': 'application/json' },
+        headers: adminHeaders({ 'Content-Type': 'application/json' }),
         body: JSON.stringify({ url }),
       });
       if (!res.ok) throw new Error('Произошла ошибка при удалении.');

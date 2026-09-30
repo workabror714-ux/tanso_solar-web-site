@@ -1,5 +1,6 @@
 import React, { useRef, useState } from 'react';
 import { Upload, Loader2, X, ImageOff } from 'lucide-react';
+import { adminHeaders } from '../lib/adminAuth';
 
 interface ImageUploaderProps {
   value: string;
@@ -23,7 +24,7 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({ value, onChange, l
     try {
       const formData = new FormData();
       formData.append('file', file);
-      const res = await fetch('/api/upload', { method: 'POST', body: formData });
+      const res = await fetch('/api/upload', { method: 'POST', headers: adminHeaders(), body: formData });
       const data = await res.json().catch(() => ({}));
       if (!res.ok) throw new Error(data.error || 'Ошибка при загрузке.');
       onChange(data.url);
