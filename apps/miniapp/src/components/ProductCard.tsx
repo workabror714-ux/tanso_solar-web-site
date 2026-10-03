@@ -31,7 +31,6 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onOpen }) => 
               src={product.images[0]}
               alt={title}
               className="w-full h-full object-contain p-3"
-              loading="lazy"
               decoding="async"
               onError={(e) => { (e.target as HTMLImageElement).style.visibility = 'hidden'; }}
             />

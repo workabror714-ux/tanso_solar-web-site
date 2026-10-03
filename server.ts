@@ -878,6 +878,14 @@ async function sendTelegramNotification(lead: any) {
 const app = express();
 const PORT = 3000;
 
+// Cache-busting token for Telegram's Mini App URL: Telegram's own WebView
+// aggressively caches whatever URL the menu button / web_app button last
+// pointed to, sometimes showing stale content (old product images, old
+// data) long after the live site has moved on. Appending ?v=<this> makes
+// every new deploy look like a brand-new URL to Telegram, forcing a fresh
+// load instead of a cached one.
+const BUILD_VERSION = process.env.VERCEL_GIT_COMMIT_SHA || String(Date.now());
+
 // --- ADMIN AUTH -------------------------------------------------------
 // Everything under the admin panel (product/category/settings/lead edits,
 // image uploads, Telegram admin actions) used to have NO server-side
@@ -924,6 +932,13 @@ function requireAdminAuth(req: express.Request, res: express.Response, next: exp
 
 async function startServer() {
   app.use(express.json({ limit: '10mb' }));
+
+  // API responses must always be live — never cached by Telegram's
+  // in-app WebView, intermediate proxies, or the browser.
+  app.use('/api', (req, res, next) => {
+    res.setHeader('Cache-Control', 'no-store, must-revalidate');
+    next();
+  });
 
   app.post('/api/admin/login', (req, res) => {
     if (!ADMIN_API_KEY) {
@@ -1381,7 +1396,7 @@ async function startServer() {
     }
 
     const origin = `https://${req.headers.host}`;
-    const miniAppUrl = `${origin}/bot`;
+    const miniAppUrl = `${origin}/bot?v=${BUILD_VERSION}`;
     const webhookUrl = `${origin}/api/telegram/webhook`;
 
     try {
@@ -1476,7 +1491,7 @@ async function startServer() {
             text: "TANSO SOLAR botiga xush kelibsiz! ☀️\n\nQuyosh suv isitgichlari katalogini ko'rish, mahsulot tanlash va buyurtma berish uchun pastdagi tugmani bosing.",
             reply_markup: {
               inline_keyboard: [[
-                { text: '🛍️ Katalogni ochish', web_app: { url: `${origin}/bot` } },
+                { text: '🛍️ Katalogni ochish', web_app: { url: `${origin}/bot?v=${BUILD_VERSION}` } },
               ]],
             },
           }),

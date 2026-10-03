@@ -55,7 +55,7 @@ export const ProductPage: React.FC<ProductPageProps> = ({ product, onBack, onGoT
               className="w-14 h-14 shrink-0 rounded-lg overflow-hidden border-2"
               style={{ borderColor: i === activeImg ? 'var(--teal)' : 'var(--border)' }}
             >
-              <img src={img} alt="" className="w-full h-full object-contain bg-[var(--teal-tint)]" loading="lazy" decoding="async" />
+              <img src={img} alt="" className="w-full h-full object-contain bg-[var(--teal-tint)]" decoding="async" />
             </button>
           ))}
         </div>
