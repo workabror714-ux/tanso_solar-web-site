@@ -820,19 +820,31 @@ async function sendTelegramNotification(lead: any) {
   // site_settings, field names telegramBotToken/telegramChatId). Vercel env
   // vars TELEGRAM_BOT_TOKEN/TELEGRAM_CHAT_ID are kept as a fallback so an
   // env-based deployment still works without touching the admin panel.
+  //
+  // telegramChatId can hold MULTIPLE recipients as a comma-separated list
+  // (e.g. "5954123597,123456789" -- two people's private chat ids, or a
+  // mix of private ids and a group/-100... id). Added because the admin's
+  // notification group couldn't have a diagnostic bot added to it to
+  // recover its numeric id, and a group id isn't required for this to
+  // work: every recipient in the list gets the same message independently.
   let token: string | undefined;
-  let chatId: string | undefined;
+  let chatIdRaw: string | undefined;
   try {
     const settings = await getSettings<Record<string, unknown>>();
     token = (settings?.telegramBotToken as string) || process.env.TELEGRAM_BOT_TOKEN;
-    chatId = (settings?.telegramChatId as string) || process.env.TELEGRAM_CHAT_ID;
+    chatIdRaw = (settings?.telegramChatId as string) || process.env.TELEGRAM_CHAT_ID;
   } catch (err) {
     console.error('[Telegram Notification] Failed to load settings, falling back to env vars.', err);
     token = process.env.TELEGRAM_BOT_TOKEN;
-    chatId = process.env.TELEGRAM_CHAT_ID;
+    chatIdRaw = process.env.TELEGRAM_CHAT_ID;
   }
 
-  if (!token || !chatId) {
+  const chatIds = (chatIdRaw || '')
+    .split(',')
+    .map((s) => s.trim())
+    .filter(Boolean);
+
+  if (!token || chatIds.length === 0) {
     console.log('[Telegram Notification Skipped] Bot token yoki Chat ID sozlanmagan (Sayt Sozlamalari yoki TELEGRAM_BOT_TOKEN/TELEGRAM_CHAT_ID env).');
     return;
   }
@@ -852,27 +864,34 @@ async function sendTelegramNotification(lead: any) {
     `🔗 <b>Manbaa:</b> ${sourceLabel}\n` +
     `🕒 <b>Vaqt:</b> ${new Date(lead.createdAt).toLocaleString('uz-UZ')}`;
 
-  try {
-    const url = `https://api.telegram.org/bot${token}/sendMessage`;
-    const response = await fetch(url, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        chat_id: chatId,
-        text: message,
-        parse_mode: 'HTML'
-      })
-    });
+  // Send to every configured recipient independently -- one recipient
+  // being unreachable (e.g. hasn't started the bot, or a stale id) must
+  // not stop the others from getting notified.
+  const url = `https://api.telegram.org/bot${token}/sendMessage`;
+  await Promise.all(
+    chatIds.map(async (chatId) => {
+      try {
+        const response = await fetch(url, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            chat_id: chatId,
+            text: message,
+            parse_mode: 'HTML'
+          })
+        });
 
-    const resJson = await response.json();
-    if (resJson.ok) {
-      console.log('[Telegram Notification Sent Successfully]');
-    } else {
-      console.error('[Telegram Notification Error]', resJson);
-    }
-  } catch (err) {
-    console.error('[Telegram Notification Fetch Exception]', err);
-  }
+        const resJson = await response.json();
+        if (resJson.ok) {
+          console.log(`[Telegram Notification Sent Successfully] chatId=${chatId}`);
+        } else {
+          console.error(`[Telegram Notification Error] chatId=${chatId}`, resJson);
+        }
+      } catch (err) {
+        console.error(`[Telegram Notification Fetch Exception] chatId=${chatId}`, err);
+      }
+    })
+  );
 }
 
 const app = express();
