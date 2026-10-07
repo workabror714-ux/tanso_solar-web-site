@@ -1516,6 +1516,26 @@ async function startServer() {
           }),
         });
       }
+
+      // /getid -- group-only admin utility. Typed inside a group the bot
+      // is a member of, it registers THAT group as the lead-notification
+      // target (replacing whatever telegramChatId held before) and
+      // confirms it right there in the chat. Exists because this group's
+      // numeric chat id couldn't otherwise be recovered: it isn't a
+      // supergroup (no message permalinks to read it from), and a
+      // diagnostic bot couldn't be added to the group to look it up.
+      if (text.trim() === '/getid' && (message.chat.type === 'group' || message.chat.type === 'supergroup')) {
+        await updateSettings({ telegramChatId: String(chatId) });
+        await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            chat_id: chatId,
+            text: `✅ Ushbu guruh endi TANSO SOLAR buyurtma bildirishnomalarini qabul qiladi.\n\nGuruh ID: <code>${chatId}</code>`,
+            parse_mode: 'HTML',
+          }),
+        });
+      }
     } catch (err) {
       console.error('[Telegram Webhook Error]', err);
     }
