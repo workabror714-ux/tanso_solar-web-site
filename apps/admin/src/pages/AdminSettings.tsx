@@ -14,6 +14,26 @@ export const AdminSettings: React.FC = () => {
   const [webhookState, setWebhookState] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
   const [webhookMessage, setWebhookMessage] = useState('');
 
+  const [webhookInfo, setWebhookInfo] = useState<any>(null);
+  const [webhookInfoLoading, setWebhookInfoLoading] = useState(false);
+
+  const handleCheckWebhook = async () => {
+    setWebhookInfoLoading(true);
+    setWebhookInfo(null);
+    try {
+      const key = localStorage.getItem('tanso_admin_key') || '';
+      const res = await fetch('/api/admin/telegram/webhook-info', {
+        headers: { 'x-admin-key': key },
+      });
+      const data = await res.json();
+      setWebhookInfo(data);
+    } catch (err: any) {
+      setWebhookInfo({ error: String(err?.message || err) });
+    } finally {
+      setWebhookInfoLoading(false);
+    }
+  };
+
   const handleSetupWebhook = async () => {
     setWebhookState('loading');
     setWebhookMessage('');
@@ -184,7 +204,21 @@ export const AdminSettings: React.FC = () => {
                 <AlertCircle className="w-4 h-4" /> {webhookMessage}
               </span>
             )}
+            <button
+              type="button"
+              onClick={handleCheckWebhook}
+              disabled={webhookInfoLoading}
+              className="px-4 py-2 bg-zinc-800 hover:bg-zinc-700 border border-white/10 font-bold text-zinc-300 text-[11px] uppercase tracking-wider transition-colors disabled:opacity-50"
+            >
+              {webhookInfoLoading ? 'Tekshirilmoqda...' : 'Webhook holatini tekshirish'}
+            </button>
           </div>
+
+          {webhookInfo && (
+            <pre className="text-[10px] text-zinc-300 bg-black/60 border border-white/10 p-3 overflow-x-auto whitespace-pre-wrap">
+              {JSON.stringify(webhookInfo, null, 2)}
+            </pre>
+          )}
         </div>
 
         {/* Addresses & Working Hours */}

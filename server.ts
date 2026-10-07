@@ -1406,6 +1406,25 @@ async function startServer() {
     }
   }
 
+  // Read-only diagnostic: asks Telegram directly what it has on file for
+  // this bot's webhook (registered URL, last delivery error, pending
+  // update count). Token never leaves the server -- the admin panel only
+  // ever sees this JSON back.
+  app.get('/api/admin/telegram/webhook-info', requireAdminAuth, async (req, res) => {
+    const token = await getTelegramToken();
+    if (!token) {
+      return res.status(400).json({ error: 'TELEGRAM_BOT_TOKEN sozlanmagan (Sayt Sozlamalari yoki env).' });
+    }
+    try {
+      const r = await fetch(`https://api.telegram.org/bot${token}/getWebhookInfo`);
+      const data = await r.json();
+      res.json(data);
+    } catch (err: any) {
+      console.error('[Telegram Webhook Info Error]', err);
+      res.status(500).json({ error: String(err?.message || err) });
+    }
+  });
+
   // One-time (idempotent) setup call: points the bot's menu button and
   // webhook at this deployment. Safe to call again after a domain change.
   app.post('/api/admin/telegram/setup-miniapp', requireAdminAuth, async (req, res) => {
