@@ -7,6 +7,50 @@ export const AdminSettings: React.FC = () => {
   const [formData, setFormData] = useState({ ...settings });
   const [savedSuccess, setSavedSuccess] = useState(false);
 
+  // Idempotent re-registration of the Telegram webhook/menu button/commands
+  // against this deployment's own domain. Needed after a domain change, or
+  // whenever Telegram stops delivering updates to /api/telegram/webhook for
+  // any other reason (e.g. the webhook registration silently lapsed).
+  const [webhookState, setWebhookState] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
+  const [webhookMessage, setWebhookMessage] = useState('');
+
+  const handleSetupWebhook = async () => {
+    setWebhookState('loading');
+    setWebhookMessage('');
+    try {
+      const key = localStorage.getItem('tanso_admin_key') || '';
+      const res = await fetch('/api/admin/telegram/setup-miniapp', {
+        method: 'POST',
+        headers: { 'x-admin-key': key },
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        setWebhookState('error');
+        setWebhookMessage(data?.error || `HTTP ${res.status}`);
+        return;
+      }
+      const webhookOk = data?.webhookRes?.ok;
+      const menuOk = data?.menuRes?.ok;
+      const commandsOk = data?.commandsRes?.ok;
+      if (webhookOk && menuOk && commandsOk) {
+        setWebhookState('success');
+        setWebhookMessage(`Webhook ulandi: ${data.webhookUrl}`);
+      } else {
+        setWebhookState('error');
+        setWebhookMessage(
+          [
+            !webhookOk && `webhook: ${data?.webhookRes?.description || 'xato'}`,
+            !menuOk && `menu: ${data?.menuRes?.description || 'xato'}`,
+            !commandsOk && `commands: ${data?.commandsRes?.description || 'xato'}`,
+          ].filter(Boolean).join(' | ')
+        );
+      }
+    } catch (err: any) {
+      setWebhookState('error');
+      setWebhookMessage(String(err?.message || err));
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     await updateSettings(formData);
@@ -119,6 +163,27 @@ export const AdminSettings: React.FC = () => {
                 className="w-full p-2.5 bg-black/60 border border-white/10 font-mono text-[11px]"
               />
             </div>
+          </div>
+
+          <div className="pt-2 border-t border-white/10 flex items-center gap-3 flex-wrap">
+            <button
+              type="button"
+              onClick={handleSetupWebhook}
+              disabled={webhookState === 'loading'}
+              className="px-4 py-2 bg-blue-950/60 hover:bg-blue-950 border border-blue-800 font-bold text-blue-300 text-[11px] uppercase tracking-wider transition-colors disabled:opacity-50"
+            >
+              {webhookState === 'loading' ? 'Ulanmoqda...' : "Webhook'ni ulash / yangilash"}
+            </button>
+            {webhookState === 'success' && (
+              <span className="text-emerald-400 text-[11px] flex items-center gap-1">
+                <CheckCircle2 className="w-4 h-4" /> {webhookMessage}
+              </span>
+            )}
+            {webhookState === 'error' && (
+              <span className="text-red-400 text-[11px] flex items-center gap-1">
+                <AlertCircle className="w-4 h-4" /> {webhookMessage}
+              </span>
+            )}
           </div>
         </div>
 
