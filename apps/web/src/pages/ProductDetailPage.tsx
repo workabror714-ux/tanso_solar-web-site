@@ -147,6 +147,18 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ slug, onNa
   const [zoomActive, setZoomActive] = useState(false);
   const imgRef = useRef<HTMLImageElement>(null);
 
+  // useSeo must run on every render (Rules of Hooks) -- it cannot sit after
+  // the "product not found" early return below, so it is called here first
+  // with a safe fallback while `product` may still be undefined (data still
+  // loading, or a genuinely bad slug).
+  useSeo({
+    title: product
+      ? `${getLoc(product, 'title')} — narxi va xususiyatlari | Солнечный водонагреватель TANSO`
+      : 'TANSO solar suv isitgichlari',
+    description: product ? (getLoc(product, 'shortDesc') || getLoc(product, 'title')) : undefined,
+    path: product ? `/product/${product.slug}` : undefined,
+  });
+
   if (!product) {
     return (
       <div className="min-h-screen bg-[var(--paper)] text-[var(--ink)] pt-32 pb-20 text-center">
@@ -169,12 +181,6 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ slug, onNa
   }
 
   const category = categories.find(c => c.id === product.categoryId);
-
-  useSeo({
-    title: `${getLoc(product, 'title')} — narxi va xususiyatlari | Солнечный водонагреватель TANSO`,
-    description: getLoc(product, 'shortDesc') || getLoc(product, 'title'),
-    path: `/product/${product.slug}`,
-  });
   const relatedProducts = products
     .filter(p => p.id !== product.id && p.categoryId === product.categoryId)
     .slice(0, 3);
