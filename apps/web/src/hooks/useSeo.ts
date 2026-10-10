@@ -1,7 +1,6 @@
 import { useEffect } from 'react';
 
 const SITE_URL = 'https://www.tanso-solar.uz';
-const BRAND = 'TANSO';
 
 function upsertMeta(attr: 'name' | 'property', key: string, content: string) {
   if (!content) return;
@@ -41,15 +40,17 @@ export interface SeoInput {
  */
 export function useSeo({ title, description, path }: SeoInput) {
   useEffect(() => {
-    const fullTitle = `${title} | ${BRAND}`;
-    document.title = fullTitle;
+    // Every per-page title passed into this hook already includes "TANSO"
+    // (see Home/Catalog/Product/About/... callers) -- do not also append a
+    // brand suffix here, or it shows up twice in the tab title and SERP.
+    document.title = title;
 
     if (description) {
       upsertMeta('name', 'description', description);
       upsertMeta('property', 'og:description', description);
     }
 
-    upsertMeta('property', 'og:title', fullTitle);
+    upsertMeta('property', 'og:title', title);
 
     const canonicalUrl = `${SITE_URL}${path ?? window.location.pathname}`;
     upsertCanonical(canonicalUrl);
