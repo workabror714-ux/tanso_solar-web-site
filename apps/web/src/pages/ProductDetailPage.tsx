@@ -1,13 +1,14 @@
 import React, { useState, useRef } from 'react';
 import {
-  ChevronRight, ShieldCheck, ShoppingBag, Phone, CheckCircle2, ZoomIn,
-  Award
+  ChevronRight, ShieldCheck, Phone, CheckCircle2, ZoomIn,
+  Award, Download, Loader2
 } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 import { useData } from '../context/DataContext';
 import { ProductCard } from '../components/ProductCard';
 import { Product } from '../types';
 import { useSeo } from '../hooks/useSeo';
+import { generateProductPdf } from '../lib/productPdf';
 
 // ─── Smart description renderer ───────────────────────────────────────────────
 // Parses fullDesc text that may contain:
@@ -145,6 +146,7 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ slug, onNa
   const product = products.find(p => p.slug === slug || p.id === slug);
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [zoomActive, setZoomActive] = useState(false);
+  const [pdfLoading, setPdfLoading] = useState(false);
   const imgRef = useRef<HTMLImageElement>(null);
 
   // useSeo must run on every render (Rules of Hooks) -- it cannot sit after
@@ -219,6 +221,21 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ slug, onNa
   const formatPrice = (price: number | null | undefined) => {
     if (!price) return language === 'ru' ? 'Цена по запросу' : 'Narxi so‘rov bo‘yicha';
     return new Intl.NumberFormat(language === 'ru' ? 'ru-RU' : 'uz-UZ').format(price) + ' UZS';
+  };
+
+  // Generates a branded PDF "product sheet" (price, status, full description,
+  // specs, contacts) entirely client-side so visitors can download it and
+  // show it to someone else -- no server round-trip, no account needed.
+  const handleDownloadPdf = async () => {
+    if (pdfLoading) return;
+    setPdfLoading(true);
+    try {
+      await generateProductPdf({ product, category, language, getLoc, formatPrice });
+    } catch (err) {
+      console.error('PDF generation failed:', err);
+    } finally {
+      setPdfLoading(false);
+    }
   };
 
   return (
@@ -366,12 +383,21 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ slug, onNa
             {/* Main CTA Buttons */}
             <div className="space-y-3 pt-2">
               <button
-                onClick={() => onOpenConsultation(product)}
-                className="btn-primary w-full !min-h-[52px]"
-                id={`btn-detail-order-${product.id}`}
+                onClick={handleDownloadPdf}
+                disabled={pdfLoading}
+                className="btn-primary w-full !min-h-[52px] disabled:opacity-70 disabled:cursor-wait"
+                id={`btn-detail-pdf-${product.id}`}
               >
-                <ShoppingBag className="w-4 h-4" />
-                <span>{language === 'ru' ? 'Отправить запрос' : 'So‘rov yuborish'}</span>
+                {pdfLoading ? (
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                ) : (
+                  <Download className="w-4 h-4" />
+                )}
+                <span>
+                  {pdfLoading
+                    ? (language === 'ru' ? 'Формируется PDF...' : 'PDF tayyorlanmoqda...')
+                    : (language === 'ru' ? 'Скачать PDF о товаре' : 'Mahsulot haqida PDF yuklab olish')}
+                </span>
               </button>
 
               <a
