@@ -4,6 +4,7 @@ import { useLanguage } from '../context/LanguageContext';
 import { AboutSection } from '../components/AboutSection';
 import { CertificatesSection } from '../components/CertificatesSection';
 import { WhyTanso } from '../components/WhyTanso';
+import { useSeo } from '../hooks/useSeo';
 
 interface AboutPageProps {
   onNavigate: (path: string) => void;
@@ -12,6 +13,13 @@ interface AboutPageProps {
 
 export const AboutPage: React.FC<AboutPageProps> = ({ onNavigate }) => {
   const { language, t } = useLanguage();
+
+  useSeo({
+    title: 'TANSO haqida — Солнечный водонагреватель ishlab chiqaruvchisi',
+    description:
+      'TANSO — Ўзбекистондаги расмий солнечный водонагреватель дистрибьютори. Kompaniya tarixi, sertifikatlar va afzalliklar.',
+    path: '/about',
+  });
 
   const values = [
     {

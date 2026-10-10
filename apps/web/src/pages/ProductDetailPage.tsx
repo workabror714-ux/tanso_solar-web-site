@@ -7,6 +7,7 @@ import { useLanguage } from '../context/LanguageContext';
 import { useData } from '../context/DataContext';
 import { ProductCard } from '../components/ProductCard';
 import { Product } from '../types';
+import { useSeo } from '../hooks/useSeo';
 
 // ─── Smart description renderer ───────────────────────────────────────────────
 // Parses fullDesc text that may contain:
@@ -168,6 +169,12 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ slug, onNa
   }
 
   const category = categories.find(c => c.id === product.categoryId);
+
+  useSeo({
+    title: `${getLoc(product, 'title')} — narxi va xususiyatlari | Солнечный водонагреватель TANSO`,
+    description: getLoc(product, 'shortDesc') || getLoc(product, 'title'),
+    path: `/product/${product.slug}`,
+  });
   const relatedProducts = products
     .filter(p => p.id !== product.id && p.categoryId === product.categoryId)
     .slice(0, 3);

@@ -10,6 +10,7 @@ import { PartnersSection } from '../components/PartnersSection';
 import { ContactSection } from '../components/ContactSection';
 import { Reveal } from '../components/Reveal';
 import { Product } from '../types';
+import { useSeo } from '../hooks/useSeo';
 
 interface HomePageProps {
   onNavigate: (path: string) => void;
@@ -17,6 +18,13 @@ interface HomePageProps {
 }
 
 export const HomePage: React.FC<HomePageProps> = ({ onNavigate, onOpenConsultation }) => {
+  useSeo({
+    title: 'Солнечный водонагреватель TANSO — quyosh suv isitgichlari Узбекистан',
+    description:
+      'TANSO — Ўзбекистондаги расмий солнечный водонагреватель провайдери. Bosimli, bosimsiz va SPLIT tizimlar. Напорные, безнапорные и SPLIT солнечные водонагреватели для дома и бизнеса в Узбекистане.',
+    path: '/',
+  });
+
   return (
     <div className="min-h-screen bg-[var(--paper)] text-[var(--ink)] overflow-hidden">
       <Hero onNavigate={onNavigate} onOpenConsultation={() => onOpenConsultation(null)} />

@@ -3,10 +3,18 @@ import { Phone, MapPin, Clock } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 import { useData } from '../context/DataContext';
 import { ContactSection } from '../components/ContactSection';
+import { useSeo } from '../hooks/useSeo';
 
 export const ContactPage: React.FC = () => {
   const { language, t, getLoc } = useLanguage();
   const { settings } = useData();
+
+  useSeo({
+    title: 'Aloqa — TANSO солнечный водонагреватель',
+    description:
+      'TANSO ofisi va markaziy ombori bilan boglanish. Контакты центрального офиса и склада солнечных водонагревателей TANSO в Ташкенте.',
+    path: '/contact',
+  });
 
   return (
     <div className="min-h-screen bg-[var(--paper)] text-[var(--ink)] pt-28 pb-20">

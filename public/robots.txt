@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+Disallow: /admin
+Disallow: /bot
+
+Sitemap: https://www.tanso-solar.uz/sitemap.xml

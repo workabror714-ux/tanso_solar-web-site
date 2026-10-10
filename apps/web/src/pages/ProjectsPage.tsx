@@ -2,6 +2,7 @@ import React from 'react';
 import { MapPin } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 import { useData } from '../context/DataContext';
+import { useSeo } from '../hooks/useSeo';
 
 interface ProjectsPageProps {
   onNavigate: (path: string) => void;
@@ -11,6 +12,13 @@ interface ProjectsPageProps {
 export const ProjectsPage: React.FC<ProjectsPageProps> = ({ onOpenConsultation }) => {
   const { language, t, getLoc } = useLanguage();
   const { projects } = useData();
+
+  useSeo({
+    title: 'Loyihalar — TANSO солнечный водонагреватель portfoliosi',
+    description:
+      'TANSO quyosh suv isitgichlari bilan amalga oshirilgan loyihalar. Реализованные проекты солнечных водонагревателей TANSO в Узбекистане.',
+    path: '/projects',
+  });
 
   const activeProjects = projects.filter(p => p.active);
 

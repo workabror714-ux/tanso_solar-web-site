@@ -4,6 +4,7 @@ import { useLanguage } from '../context/LanguageContext';
 import { useData } from '../context/DataContext';
 import { ProductCard } from '../components/ProductCard';
 import { Product } from '../types';
+import { useSeo } from '../hooks/useSeo';
 
 interface CatalogPageProps {
   categorySlug?: string;
@@ -27,6 +28,21 @@ export const CatalogPage: React.FC<CatalogPageProps> = ({ categorySlug, onNaviga
 
   // Active category
   const activeCategory = categories.find(c => c.slug === selectedCategorySlug || c.id === selectedCategorySlug);
+
+  useSeo(
+    activeCategory
+      ? {
+          title: `${getLoc(activeCategory, 'name')} — солнечный водонагреватель TANSO narxi`,
+          description: `${getLoc(activeCategory, 'description') || ''} Солнечные водонагреватели TANSO — нархлари ва хусусиятлари.`.trim(),
+          path: `/catalog/${activeCategory.slug}`,
+        }
+      : {
+          title: 'Katalog — Солнечный водонагреватель TANSO narxlari',
+          description:
+            'TANSO quyosh suv isitgichlari katalogi: bosimli, bosimsiz va SPLIT tizimlar. Цены на солнечные водонагреватели TANSO в Узбекистане.',
+          path: '/catalog',
+        }
+  );
 
   const filteredProducts = useMemo(() => {
     let list = products.filter(p => p.active !== false);
