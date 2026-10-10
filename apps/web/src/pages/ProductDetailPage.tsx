@@ -151,12 +151,43 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ slug, onNa
   // the "product not found" early return below, so it is called here first
   // with a safe fallback while `product` may still be undefined (data still
   // loading, or a genuinely bad slug).
+  //
+  // The Product JSON-LD below is what lets Google (including Google Business
+  // Profile's automatic product detection) read the CURRENT name/price/stock
+  // straight off this page, instead of whatever stale snapshot it picked up
+  // before. Price is only included when one is actually set, so we never
+  // publish a fake/zero price.
+  const productJsonLd = product
+    ? {
+        '@context': 'https://schema.org',
+        '@type': 'Product',
+        name: getLoc(product, 'title'),
+        description: getLoc(product, 'shortDesc') || getLoc(product, 'title'),
+        ...(product.images?.length ? { image: product.images } : {}),
+        brand: { '@type': 'Brand', name: 'TANSO' },
+        ...(product.priceUZS
+          ? {
+              offers: {
+                '@type': 'Offer',
+                url: `https://www.tanso-solar.uz/product/${product.slug}`,
+                priceCurrency: 'UZS',
+                price: String(product.priceUZS),
+                availability:
+                  product.inStock === false ? 'https://schema.org/OutOfStock' : 'https://schema.org/InStock',
+                itemCondition: 'https://schema.org/NewCondition',
+              },
+            }
+          : {}),
+      }
+    : undefined;
+
   useSeo({
     title: product
       ? `${getLoc(product, 'title')} — narxi va xususiyatlari | Солнечный водонагреватель TANSO`
       : 'TANSO solar suv isitgichlari',
     description: product ? (getLoc(product, 'shortDesc') || getLoc(product, 'title')) : undefined,
     path: product ? `/product/${product.slug}` : undefined,
+    jsonLd: productJsonLd,
   });
 
   if (!product) {
