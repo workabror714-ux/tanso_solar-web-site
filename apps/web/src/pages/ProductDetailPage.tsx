@@ -1,6 +1,6 @@
 import React, { useState, useRef } from 'react';
 import {
-  ChevronRight, ShieldCheck, Phone, CheckCircle2, ZoomIn,
+  ChevronRight, ShieldCheck, ShoppingBag, Phone, CheckCircle2, ZoomIn,
   Award, Download, Loader2
 } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
@@ -383,9 +383,18 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ slug, onNa
             {/* Main CTA Buttons */}
             <div className="space-y-3 pt-2">
               <button
+                onClick={() => onOpenConsultation(product)}
+                className="btn-primary w-full !min-h-[52px]"
+                id={`btn-detail-order-${product.id}`}
+              >
+                <ShoppingBag className="w-4 h-4" />
+                <span>{language === 'ru' ? 'Отправить запрос' : 'So‘rov yuborish'}</span>
+              </button>
+
+              <button
                 onClick={handleDownloadPdf}
                 disabled={pdfLoading}
-                className="btn-primary w-full !min-h-[52px] disabled:opacity-70 disabled:cursor-wait"
+                className="btn-secondary w-full !min-h-[52px] disabled:opacity-70 disabled:cursor-wait"
                 id={`btn-detail-pdf-${product.id}`}
               >
                 {pdfLoading ? (
