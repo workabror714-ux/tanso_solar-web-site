@@ -48,7 +48,7 @@ function parseDescription(raw: string): DescBlock[] {
     .filter(Boolean);
 
   const isEmojiLine = (l: string) => /^[\u{1F300}-\u{1F9FF}\u{2600}-\u{27BF}]/u.test(l);
-  const isAllCapsLine = (l: string) => /^[A-Z0-9\s']{4,}$/.test(l) && l.length < 120;
+  const isAllCapsLine = (l: string) => /^[A-ZА-ЯЁ0-9\s'’-]{4,}$/.test(l) && l.length < 120;
 
   const blocks: DescBlock[] = [];
 
@@ -73,7 +73,7 @@ function parseDescription(raw: string): DescBlock[] {
     const emojM = line.match(/^([\u{1F300}-\u{1F9FF}\u{2600}-\u{27BF}])\s*(.+)/u);
     if (emojM) {
       const rest = emojM[2];
-      const splitM = rest.match(/^([^a-z]+?)\s+([a-z].*)$/s);
+      const splitM = rest.match(/^([^a-zа-яё]+?)\s+([a-zа-яё].*)$/s);
       blocks.push({
         kind: 'item',
         title: splitM ? splitM[1].trim() : rest.slice(0, 55).trim(),
@@ -263,6 +263,10 @@ export async function generateProductPdf({
   const imgBoxSize = 55;
   const rightColX = marginX + imgBoxSize + 8;
   const rightColW = contentW - imgBoxSize - 8;
+  // Guard against an unusually long title/description pushing this fixed-height
+  // row past the page boundary (not hit by current catalog data, but cheap
+  // insurance against future products with longer copy).
+  ensureSpace(imgBoxSize + 6);
   const rowTop = y;
 
   let imageResult: { dataUrl: string; ratio: number } | null = null;

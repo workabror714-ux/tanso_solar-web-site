@@ -22,7 +22,7 @@ export const ServicesPage: React.FC<ServicesPageProps> = ({ onNavigate, onOpenCo
 
   return (
     <div className="min-h-screen bg-[var(--paper)] text-[var(--ink)] pt-28">
-      <ServicesSection onNavigate={onNavigate} onOpenConsultation={onOpenConsultation} />
+      <ServicesSection onNavigate={onNavigate} onOpenConsultation={onOpenConsultation} asPageTitle />
       <ProcessSection />
       <ContactSection />
     </div>

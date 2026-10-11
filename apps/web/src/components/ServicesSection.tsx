@@ -8,6 +8,10 @@ import { useData } from '../context/DataContext';
 interface ServicesSectionProps {
   onNavigate: (path: string) => void;
   onOpenConsultation: () => void;
+  /** Render the section's heading as the page's single <h1> (used on /services,
+   * which has no other page title). Defaults to <h2> for when this section is
+   * embedded inside HomePage, which already has its own <h1>. */
+  asPageTitle?: boolean;
 }
 
 const iconMap: Record<string, any> = {
@@ -19,9 +23,10 @@ const iconMap: Record<string, any> = {
   ShieldCheck
 };
 
-export const ServicesSection: React.FC<ServicesSectionProps> = ({ onNavigate, onOpenConsultation }) => {
+export const ServicesSection: React.FC<ServicesSectionProps> = ({ onNavigate, onOpenConsultation, asPageTitle = false }) => {
   const { language, t, getLoc } = useLanguage();
   const { services } = useData();
+  const HeadingTag = asPageTitle ? 'h1' : 'h2';
 
   const activeServices = services.filter(s => s.active).sort((a, b) => a.sortOrder - b.sortOrder);
 
@@ -32,9 +37,9 @@ export const ServicesSection: React.FC<ServicesSectionProps> = ({ onNavigate, on
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12 border-b border-[var(--border)] pb-8">
           <div className="max-w-2xl">
             <div className="kicker">INJENERLIK VA SERVIS</div>
-            <h2 className="mt-4 text-3xl sm:text-4xl lg:text-[2.75rem] font-extrabold tracking-[-0.02em] text-[var(--ink)]">
+            <HeadingTag className="mt-4 text-3xl sm:text-4xl lg:text-[2.75rem] font-extrabold tracking-[-0.02em] text-[var(--ink)]">
               {t('services')}
-            </h2>
+            </HeadingTag>
             <p className="text-sm text-[var(--muted)] mt-3 max-w-xl">
               {language === 'ru'
                 ? 'Полный комплекс услуг от бесплатного аудита до долгосрочного сервиса'

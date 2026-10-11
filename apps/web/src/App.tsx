@@ -11,6 +11,7 @@ import { ServicesPage } from './pages/ServicesPage';
 import { ProjectsPage } from './pages/ProjectsPage';
 import { AboutPage } from './pages/AboutPage';
 import { ContactPage } from './pages/ContactPage';
+import { NotFoundPage } from './pages/NotFoundPage';
 
 const WebRouter: React.FC = () => {
   const [currentPath, setCurrentPath] = useState<string>(window.location.pathname || '/');
@@ -63,8 +64,9 @@ const WebRouter: React.FC = () => {
       case '/contact':
         return <ContactPage onNavigate={navigate} />;
       case '/':
-      default:
         return <HomePage onNavigate={navigate} onOpenConsultation={handleOpenConsultation} />;
+      default:
+        return <NotFoundPage onNavigate={navigate} />;
     }
   };
 

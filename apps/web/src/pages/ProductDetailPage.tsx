@@ -43,7 +43,7 @@ const RichDescription: React.FC<{ text: string }> = ({ text }) => {
   };
 
   const isEmojiLine  = (l: string) => /^[\u{1F300}-\u{1F9FF}\u{2600}-\u{27BF}]/u.test(l);
-  const isAllCapsLine = (l: string) => /^[A-Z0-9\s']{4,}$/.test(l) && l.length < 120;
+  const isAllCapsLine = (l: string) => /^[A-ZА-ЯЁ0-9\s'’-]{4,}$/.test(l) && l.length < 120;
 
   for (const line of normalized) {
     // Numbered list item  e.g. "1. Vakuumli..."
@@ -65,7 +65,7 @@ const RichDescription: React.FC<{ text: string }> = ({ text }) => {
     if (emojM) {
       const rest = emojM[2];
       // Title = leading uppercase block (no lowercase a-z); body = the rest
-      const splitM = rest.match(/^([^a-z]+?)\s+([a-z].*)$/s);
+      const splitM = rest.match(/^([^a-zа-яё]+?)\s+([a-zа-яё].*)$/s);
       blocks.push({
         kind: 'emoji',
         emoji: emojM[1],
