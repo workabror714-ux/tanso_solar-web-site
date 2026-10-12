@@ -36,7 +36,7 @@ export const AboutSection: React.FC<AboutSectionProps> = ({ onNavigate }) => {
               </div>
               <div>
                 <p className="text-[9px] uppercase tracking-[.16em] text-[var(--muted)]">TANSO SYSTEMS</p>
-                <p className="text-xs font-bold text-[var(--ink)]">Bosimli • Bosimsiz • SPLIT</p>
+                <p className="text-xs font-bold text-[var(--ink)]">{language === 'ru' ? 'С давлением • Без давления • SPLIT' : 'Bosimli • Bosimsiz • SPLIT'}</p>
               </div>
             </div>
           </div>

@@ -68,7 +68,7 @@ export const ContactPage: React.FC = () => {
               </div>
               <p className="text-sm font-semibold text-[var(--muted)]">{t('address')}</p>
             </div>
-            <span className="text-xl font-extrabold text-[var(--ink)] group-hover:text-[var(--teal-dark)] transition-colors leading-tight whitespace-nowrap">
+            <span className="text-lg sm:text-xl font-extrabold text-[var(--ink)] group-hover:text-[var(--teal-dark)] transition-colors leading-snug break-words">
               {getLoc(settings, 'address')}
             </span>
           </a>
