@@ -109,24 +109,64 @@ async function fetchFontBase64(url: string): Promise<string> {
 // Fetches the product image and returns a data URL + its pixel aspect ratio.
 // Returns null (rather than throwing) on any failure so a missing/blocked
 // image never breaks PDF generation -- the sheet is still useful without it.
+//
+// Product photos uploaded from Admin are stored as .webp (see the Blob
+// upload pipeline), but jsPDF's addImage only understands PNG/JPEG -- it
+// has no WEBP decoder. The old version here just sniffed the data URL's
+// MIME type for "image/png" and labeled everything else "JPEG", so a real
+// WEBP got handed to jsPDF mislabeled as JPEG: jsPDF tried to parse WEBP
+// bytes as a JPEG stream, producing the corrupted, blocky "Minecraft"
+// output (and any transparent pixels came out solid black, since JPEG
+// has no alpha channel to begin with).
+//
+// Fix: always decode the source image with a real <img> element (the
+// browser's own WEBP/PNG/JPEG decoders all work here) and re-encode it
+// through a canvas into a guaranteed-valid JPEG, painted onto a white
+// background first so transparency becomes clean white instead of black
+// or corrupted pixels. High-quality smoothing avoids any pixelation from
+// the canvas round-trip.
 async function fetchImageAsDataUrl(url: string): Promise<{ dataUrl: string; ratio: number } | null> {
   try {
     const res = await fetch(url, { mode: 'cors' });
     if (!res.ok) return null;
     const blob = await res.blob();
-    const dataUrl: string = await new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onload = () => resolve(reader.result as string);
-      reader.onerror = reject;
-      reader.readAsDataURL(blob);
-    });
-    const ratio: number = await new Promise((resolve, reject) => {
-      const img = new Image();
-      img.onload = () => resolve(img.naturalWidth / img.naturalHeight || 1);
-      img.onerror = reject;
-      img.src = dataUrl;
-    });
-    return { dataUrl, ratio: Number.isFinite(ratio) && ratio > 0 ? ratio : 1 };
+    const objectUrl = URL.createObjectURL(blob);
+    try {
+      const img: HTMLImageElement = await new Promise((resolve, reject) => {
+        const el = new Image();
+        el.onload = () => resolve(el);
+        el.onerror = reject;
+        el.src = objectUrl;
+      });
+
+      const naturalW = img.naturalWidth || 1;
+      const naturalH = img.naturalHeight || 1;
+      const ratio = naturalW / naturalH || 1;
+
+      // Cap the longer edge so the PDF stays a reasonable size; product
+      // photos are typically much larger than they'll ever render here.
+      const MAX_EDGE = 1200;
+      const scale = Math.min(1, MAX_EDGE / Math.max(naturalW, naturalH));
+      const canvasW = Math.max(1, Math.round(naturalW * scale));
+      const canvasH = Math.max(1, Math.round(naturalH * scale));
+
+      const canvas = document.createElement('canvas');
+      canvas.width = canvasW;
+      canvas.height = canvasH;
+      const ctx = canvas.getContext('2d');
+      if (!ctx) return null;
+
+      ctx.imageSmoothingEnabled = true;
+      ctx.imageSmoothingQuality = 'high';
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(0, 0, canvasW, canvasH);
+      ctx.drawImage(img, 0, 0, canvasW, canvasH);
+
+      const dataUrl = canvas.toDataURL('image/jpeg', 0.92);
+      return { dataUrl, ratio: Number.isFinite(ratio) && ratio > 0 ? ratio : 1 };
+    } finally {
+      URL.revokeObjectURL(objectUrl);
+    }
   } catch {
     return null;
   }
@@ -287,9 +327,8 @@ export async function generateProductPdf({
     }
     const ix = marginX + (imgBoxSize - w) / 2;
     const iy = rowTop + (imgBoxSize - h) / 2;
-    const fmt = dataUrl.includes('image/png') ? 'PNG' : 'JPEG';
     try {
-      doc.addImage(dataUrl, fmt, ix, iy, w, h);
+      doc.addImage(dataUrl, 'JPEG', ix, iy, w, h);
     } catch {
       /* ignore image embed failures -- rest of the PDF still renders */
     }
