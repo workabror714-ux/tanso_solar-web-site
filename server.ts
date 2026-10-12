@@ -1406,6 +1406,22 @@ async function startServer() {
     }
   }
 
+  // Telegram's webhook endpoint (below) has to stay publicly reachable --
+  // Telegram itself calls it, with no x-admin-key -- so unlike every other
+  // mutating route it can't go behind requireAdminAuth. Previously it had
+  // NO verification at all that a request actually came from Telegram,
+  // which meant anyone who found the URL could POST a forged '/getid'
+  // group message and silently redirect every future customer lead
+  // notification to their own Telegram chat (see the /getid handler
+  // below). Telegram's fix for exactly this is a secret_token registered
+  // with setWebhook and echoed back on every real call as the
+  // X-Telegram-Bot-Api-Secret-Token header; this derives that token from
+  // the bot token itself (already a secret only this server knows) so no
+  // extra env var is needed.
+  function getWebhookSecret(token: string): string {
+    return crypto.createHash('sha256').update(`${token}:webhook-secret`).digest('hex');
+  }
+
   // Read-only diagnostic: asks Telegram directly what it has on file for
   // this bot's webhook (registered URL, last delivery error, pending
   // update count). Token never leaves the server -- the admin panel only
@@ -1449,7 +1465,11 @@ async function startServer() {
         fetch(`https://api.telegram.org/bot${token}/setWebhook`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ url: webhookUrl, drop_pending_updates: false }),
+          body: JSON.stringify({
+            url: webhookUrl,
+            drop_pending_updates: false,
+            secret_token: getWebhookSecret(token),
+          }),
         }).then((r) => r.json()),
         fetch(`https://api.telegram.org/bot${token}/setMyCommands`, {
           method: 'POST',
@@ -1505,14 +1525,21 @@ async function startServer() {
   });
 
   app.post('/api/telegram/webhook', async (req, res) => {
+    const token = await getTelegramToken();
+    if (!token) return res.status(503).json({ ok: false });
+
+    // Reject anything that isn't really from Telegram (see
+    // getWebhookSecret above) before acking or acting on it.
+    const provided = req.header('x-telegram-bot-api-secret-token') || '';
+    if (!timingSafeEqualStr(provided, getWebhookSecret(token))) {
+      return res.status(401).json({ ok: false });
+    }
+
     // Ack immediately — Telegram retries aggressively on anything but 2xx,
     // and the actual reply below is fire-and-forget from Telegram's view.
     res.json({ ok: true });
 
     try {
-      const token = await getTelegramToken();
-      if (!token) return;
-
       const message = req.body?.message;
       if (!message?.chat?.id) return;
 
