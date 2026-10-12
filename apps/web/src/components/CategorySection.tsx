@@ -19,7 +19,7 @@ export const CategorySection: React.FC<CategorySectionProps> = ({ onNavigate }) 
       <div className="tanso-container">
         <div className="mb-10 flex flex-col justify-between gap-6 sm:mb-12 md:flex-row md:items-end">
           <div className="max-w-2xl">
-            <div className="kicker">TANSO KATALOG</div>
+            <div className="kicker">{t('catalogKicker')}</div>
             <h2 className="mt-4 text-3xl font-extrabold tracking-[-0.02em] text-[var(--ink)] sm:text-4xl lg:text-[2.75rem]">
               {language === 'ru' ? 'Категории продукции' : 'Mahsulot kategoriyalari'}
             </h2>

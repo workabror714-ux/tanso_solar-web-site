@@ -21,7 +21,7 @@ export const ContactPage: React.FC = () => {
       <div className="tanso-container mb-16">
 
         <div className="max-w-3xl mb-12">
-          <div className="kicker">BOG‘LANISH</div>
+          <div className="kicker">{t('contactKicker')}</div>
           <h1 className="text-4xl sm:text-5xl font-extrabold text-[var(--ink)] tracking-[-0.02em] mt-4">
             {t('contact')}
           </h1>

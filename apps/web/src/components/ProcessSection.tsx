@@ -42,7 +42,7 @@ export const ProcessSection: React.FC = () => {
     <section className="py-20 sm:py-24 bg-[var(--teal-tint)] text-[var(--ink)]">
       <div className="tanso-container">
         <div className="max-w-2xl mb-12 sm:mb-14">
-          <div className="kicker">JARAYON</div>
+          <div className="kicker">{t('processKicker')}</div>
           <h2 className="mt-4 text-3xl sm:text-4xl lg:text-[2.75rem] font-extrabold tracking-[-0.02em] text-[var(--ink)]">{t('process')}</h2>
           <p className="mt-3 text-sm text-[var(--muted)]">
             {language === 'ru' ? 'От первой заявки до подбора, установки и дальнейшего сервиса.' : 'Birinchi so‘rovdan model tanlash, montaj va keyingi servisgacha.'}

@@ -15,7 +15,7 @@ export const PartnersSection: React.FC = () => {
     <section className="py-16 bg-[var(--teal-tint)] text-[var(--ink)]">
       <div className="tanso-container">
         <div className="text-center mb-8">
-          <div className="kicker justify-center">HAMKORLAR</div>
+          <div className="kicker justify-center">{t('partnersKicker')}</div>
           <h2 className="mt-3 text-2xl sm:text-3xl font-extrabold tracking-[-0.01em]">{t('partners')}</h2>
         </div>
         <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-4">

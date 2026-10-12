@@ -54,7 +54,7 @@ export const WhyTanso: React.FC = () => {
     <section className="py-20 sm:py-24 bg-[var(--paper)] text-[var(--ink)]">
       <div className="tanso-container">
         <div className="text-center max-w-2xl mx-auto mb-12 sm:mb-14">
-          <div className="kicker justify-center">TANSO AFZALLIKLARI</div>
+          <div className="kicker justify-center">{t('whyTansoKicker')}</div>
           <h2 className="mt-4 text-3xl sm:text-4xl lg:text-[2.75rem] font-extrabold tracking-[-0.02em] text-[var(--ink)]">
             {t('whyTanso')}
           </h2>

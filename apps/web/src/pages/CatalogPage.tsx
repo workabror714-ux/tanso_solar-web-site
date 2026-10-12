@@ -111,7 +111,7 @@ export const CatalogPage: React.FC<CatalogPageProps> = ({ categorySlug, onNaviga
 
         {/* Title */}
         <div className="mb-8">
-          <div className="kicker mb-3">TANSO KATALOG</div>
+          <div className="kicker mb-3">{t('catalogKicker')}</div>
           <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-[var(--ink)] tracking-[-0.02em]">
             {activeCategory ? getLoc(activeCategory, 'name') : t('catalog')}
           </h1>

@@ -50,7 +50,18 @@ const translations: Record<Language, Record<string, string>> = {
     callMe: 'Menga qo‘ng‘iroq qiling',
     address: 'Manzil',
     workingHours: 'Ish vaqti',
-    copyright: 'Barcha huquqlar himoyalangan.'
+    copyright: 'Barcha huquqlar himoyalangan.',
+    catalogKicker: 'TANSO KATALOG',
+    featuredKicker: 'TANSO MAHSULOTLARI',
+    projectsKicker: 'AMALGA OSHIRILGAN LOYIHALAR',
+    servicesKicker: 'INJENERLIK VA SERVIS',
+    whyTansoKicker: 'TANSO AFZALLIKLARI',
+    processKicker: 'JARAYON',
+    contactKicker: 'BOG‘LANISH',
+    portfolioKicker: 'BIZNING PORTFOLIOMIZ',
+    partnersKicker: 'HAMKORLAR',
+    heroKicker: 'TANSO • O‘ZBEKISTON',
+    aboutKicker: 'TANSO HAQIDA'
   },
   ru: {
     home: 'Главная',
@@ -85,7 +96,7 @@ const translations: Record<Language, Record<string, string>> = {
     close: 'Закрыть',
     successTitle: 'Спасибо! Ваша заявка принята',
     successMsg: 'Наш специалист свяжется с вами в ближайшее время.',
-    whyTanso: 'Почему выберают TANSO SOLAR?',
+    whyTanso: 'Почему выбирают TANSO SOLAR?',
     process: 'Как мы работаем?',
     partners: 'Наши партнеры',
     contactHeading: 'Готовы перейти на солнечную энергию?',
@@ -93,7 +104,18 @@ const translations: Record<Language, Record<string, string>> = {
     callMe: 'Перезвоните мне',
     address: 'Адрес',
     workingHours: 'Режим работы',
-    copyright: 'Все права защищены.'
+    copyright: 'Все права защищены.',
+    catalogKicker: 'КАТАЛОГ TANSO',
+    featuredKicker: 'ПРОДУКЦИЯ TANSO',
+    projectsKicker: 'РЕАЛИЗОВАННЫЕ ПРОЕКТЫ',
+    servicesKicker: 'ИНЖЕНЕРИЯ И СЕРВИС',
+    whyTansoKicker: 'ПРЕИМУЩЕСТВА TANSO',
+    processKicker: 'ПРОЦЕСС',
+    contactKicker: 'КОНТАКТЫ',
+    portfolioKicker: 'НАШЕ ПОРТФОЛИО',
+    partnersKicker: 'ПАРТНЕРЫ',
+    heroKicker: 'TANSO • УЗБЕКИСТАН',
+    aboutKicker: 'О TANSO'
   }
 };
 

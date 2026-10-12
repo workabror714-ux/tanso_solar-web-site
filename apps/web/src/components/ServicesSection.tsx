@@ -36,7 +36,7 @@ export const ServicesSection: React.FC<ServicesSectionProps> = ({ onNavigate, on
 
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12 border-b border-[var(--border)] pb-8">
           <div className="max-w-2xl">
-            <div className="kicker">INJENERLIK VA SERVIS</div>
+            <div className="kicker">{t('servicesKicker')}</div>
             <HeadingTag className="mt-4 text-3xl sm:text-4xl lg:text-[2.75rem] font-extrabold tracking-[-0.02em] text-[var(--ink)]">
               {t('services')}
             </HeadingTag>

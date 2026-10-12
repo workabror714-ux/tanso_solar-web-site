@@ -8,7 +8,7 @@ interface ProjectsSectionProps {
 }
 
 export const ProjectsSection: React.FC<ProjectsSectionProps> = ({ onNavigate }) => {
-  const { language, getLoc } = useLanguage();
+  const { language, t, getLoc } = useLanguage();
   const { projects } = useData();
 
   const activeProjects = projects.filter(p => p.active).slice(0, 3);
@@ -20,7 +20,7 @@ export const ProjectsSection: React.FC<ProjectsSectionProps> = ({ onNavigate }) 
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12 border-b border-[var(--border)] pb-8">
           <div className="max-w-2xl">
-            <div className="kicker">AMALGA OSHIRILGAN LOYIHALAR</div>
+            <div className="kicker">{t('projectsKicker')}</div>
             <h2 className="mt-4 text-3xl sm:text-4xl lg:text-[2.75rem] font-extrabold tracking-[-0.02em] text-[var(--ink)]">
               {language === 'ru' ? 'Выполненные объекты' : 'Bajarilgan loyihalar'}
             </h2>

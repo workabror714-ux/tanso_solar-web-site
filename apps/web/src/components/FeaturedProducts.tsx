@@ -20,7 +20,7 @@ export const FeaturedProducts: React.FC<FeaturedProductsProps> = ({ onNavigate, 
       <div className="tanso-container">
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10 sm:mb-12">
           <div className="max-w-2xl">
-            <div className="kicker">TANSO MAHSULOTLARI</div>
+            <div className="kicker">{t('featuredKicker')}</div>
             <h2 className="mt-4 text-3xl sm:text-4xl lg:text-[2.75rem] font-extrabold tracking-[-0.02em] text-[var(--ink)]">{t('featuredProducts')}</h2>
             <p className="mt-3 text-sm text-[var(--muted)] max-w-xl">
               {language === 'ru' ? 'Выбранные модели из актуального каталога TANSO.' : 'TANSO katalogidan saralangan quyosh suv isitish modellari.'}

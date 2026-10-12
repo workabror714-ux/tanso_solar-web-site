@@ -281,7 +281,7 @@ export const Hero: React.FC<HeroProps> = ({ onNavigate, onOpenConsultation }) =>
               transition={{ duration: .55, ease: [0.22, 1, 0.36, 1] }}
               className="kicker-dark mb-5"
             >
-              TANSO • O'ZBEKISTON
+              {t('heroKicker')}
             </motion.div>
 
             <motion.h1

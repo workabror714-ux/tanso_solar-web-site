@@ -49,7 +49,7 @@ export const AboutPage: React.FC<AboutPageProps> = ({ onNavigate }) => {
     <div className="min-h-screen bg-[var(--paper)] text-[var(--ink)] pt-28">
       <section className="pb-14 sm:pb-16">
         <div className="tanso-container">
-          <div className="kicker">TANSO HAQIDA</div>
+          <div className="kicker">{t('aboutKicker')}</div>
           <h1 className="mt-4 text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-[-0.025em] text-[var(--ink)]">{t('about')}</h1>
           <p className="mt-4 max-w-2xl text-sm sm:text-base leading-relaxed text-[var(--muted)]">
             {language === 'ru'

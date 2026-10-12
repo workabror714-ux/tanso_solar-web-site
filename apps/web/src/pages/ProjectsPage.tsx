@@ -27,7 +27,7 @@ export const ProjectsPage: React.FC<ProjectsPageProps> = ({ onOpenConsultation }
       <div className="tanso-container">
 
         <div className="max-w-3xl mb-12">
-          <div className="kicker">BIZNING PORTFOLIOMIZ</div>
+          <div className="kicker">{t('portfolioKicker')}</div>
           <h1 className="text-4xl sm:text-5xl font-extrabold text-[var(--ink)] tracking-[-0.02em] mt-4">
             {t('projects')}
           </h1>
